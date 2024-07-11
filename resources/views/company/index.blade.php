@@ -104,18 +104,33 @@ Company Profile
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#log" role="tab" aria-selected="false" tabindex="-1">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#team" role="tab" aria-selected="false" tabindex="-1">
                                 <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
-                                <span class="d-none d-sm-block">Activity Log</span>
+                                <span class="d-none d-sm-block">Team</span>
                             </a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" data-bs-toggle="tab" href="#doc" role="tab" aria-selected="false" tabindex="-1">
+                            <a class="nav-link " data-bs-toggle="tab" href="#certificates" role="tab" aria-selected="false" tabindex="-1">
                                 <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
-                                <span class="d-none d-sm-block">Documentation</span>
+                                <span class="d-none d-sm-block">Certificates</span>
                             </a>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link " data-bs-toggle="tab" href="#doc" role="tab" aria-selected="false" tabindex="-1">
+                                <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                <span class="d-none d-sm-block">CAC & TAX Clearance Cert.</span>
+                            </a>
+                        </li>
+
+
+
                         @if(\Illuminate\Support\Facades\Auth::user()->org_id == $company->id)
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link " data-bs-toggle="tab" href="#log" role="tab" aria-selected="false" tabindex="-1">
+                                    <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                    <span class="d-none d-sm-block">Activity Log</span>
+                                </a>
+                            </li>
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" data-bs-toggle="tab" href="#settings1" role="tab" aria-selected="false" tabindex="-1">
                                     <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
@@ -128,33 +143,56 @@ Company Profile
 
                     <!-- Tab panes -->
                     <div class="tab-content p-3 text-muted">
-                        <div class="tab-pane active" id="log" role="tabpanel" >
-                            <p>{{$company->organization_name ?? '' }} activity log <span class="badge rounded-pill bg-danger" style="background: #ff0000 !important;">{{number_format($logs->count())}}</span></p>
-                            <div class="mt-4" style="height: 660px; overflow-y: scroll;">
-                                <ul class="verti-timeline list-unstyled">
-                                    @foreach($logs as $log)
-                                        <li class="event-list">
-                                            <div class="event-timeline-dot">
-                                                <i class="bx bx-right-arrow-circle"></i>
-                                            </div>
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <i class="bx bx-code h4 text-primary"></i>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <div>
-                                                        <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark">{{$log->title ?? '' }}</a></h5>
-                                                        <p>{{$log->log ?? '' }}</p>
-                                                        <span class="text-primary">{{date('d M, Y h:ia', strtotime($log->created_at))}}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
+
+                        <div class="tab-pane active" id="team" role="tabpanel" >
+                            <p> <code>{{$company->organization_name ?? '' }}'s</code> team  <span class="badge rounded-pill bg-danger" style="background: #ff0000 !important;"></span></p>
+                            <div class="row">
+                                <div class="col-md-12 col-lx-12">
+                                    <div class="table-responsive mt-3">
+                                        <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+                                            <thead>
+                                            <tr>
+                                                <th class="">#</th>
+                                                <th class="wd-15p">Name</th>
+                                                <th class="wd-15p">Mobile No.</th>
+                                                <th class="wd-15p">Type</th>
+                                                <th class="wd-15p">Email</th>
+                                                <th class="wd-5p">Status</th>
+                                                <th class="wd-15p">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach($company->getOrganizationUsers as $key => $user)
+                                                <tr>
+                                                    <td>{{$key + 1}}</td>
+                                                    <td>
+                                                        <img src="{{url('storage/'.$user->image)}}" style="width: 24px; height: 24px;" alt="{{$user->first_name ?? '' }} {{$user->last_name ?? '' }}" class="rounded-circle avatar-sm">
+                                                        <a href="{{route('person-profile', $user->slug)}}">{{$user->title ?? '' }} {{$user->first_name ?? '' }} {{$user->last_name ?? '' }} {{$user->other_names ?? '' }}</a> </td>
+                                                    <td>{{$user->cellphone_no ?? '' }} </td>
+                                                    <td>{!! $user->type == 2 ? "<span class='badge rounded-pill bg-success'>Director</span>" : "<span class='badge rounded-pill bg-secondary'>Contact Person</span>" !!}</td>
+                                                    <td>{{$user->email ?? '' }} </td>
+                                                    <td>
+                                                        {!! $user->status == 1 ? "<i class='bx bxs-check-circle text-success'></i>" : "<i class='bx bxs-x-circle text-danger' style='color:#ff0000 !important;'></i>" !!}
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                                                            <div class="dropdown-menu">
+                                                                <a class="dropdown-item" href="{{route('person-profile', $user->slug)}}"> <i class="bx bxs-user"></i> View Profile</a>
+                                                            </div>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="tab-pane" id="doc" role="tabpanel" >
+                        <div class="tab-pane " id="doc" role="tabpanel" >
                             <p>Your company's certificate of incorporation by the <code>Corporate Affairs Commission(CAC)</code> and <code>Current Tax Clearance Certificate</code> is required. This is needed to verify and keep your account with us verified.</p>
                             <p>Do well to furnish us with your current tax clearance certificate as the previous one expires.</p>
                             <p><strong>Note:</strong> All documents must be uploaded in <code>PDF</code> format.</p>
@@ -194,7 +232,90 @@ Company Profile
                             </div>
 
                         </div>
+
+                        <div class="tab-pane" id="certificates" role="tabpanel" >
+                            <p> <code>{{$company->organization_name ?? '' }}'s</code> certificates  <span class="badge rounded-pill bg-danger" style="background: #ff0000 !important;"></span></p>
+                            <div class="row">
+                                <div class="col-md-12 col-lx-12">
+                                    <div class="table-responsive mt-3">
+                                        <table id="datatable1" class="table table-striped table-bordered nowrap dataTable" role="grid" aria-describedby="complex-header_info" style="width: 100%; margin:0px auto;">
+                                            <thead style="position: sticky;top: 0">
+                                            <tr role="row">
+                                                <th class="sorting_asc text-left text-uppercase header" tabindex="0" >S/No.</th>
+                                                <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Start Date</th>
+                                                <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Expires</th>
+                                                <th class="sorting_asc text-left text-uppercase header" tabindex="0"  >Category</th>
+                                                <th class="sorting_asc text-left text-uppercase header" tabindex="0"  >Licence No.</th>
+                                                <th class="sorting_asc text-left text-uppercase header" tabindex="0"  >Status</th>
+                                                <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach($company->getOrganizationCertificates as $key => $cert)
+                                                <tr>
+                                                    <td>{{$key + 1}}</td>
+                                                    <td>{{ date('d M, Y', strtotime($cert->start_date)) }}</td>
+                                                    <td style="color: #ff0000 !important;">{{ date('d M, Y', strtotime($cert->expires_at)) }}</td>
+                                                    <td>{{ $cert->getCategory->getParentCategory->name }}</td>
+                                                    <td>{{ $cert->license_no ?? '' }}/{{$cert->getCategory->getParentCategory->abbr}}/{{date('y', strtotime($cert->start_date))}}</td>
+                                                    <td>
+                                                        @switch($cert->status)
+                                                            @case(1)
+                                                            <span class="text-success">Active</span>
+                                                            @break
+                                                            @case(2)
+                                                            <span class="text-danger" style="color: #ff0000 !important;">Expired</span>
+                                                            @break
+                                                            @case(3)
+                                                            <span class="text-warning">Renewed</span>
+                                                            @break
+                                                        @endswitch
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                                                            <div class="dropdown-menu">
+                                                                <a class="dropdown-item" href="{{ route('certificate-details', $cert->slug) }}" > <i class="bx bxs-book-open"></i> View</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         @if(\Illuminate\Support\Facades\Auth::user()->org_id == $company->id)
+                            <div class="tab-pane " id="log" role="tabpanel" >
+                                <p>{{$company->organization_name ?? '' }} activity log <span class="badge rounded-pill bg-danger" style="background: #ff0000 !important;">{{number_format($logs->count())}}</span></p>
+                                <div class="mt-4" style="height: 660px; overflow-y: scroll;">
+                                    <ul class="verti-timeline list-unstyled">
+                                        @foreach($logs as $log)
+                                            <li class="event-list">
+                                                <div class="event-timeline-dot">
+                                                    <i class="bx bx-right-arrow-circle"></i>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <i class="bx bx-code h4 text-primary"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div>
+                                                            <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark">{{$log->title ?? '' }}</a></h5>
+                                                            <p>{{$log->log ?? '' }}</p>
+                                                            <span class="text-primary">{{date('d M, Y h:ia', strtotime($log->created_at))}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="tab-pane" id="settings1" role="tabpanel" >
                                 <div class="row">
                                     <div class="col-md-12">

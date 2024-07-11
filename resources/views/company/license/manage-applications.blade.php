@@ -53,7 +53,7 @@
                             <div class="row mb-1" >
                                 <div class="col" >
                                     <p class="mb-1">Verified</p>
-                                    <h5 class="mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $workflows->where('p_status',5)->where('p_type',6)->sum('p_amount') )}}</h5>
+                                    <h5 class="mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $workflows->where('p_status', '>=',5)->where('p_type',6)->sum('p_amount') )}}</h5>
                                 </div>
                                 <div class="col-auto mb-0" >
                                     <div class="dash-icon text-orange" >
@@ -61,7 +61,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Verified<code>({{number_format($workflows->where('p_status',5)->where('p_type',6)->count())}})</code></span></span>
+                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Verified<code>({{number_format($workflows->where('p_status','>=',5)->where('p_type',6)->count())}})</code></span></span>
                         </div>
                     </div>
                 </div>
@@ -244,7 +244,11 @@
                                         <td class="">{{$flow->p_title ?? ''}}</td>
                                         <td class="" style="text-align: right">
                                             @if(($flow->p_status == 0) || ($flow->p_status == 1) || ($flow->p_status == 2))
-                                                <span class="text-warning">Awaiting Charge</span>
+                                                @if(!empty($flow->p_invoice_id))
+                                                    <span class="text-info">Invoice Issued</span>
+                                                @else
+                                                    <span class="text-warning">Awaiting Charge</span>
+                                                @endif
                                             @elseif(($flow->p_status == 1) && (!empty($flow->p_amount)))
                                                 {{$flow->getCurrency->symbol ?? '' }}{{ number_format($flow->p_amount ?? 0, 2) }}
 
@@ -277,6 +281,9 @@
                                                 @break
                                                 @case(6)
                                                 <span class="text-warning">Licensed</span>
+                                                @break
+                                                @case(7)
+                                                <span class="text-warning">Assigned</span>
                                                 @break
                                             @endswitch
                                         </td>

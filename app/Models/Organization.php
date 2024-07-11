@@ -24,6 +24,9 @@ class Organization extends Model
     public function getOrganizationUsers(){
         return $this->hasMany(User::class, 'org_id');
     }
+    public function getOrganizationCertificates(){
+        return $this->hasMany(AssignFrequency::class, 'org_id');
+    }
 
 
     public function getCompanyDocuments(){
@@ -137,5 +140,13 @@ class Organization extends Model
 
     public function getOrganizationBySubdomain($website){
         return Organization::where('sub_domain', $website)->first();
+    }
+
+    public function getCompanyBySlug($slug){
+        return Organization::where('slug', $slug)->first();
+    }
+
+    public function getCompaniesByIds($ids){
+        return Organization::whereIn('id',$ids)->distinct()->orderBy('id', 'DESC')->get();
     }
 }

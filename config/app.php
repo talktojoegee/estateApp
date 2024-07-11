@@ -168,6 +168,7 @@ return [
         Stevebauman\Location\LocationServiceProvider::class,
 
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -200,6 +201,7 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'Analytics'=>\Spatie\Analytics\AnalyticsFacade::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Image' => Intervention\Image\Facades\Image::class,
     ])->toArray(),
 
 ];

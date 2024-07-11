@@ -115,6 +115,9 @@
                                                 @case(6)
                                                 <span class="text-warning">Licensed</span>
                                                 @break
+                                                @case(7)
+                                                <span class="text-info">Assigned</span>
+                                                @break
                                             @endswitch
                                         </td>
                                         <td>
@@ -128,6 +131,9 @@
                                                     @endif
                                                     @if((\Illuminate\Support\Facades\Auth::user()->type == 1)  && ($flow->p_status == 5)  )
                                                         <a class="dropdown-item" href="{{route('show-assign-license', $flow->p_slug)}}" > <i class="bx bx-certification"></i> Assign Frequency</a>
+                                                    @endif
+                                                    @if((\Illuminate\Support\Facades\Auth::user()->type == 1)  && ($flow->p_status == 7)  )
+                                                        <a class="dropdown-item" href="{{route('review-assignment', $flow->p_slug)}}" > <i class="bx bx-certification"></i> Review Assignment</a>
                                                     @endif
                                                 </div>
                                             </div>

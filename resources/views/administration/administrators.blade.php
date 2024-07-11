@@ -1,6 +1,6 @@
 @extends('layouts.master-layout')
 @section('current-page')
-    Manage Pastors
+    Manage Team
 @endsection
 @section('extra-styles')
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
@@ -52,7 +52,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Pastors<code>(Active)</code></span></span>
+                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Member<code>(Active)</code></span></span>
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Pastors<code>(Inactive)</code></span></span>
+                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Member<code>(Inactive)</code></span></span>
                         </div>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
             <div class="col-xl-12 col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{route('add-new-pastor')}}"  class="btn btn-primary  mb-3">Add New Pastor <i class="bx bxs-plus-circle"></i> </a>
+                        <a href="{{route('add-new-pastor')}}"  class="btn btn-primary  mb-3">Add New Member <i class="bx bxs-plus-circle"></i> </a>
                     </div>
                     <div class="card-body">
                         <p><strong class="text-danger">Note:</strong> Your account currently has a total of <code>{{ number_format($users->count() ) }} </code>users</p>

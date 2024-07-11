@@ -10,11 +10,15 @@ use App\Models\AuthorizingPerson;
 use App\Models\ChurchBranch;
 use App\Models\InvoiceDetail;
 use App\Models\InvoiceMaster;
+use App\Models\InvoiceService;
+use App\Models\Lead;
 use App\Models\LicenceCategory;
 use App\Models\Notification;
 use App\Models\Post;
 use App\Models\PostAttachment;
+use App\Models\PostComment;
 use App\Models\PostRadioDetail;
+use App\Models\Property;
 use App\Models\State;
 use App\Models\User;
 use App\Models\Workstation;
@@ -35,6 +39,11 @@ class RadioController extends Controller
         $this->postradiodetail = new PostRadioDetail();
         $this->invoicemaster = new InvoiceMaster();
         $this->assignfrequency = new AssignFrequency();
+        $this->authorizingpersons = new AuthorizingPerson();
+
+        $this->invoiceservice = new InvoiceService();
+        $this->lead = new Lead();
+        $this->property = new Property();
 
     }
 
@@ -180,7 +189,7 @@ class RadioController extends Controller
                     if($post){
                         $this->postradiodetail->setRadioLicenseApplicationDetails($request, $post->p_id);
                         #Register new workflow process
-                        AuthorizingPerson::publishAuthorizingPerson($post->p_id, $supervisor->cb_head_pastor); //supervisorID
+                        AuthorizingPerson::publishAuthorizingPerson($post->p_id, $supervisor->cb_head_pastor, 'Notified of new license application',0); //supervisorID
                         if ($request->hasFile('attachments')) {
                             foreach($request->attachments as $attachment){
                                 $extension = $attachment->getClientOriginalExtension();
@@ -242,18 +251,22 @@ class RadioController extends Controller
                 $this->post->getAllApplications(),
         ]);
     }
+
     public function showManageApplicationDetails($slug){
         $workflow = $this->post->getPostBySlug($slug);
         if(empty($workflow)){
             abort(404);
         }
-        $authIds = AuthorizingPerson::pluckPendingAuthorizingPersonsByPostId($workflow->p_id);
+        $authIds = AuthorizingPerson::pluckPendingAuthorizingPersonsByPostIdType($workflow->p_id,0);
+
+        $userAction = AuthorizingPerson::getAuthUserAction($workflow->p_id,0, Auth::user()->id);
         return view('company.license.view',
             [
                 'workflow'=>$workflow,
                 'authIds'=>$authIds,
                 'persons'=>$this->user->getAllAdminUsers(),
-                'pendingId'=>0
+                'pendingId'=>0,
+                'userAction'=>$userAction
             ]);
     }
 
@@ -296,6 +309,9 @@ class RadioController extends Controller
 
         $invoice = $this->invoicemaster->createNewInvoice($request,$post);
         if(!empty($invoice)){
+            $post->p_invoice_id = $invoice->id;
+            $post->save();
+
             InvoiceDetail::setInvoiceDetail($invoice->id, $request);
         }else{
             session()->flash("error", "Whoops! Something went wrong.");
@@ -305,11 +321,102 @@ class RadioController extends Controller
         return back();
     }
 
-    public function showManageInvoices(){
-        $authUser = Auth::user();
-        return view('company.invoice.index',[
-            'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices() : $this->invoicemaster->getAllCompanyInoices($authUser->org_id)
+
+
+    public function showNewInvoiceForm(){
+        return view('company.invoice.new-invoice',[
+            'customers'=>$this->lead->getAllOrgLeads(),
+            'properties'=>$this->property->getAllProperties()
         ]);
+    }
+
+
+    public function storeNewInvoice(Request $request){
+        if(empty($request->invoice_type)){
+            session()->flash("error", "Whoops! Kindly select the type of invoice you want to issue");
+            return back();
+        }else{
+            #Process invoice for new applicant
+            //if($request->invoice_type == 1){
+                if(empty($request->customer)){
+                    session()->flash("error", "Whoops! Kindly select a customer");
+                    return back();
+                }else{
+                    $this->handleInvoiceValidation($request);
+                    $customer = $this->lead->getLeadById($request->customer);
+
+                    if(!empty($customer)){
+                        $invoice_no = $this->invoicemaster->getLatestInvoiceNo();
+                        $invoice = $this->invoicemaster->newCustomerInvoice($request, $invoice_no);
+
+                        //$activity = Auth::user()->first_name.' issued an invoice with the invoice No.'.$invoice->invoice_no;
+                        //ActivityLog::logActivity(Auth::user()->tenant_id, Auth::user()->id, 0, 'New invoice', $activity);
+                        session()->flash("success", "Action successful");
+                        return back();
+                    }else{
+                        session()->flash("error", "Whoops! Something went wrong.");
+                        return back();
+                    }
+                }
+
+            //}
+
+        }
+    }
+
+    private function handleInvoiceValidation(Request $request){
+        $this->validate($request,[
+            'invoice_type'=>'required',
+            'customer'=>'required',
+            'issue_date'=>'required|date',
+            'due_date'=>'required|date',
+            'service'=>'required|array',
+            'service.*'=>'required'
+        ],[
+            "due_date.required"=>"Enter invoice due date",
+            "due_date.date"=>"Enter a valid date",
+            "issue_date.date"=>"Enter a valid date",
+            "issue_date.required"=>"Enter invoice issue date",
+            "customer.required"=>"Choose customer",
+            "service.required"=>"Service or product is required",
+            "service.*"=>"Enter at least one service",
+        ]);
+    }
+
+    public function showManageInvoices($type){
+        $authUser = Auth::user();
+        switch ($type){
+            case 'invoices':
+                return view('company.invoice.index',[
+                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([0,1,2,3]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[0,1,2,3]),
+                    'title'=>'Invoices'
+                ]);
+            case 'pending':
+                return view('company.invoice.index',[
+                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([0]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[0]),
+                    'title'=>'Pending Invoices'
+                ]);
+            case 'paid':
+                return view('company.invoice.index',[
+                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([1]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[1]),
+                    'title'=>'Paid Invoices'
+                ]);
+            case 'verified':
+                return view('company.invoice.index',[
+                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([2]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[2]),
+                    'title'=>'Verified Invoices'
+                ]);
+            case 'declined':
+                return view('company.invoice.index',[
+                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([3]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[3]),
+                    'title'=>'Declined Invoices'
+                ]);
+
+            default:
+                abort(404);
+        }
+
+
     }
 
     public function showInvoiceDetails($slug){
@@ -389,14 +496,14 @@ class RadioController extends Controller
         $invoice->date_actioned = now();
         $invoice->status = $request->status;
         $invoice->amount_paid = $request->status == 2 ? $invoice->total : 0;
-        //$invoice->save();
+        $invoice->save();
         //update post/license application too
         $post = $this->post->getPostById($invoice->post_id);
         //return dd($post);
         if(!empty($post)){
             $post->p_invoice_id = $invoice->id;
             $post->p_amount = $invoice->total ?? 0;
-            $post->p_status = 5;//payment verified || Decline
+            $post->p_status = $request->status == 2 ? 5 : 4;//status == 2 ? payment verified // mark payment as paid
             $post->save();
         }
         //proceed with notification and activity log
@@ -432,6 +539,12 @@ class RadioController extends Controller
                     'posts'=>$posts,
                     'title'=>'Declined Applications'
                 ]);
+            case 'assigned':
+                $posts = $authUser->type == 1 ?  $this->post->getAllPostByStatus(7) : $this->post->getAllOrgPostByStatus(7, $authUser->org_id);
+                return view('company.license.application-status',[
+                    'posts'=>$posts,
+                    'title'=>'Assigned Frequencies'
+                ]);
 
             default:
                 abort(404);
@@ -449,57 +562,245 @@ class RadioController extends Controller
         ]);
     }
 
+
     public function assignFrequency(Request $request){
         $this->validate($request,[
             "startDate"=>"required|date",
             "frequency"=>"required|array",
             "frequency.*"=>"required",
             "detailId"=>"required|array",
-            "detailId.*"=>"required"
+            "detailId.*"=>"required",
+            "licenseNo"=>"required|unique:assign_frequencies,license_no",
         ],[
             "startDate.required"=>"Enter a start date",
             "frequency.required"=>"Enter frequency value",
             "frequency.*"=>"Enter frequency value",
             "detailId.required"=>"Whoops! Something went wrong.",
-            "detailId.*"=>"Whoops! Something went wrong."
+            "detailId.*"=>"Whoops! Something went wrong.",
+            "licenseNo.unique"=>"This license number is currently in use.",
         ]);
-        $startDate = $request->startDate;
-        $expiresAt = date('Y-m-d', strtotime($startDate. ' + 365 days'));
-        $batchCode = substr(sha1(time()),29,40);
-        foreach($request->frequency as $key => $value){
-            $detail = $this->postradiodetail->getRadioDetailById($request->detailId[$key]);
-            if(!empty($detail)){
-                $post = $this->post->getPostById($detail->post_id);
-                if(!empty($post)){
-                    $slug = $key."_".substr(sha1(time()),31,40).uniqid();
-                    $licenseNo = rand(100,10000);
-                    $formNo = rand(10,100);
-                    $formSerialNo = rand(7,100);
-                    AssignFrequency::addFrequencyDetails($detail->post_id,$detail->id,$post->p_org_id,
-                        $request->frequency[$key], $startDate, $expiresAt,$detail->workstation_id,
-                        $detail->operation_mode, $detail->cat_id,$detail->frequency_band,$detail->type_of_device,
-                        $batchCode,$slug, $detail->make, $formNo, $request->emission[$key], $request->effectiveRadiated[$key],
-                        $detail->call_sign, $licenseNo, '-',$request->frequency[$key],
-                        $formSerialNo);
-                    //mark application as licensed
-                    $post->p_status = 6;//licensed
-                    $post->save();
+
+        $oneDetail = $this->postradiodetail->getRadioDetailById($request->detailId[0]);
+        if(!empty($oneDetail)) {
+
+            $post = $this->post->getPostById($oneDetail->post_id);
+
+
+            if(!empty($post)){
+
+                $this->handleAssignment($request, 'assign', $post->p_id);
+            }else{
+                session()->flash("error", "Whoops! No record found.");
+                return back();
+            }
+
+
+        }else{
+            session()->flash("error", "No record found");
+            return back();
+        }
+
+        //Initiate frequency assignment workflow
+        $defaultSettings = $this->appdefaultsetting->getAppDefaultSettings();
+        if(!empty($defaultSettings)) {
+            if (!empty($defaultSettings->frequency_assignment_handler)) {
+                $department = $defaultSettings->frequency_assignment_handler;
+                $supervisor = $this->churchbranch->getActiveSupervisorByDepartmentId($department);
+                if (!empty($supervisor)) {
+
+
+                    #Register new workflow process
+                    AuthorizingPerson::publishAuthorizingPerson($oneDetail->post_id, $supervisor->cb_head_pastor,
+                        'Notified of frequency assignment', 1);
+
+                }else{
+                    $this->handleAssignment($request, 'unassigned', $oneDetail->post_id);
+                    session()->flash("error", "Whoops! Something went wrong. Contact webmaster.");
+                    return back();
+
                 }
+            }else{
+                $this->handleAssignment($request, 'unassigned', $oneDetail->post_id);
+                session()->flash("error", "Whoops! Something went wrong. Contact webmaster.");
+                    return back();
 
             }
+        }else{
+            $this->handleAssignment($request, 'unassigned', $oneDetail->post_id);
+            session()->flash("error", "Whoops! Something went wrong. Contact webmaster.");
+            return back();
         }
+
         //proceed with notification and activity log
         session()->flash("success", "Action successful");
         return redirect()->route('manage-applications');
     }
 
 
-    public function showCertificates(){
-        $authUser = Auth::user();
-        return view('company.license.certificates',[
-            'certificates'=> $authUser->type == 1 ? $this->assignfrequency->getAllCertificates() : $this->assignfrequency->getAllOrgCertificates($authUser->org_id),
-            //'certificateBatch'=> $authUser->type == 1 ? $this->assignfrequency->getAllCertificates() : $this->assignfrequency->getAllGroupedOrgCertificates($authUser->org_id)
+    public function handleAssignment(Request $request, $operationType, $postId){
+
+        $startDate = $request->startDate;
+        $expiresAt = date('Y-m-d', strtotime($startDate. ' + 365 days'));
+        $batchCode = substr(sha1(time()),29,40);
+        $newAssignments = [];
+        if($operationType == 'assign'){
+            foreach($request->frequency as $key => $value){
+                $detail = $this->postradiodetail->getRadioDetailById($request->detailId[$key]);
+                if(!empty($detail)){
+                    $post = $this->post->getPostById($detail->post_id);
+                    if(!empty($post)){
+                        $slug = $key."_".substr(sha1(time()),31,40).uniqid();
+                        $licenseNo = $request->licenseNo ?? rand(9,9999);
+                        $formNo = rand(10,100);
+                        $formSerialNo = rand(7,100);
+                        $record = AssignFrequency::addFrequencyDetails('new',$detail->post_id,$detail->id,$post->p_org_id,
+                            $request->frequency[$key], $startDate, $expiresAt,$detail->workstation_id,
+                            $detail->operation_mode, $detail->cat_id,$detail->frequency_band,$detail->type_of_device,
+                            $batchCode,$slug, $detail->make, $formNo, $request->emission[$key], $request->effectiveRadiated[$key],
+                            $detail->call_sign, $licenseNo, '-',$request->frequency[$key],
+                            $formSerialNo);
+                        array_push($newAssignments, $record->id);
+                        //mark application as licensed
+                        $post->p_status = 7;//frequency assigned.
+                        $post->save();
+                    }
+
+                }
+            }
+        }else{
+            AssignFrequency::destroy($newAssignments);
+            $postRecord = Post::find($postId);
+            $postRecord->p_status = 5;//take it back to verified
+            $postRecord->save();
+        }
+
+
+    }
+
+    public function showReviewFrequencyAssignment($slug){
+        $workflow = $this->post->getPostBySlug($slug);
+        if(empty($workflow)){
+            abort(404);
+        }
+        $authIds = AuthorizingPerson::pluckPendingAuthorizingPersonsByPostIdType($workflow->p_id,1);
+        $userAction = AuthorizingPerson::getAuthUserAction($workflow->p_id,1, Auth::user()->id);
+        return view('company.license.review-frequency-assignment',[
+            'workflow'=>$workflow,
+            'authIds'=>$authIds,
+            'persons'=>$this->user->getAllAdminUsers(),
+            'pendingId'=>0,
+            'userAction'=>$userAction,
+            'assignment'=>$workflow->getFrequencyAssignmentDetails->first()
         ]);
+
+
+    }
+    public function updateFrequencyAssignment(Request $request){
+
+        $this->validate($request,[
+            "startDate"=>"required|date",
+            "endDate"=>"required|date",
+            "frequency"=>"required|array",
+            "frequency.*"=>"required",
+            "detailId"=>"required|array",
+            "detailId.*"=>"required",
+            "make"=>"required|array",
+            "make.*"=>"required",
+            "emission"=>"required|array",
+            "emission.*"=>"required",
+            "effectiveRadiated"=>"required|array",
+            "effectiveRadiated.*"=>"required",
+            "callSign"=>"required|array",
+            "callSign.*"=>"required",
+            "formNo"=>"required|array",
+            "formNo.*"=>"required",
+            "licenseNo"=>"required",
+        ],[
+            "startDate.required"=>"Enter a start date",
+            "frequency.required"=>"What is the Max. Frequency & Tolerance",
+            "frequency.*"=>"What is the Max. Frequency & Tolerance",
+            "detailId.required"=>"Whoops! Something went wrong.",
+            "detailId.*"=>"Whoops! Something went wrong.",
+            "make.required"=>"Enter make",
+            "make.*"=>"Enter value for make",
+            "emission.required"=>"What should be the Emission Bandwidth",
+            "emission.*"=>"What should be the Emission Bandwidth",
+            "effectiveRadiated.required"=>"What is the Max. Effective Radiated Power",
+            "effectiveRadiated.*"=>"What is the Max. Effective Radiated Power",
+            "callSign.required"=>"What is the Call Sign",
+            "callSign.*"=>"What is the Call Sign",
+            "formNo.required"=>"Form No. is required",
+            "formNo.*"=>"Form No. is required",
+            "licenseNo.required"=>"License number is required",
+        ]);
+        $authUser = Auth::user();
+        $assignedFrequency = $this->assignfrequency->getAssignedFrequencyById($request->detailId[0]);
+        if(empty($assignedFrequency)){
+            abort(404);
+        }
+        $detailId = $request->detailId[0] ?? null;
+        $callSign = $request->callSign[0] ?? null;
+        $emission = $request->emission[0] ?? null;
+        $radiated = $request->effectiveRadiated[0] ?? null;
+        $freq = $request->frequency[0] ?? null;
+        $make = $request->make[0] ?? null;
+        $formNo = $request->formNo[0] ?? null;
+        $licenseNo = $request->licenseNo ?? null;
+        $formSerialNo = rand(9,9999);
+        $statement = "$authUser->title $authUser->first_name $authUser->last_name ($authUser->email) made the following changes:
+            <p>From : <br>
+                <strong>Call Sign:</strong> $assignedFrequency->call_sign  <br>
+                <strong>Emission Bandwidth:</strong> $assignedFrequency->emission_bandwidth  <br>
+                <strong>Max. Effective Radiated Power:</strong> $assignedFrequency->max_effective_rad  <br>
+                <strong>Max. Frequency & Tolerance:</strong> $assignedFrequency->max_freq_tolerance  <br>
+                <strong>Make:</strong> $assignedFrequency->make  <br>
+                <strong>Form No.:</strong> $assignedFrequency->form_no  <br>
+                <strong>License No.:</strong> $assignedFrequency->license_no  <br>
+            </p>
+            <p>To : <br>
+                <strong>Call Sign:</strong> $callSign <br>
+                <strong>Emission Bandwidth:</strong> $emission <br>
+                <strong>Max. Effective Radiated Power:</strong> $radiated <br>
+                <strong>Max. Frequency & Tolerance:</strong>  $freq <br>
+                <strong>Make:</strong> $make <br>
+                <strong>Form No.:</strong> $formNo <br>
+                <strong>License No.:</strong> $licenseNo <br>
+            </p>
+        ";
+        AssignFrequency::addFrequencyDetails('update',$assignedFrequency->post_id,$detailId,$assignedFrequency->org_id,
+            $freq, $request->startDate, $request->endDate,$assignedFrequency->station_id,
+            $assignedFrequency->mode, $assignedFrequency->category,$assignedFrequency->band,$assignedFrequency->type,
+            $assignedFrequency->batch_code,$assignedFrequency->slug, $make, $formNo, $emission, $radiated,
+            $callSign, $licenseNo, '-',$freq, $formSerialNo);
+        PostComment::leaveComment($assignedFrequency->post_id, $authUser->id, $statement, 1);
+        session()->flash("success", "Action successful");
+        return back();
+
+
+    }
+
+
+    public function showCertificates($type){
+        $authUser = Auth::user();
+        switch ($type){
+            case 'all':
+                return view('company.license.certificates',[
+                    'certificates'=> $authUser->type == 1 ? $this->assignfrequency->getAllCertificatesByStatus([0,1,2]) : $this->assignfrequency->getAllOrgCertificatesByStatus($authUser->org_id,[0,1,2]),
+                    //'certificateBatch'=> $authUser->type == 1 ? $this->assignfrequency->getAllCertificates() : $this->assignfrequency->getAllGroupedOrgCertificates($authUser->org_id)
+                ]);
+            case 'valid':
+                return view('company.license.certificates',[
+                    'certificates'=> $authUser->type == 1 ? $this->assignfrequency->getAllCertificatesByStatus([1]) : $this->assignfrequency->getAllOrgCertificatesByStatus($authUser->org_id,[1]),
+                ]);
+            case 'expired':
+                return view('company.license.certificates',[
+                    'certificates'=> $authUser->type == 1 ? $this->assignfrequency->getAllCertificatesByStatus([2]) : $this->assignfrequency->getAllOrgCertificatesByStatus($authUser->org_id,[2]),
+                ]);
+
+            default:
+                abort(404);
+        }
+
     }
 
     public function showCertificateDetails($slug){
@@ -507,9 +808,60 @@ class RadioController extends Controller
         if(empty($certificate)){
             abort(404);
         }
-        return view('company.license.certificate-details',[
-            'certificate'=> $certificate
-        ]);
+        $finalApproval = $this->authorizingpersons->getAuthorizingPersonMarkedFinalByPostIdType($certificate->post_id,1);
+        $lastForwardedApproval = $this->authorizingpersons->getLastApprovedAuthorizingPersonsByPostIdType($certificate->post_id,1);
+        if(!empty($finalApproval) ){
+            $finalPerson = $this->user->getUserById($finalApproval->ap_user_id);
+            $lastForwarder = $this->user->getUserById($lastForwardedApproval->ap_user_id ?? 0) ?? [];
+            return view('company.license.certificate-details',[
+                'certificate'=> $certificate,
+                'finalPerson'=>$finalPerson ?? [],
+                'lastForwarder'=>$lastForwarder,
+            ]);
+        }else{
+            session()->flash("error", "Whoops! Certificate is not ready.");
+            return back();
+
+        }
+
+    }
+
+
+
+
+
+
+    public function handleInvoiceService(Request $request){
+        switch ($request->getMethod()){
+            case 'GET':
+                return view('company.invoice.service-setup',[
+                    'services'=>$this->invoiceservice->getServices()
+                ]);
+            case 'POST':
+                $this->validate($request,[
+                    'serviceName'=>'required|unique:invoice_services,is_name'
+                ],[
+                    "serviceName.required"=>"Enter service name",
+                    "serviceName.unique"=>"There is an existing service with this name"
+                ]);
+                $this->invoiceservice->addService($request);
+                session()->flash("success", "Action successful");
+                return back();
+
+            case 'PUT':
+                $this->validate($request,[
+                    'serviceName'=>'required',
+                    'serviceId'=>'required'
+                ],[
+                    "serviceName.required"=>"Enter service name",
+                    "serviceId.required"=>''
+                ]);
+                $this->invoiceservice->editService($request);
+                session()->flash("success", "Action successful");
+                return back();
+            default:
+                abort(404);
+        }
     }
 }
 

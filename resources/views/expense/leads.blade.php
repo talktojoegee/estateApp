@@ -150,7 +150,6 @@
                                    <select name="gender" data-parsley-required-message="Against all parameters; what's this persons gender?" required class="form-control">
                                        <option value="1">Male</option>
                                        <option value="2">Female</option>
-                                       <option value="3">Others</option>
                                    </select>
                                </div>
                            </div>

@@ -26,6 +26,10 @@ class Post extends Model
         return $this->hasMany(PostRadioDetail::class, 'post_id');
     }
 
+    public function getFrequencyAssignmentDetails(){
+        return $this->hasMany(AssignFrequency::class, 'post_id');
+    }
+
 
 
 
@@ -34,14 +38,20 @@ class Post extends Model
     }
 
     public function getAuthorizingPersons(){
-        return $this->hasMany(AuthorizingPerson::class, 'ap_post_id');
+        return $this->hasMany(AuthorizingPerson::class, 'ap_post_id')->where('ap_type',0);
+    }
+    public function getFrequencyAssignmentAuthorizingPersons(){
+        return $this->hasMany(AuthorizingPerson::class, 'ap_post_id')->where('ap_type',1);
     }
     public function getPostViews(){
         return $this->hasMany(PostView::class, 'pv_post_id');
     }
 
     public function getPostComments(){
-        return $this->hasMany(PostComment::class, 'pc_post_id')->orderBy('pc_id', 'DESC');
+        return $this->hasMany(PostComment::class, 'pc_post_id')->where('pc_type',0)->orderBy('pc_id', 'DESC');
+    }
+    public function getFrequencyPostComments(){
+        return $this->hasMany(PostComment::class, 'pc_post_id')->where('pc_type',1)->orderBy('pc_id', 'DESC');
     }
 
     public function getAttachments(){

@@ -181,7 +181,7 @@ class TimelineController extends Controller
         ],[
             "comment.required"=>"Type your comment in the field provided."
         ]);
-        PostComment::leaveComment($request->post, Auth::user()->id,$request->comment);
+        PostComment::leaveComment($request->post, Auth::user()->id,$request->comment,0);
         session()->flash("success", "Action successful!");
         return back();
     }

@@ -305,20 +305,36 @@ Route::group(['prefix'=>'/license', 'middleware'=>'auth'], function(){
     Route::post('/generate-invoice', [App\Http\Controllers\Portal\RadioController::class, 'generateInvoice'])->name('new-invoice');
 
     #Invoice
-    Route::get('/invoices', [App\Http\Controllers\Portal\RadioController::class,'showManageInvoices'])->name('manage-invoices');
+    Route::get('/new-invoice', [App\Http\Controllers\Portal\RadioController::class,'showNewInvoiceForm'])->name('new-invoice');
+    Route::post('/new-invoice', [App\Http\Controllers\Portal\RadioController::class,'storeNewInvoice']);
+    Route::get('/list/{invoices}', [App\Http\Controllers\Portal\RadioController::class,'showManageInvoices'])->name('manage-invoices');
     Route::get('/invoices/{slug}', [App\Http\Controllers\Portal\RadioController::class,'showInvoiceDetails'])->name('show-invoice-detail');
     Route::post('/submit-proof-of-payment', [App\Http\Controllers\Portal\RadioController::class,'submitProofOfPayment'])->name('submit-proof-of-payment');
     Route::post('/action-payment', [App\Http\Controllers\Portal\RadioController::class,'actionPayment'])->name('action-payment');
+    Route::match(['GET', 'POST', 'PUT'],'/invoice-service', [App\Http\Controllers\Portal\RadioController::class,'handleInvoiceService'])->name('invoice-service');
 
     #Show application by status
     Route::get('/category/{type}', [App\Http\Controllers\Portal\RadioController::class, 'showApplicationCategory'])->name('show-application-status');
     Route::get('/assign-license/{slug}', [App\Http\Controllers\Portal\RadioController::class, 'showAssignLicense'])->name('show-assign-license');
     Route::post('assign-frequency', [App\Http\Controllers\Portal\RadioController::class, 'assignFrequency'])->name('assign-frequency');
+    Route::get('review/assignment/{slug}', [App\Http\Controllers\Portal\RadioController::class, 'showReviewFrequencyAssignment'])->name('review-assignment');
+    Route::post('update-frequency-assignment', [App\Http\Controllers\Portal\RadioController::class, 'updateFrequencyAssignment'])->name('update-frequency-assignment');
 
     #Certificates
-    Route::get('/certificates', [App\Http\Controllers\Portal\RadioController::class, 'showCertificates'])->name('certificates');
+    Route::get('/license/certificate/{type}', [App\Http\Controllers\Portal\RadioController::class, 'showCertificates'])->name('certificates');
     Route::get('/certificates/{slug}', [App\Http\Controllers\Portal\RadioController::class, 'showCertificateDetails'])->name('certificate-details');
 });
+
+Route::group(['prefix'=>'tickets', 'middleware'=>'auth'],function(){
+    Route::get('/', [App\Http\Controllers\Portal\TicketController::class, 'showTickets'] )->name('tickets');
+    Route::post('/', [App\Http\Controllers\Portal\TicketController::class, 'newTicket'] );
+    Route::get('/{slug}', [App\Http\Controllers\Portal\TicketController::class, 'showTicketDetails'] )->name('view-ticket');
+    Route::post('/reply-ticket', [App\Http\Controllers\Portal\TicketController::class, 'submitTicketReply'] )->name('ticket-reply');
+    Route::post('/close-ticket', [App\Http\Controllers\Portal\TicketController::class, 'closeTicket'] )->name('close-ticket');
+});
+Route::get('/faqs', [App\Http\Controllers\Portal\TicketController::class, 'showFaqs'])->name('faqs');
+Route::post('/faqs', [App\Http\Controllers\Portal\TicketController::class, 'postFaq']);
+Route::post('/edit-faq', [App\Http\Controllers\Portal\TicketController::class, 'editFaq'])->name('edit-faq');
 
 Route::group(['prefix'=>'persons', 'middleware'=>'auth'], function(){
     Route::get('/', [App\Http\Controllers\Portal\PersonsController::class, 'showPersons'])->name("persons");
@@ -329,9 +345,13 @@ Route::group(['prefix'=>'persons', 'middleware'=>'auth'], function(){
 });
 
 Route::group(['prefix'=>'company', 'middleware'=>'auth'], function(){
+    Route::get('/list/{slug}', [App\Http\Controllers\Portal\CompanyController::class, 'showCompanies'])->name('list-companies');
+    Route::get('/company/{tag}', [App\Http\Controllers\Portal\CompanyController::class, 'showCompanyProfileByURL'])->name('show-company-profile');
+    //Route::get('/profile/{slug}', [App\Http\Controllers\Portal\CompanyController::class, 'showCompanyProfileByTag'])->name('show-company-profile');
     Route::get('/profile', [App\Http\Controllers\Portal\CompanyController::class, 'showCompanyProfile'])->name('company-profile');
     Route::post('/upload-document', [App\Http\Controllers\Portal\CompanyController::class, 'uploadDocument'])->name('upload-document');
     Route::post('/update-company-profile', [App\Http\Controllers\Portal\CompanyController::class, 'updateCompanyProfile'])->name('update-company-profile');
+    Route::post('/manage', [App\Http\Controllers\Portal\CompanyController::class, 'showManageCompanies'])->name('manage-companies');
 });
 
 
@@ -341,8 +361,8 @@ Route::group(['prefix'=>'/newsfeed', 'middleware'=>'auth'], function(){
 
 Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::get('/practitioners', [App\Http\Controllers\UserController::class, 'showPractitioners'])->name('practitioners');
-    Route::get('/pastors', [App\Http\Controllers\UserController::class, 'showAdministrators'])->name('pastors');
-    Route::get('/pastors/add-new', [App\Http\Controllers\UserController::class, 'showAddNewPastorForm'])->name('add-new-pastor');
+    Route::get('/members', [App\Http\Controllers\UserController::class, 'showAdministrators'])->name('pastors');
+    Route::get('/members/add-new', [App\Http\Controllers\UserController::class, 'showAddNewPastorForm'])->name('add-new-pastor');
     Route::get('/{slug}', [App\Http\Controllers\UserController::class, 'showUserProfile'])->name('user-profile');
     Route::post('/assign-revoke-role', [App\Http\Controllers\UserController::class, 'assignRevokeRole'])->name('assign-revoke-role');
     Route::post('/add-new-user', [App\Http\Controllers\UserController::class, 'addNewUser'])->name('add-new-user');
@@ -352,6 +372,49 @@ Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
 });
 
 
+Route::group(['prefix'=>'accounting', 'middleware'=>'auth'],function() {
+    Route::get('/chart-of-accounts', [App\Http\Controllers\AccountingController::class, 'chartOfAccounts'])->name('chart-of-accounts');
+    Route::get('/create-major-transaction-accounts', [App\Http\Controllers\AccountingController::class, 'createMajorTransactionAccounts'])->name('create-major-transaction-accounts');
+    Route::get('/new/chart-of-account', [App\Http\Controllers\AccountingController::class, 'showNewChartOfAccountForm'])->name('new-chart-of-account');
+    Route::post('/new/chart-of-account', [App\Http\Controllers\AccountingController::class, 'addNewChartOfAccount']);
+    Route::post('/get-parent-account', [App\Http\Controllers\AccountingController::class, 'getParentAccount']);
+    Route::get('/settings', [App\Http\Controllers\AccountingController::class, 'accountSettings'])->name('account-settings');
+    Route::post('/account-settings', [App\Http\Controllers\AccountingController::class, 'setDefaultAccounts'])->name('store-account-settings');
+    Route::post('/payment-integration-setup', [App\Http\Controllers\AccountingController::class, 'paymentIntegrationSetup'])->name('payment-integration-setup');
+    #Receipt routes
+    Route::get('/manage-receipts', [App\Http\Controllers\AccountingController::class, 'manageReceipts'])->name('manage-receipts');
+    Route::get('/manage/receipt/{ref}', [App\Http\Controllers\AccountingController::class, 'viewReceipt'])->name('view-receipt-detail');
+    Route::get('manage/receipt/approve/{ref}', [App\Http\Controllers\AccountingController::class, 'approveReceipt'])->name('approve-receipt');
+    Route::get('manage/receipt/decline/{ref}', [App\Http\Controllers\AccountingController::class, 'declineReceipt'])->name('decline-receipt');
+    #Invoice routes
+    //Route::get('/manage-invoices', [App\Http\Controllers\AccountingController::class, 'manageInvoices'])->name('manage-invoices');
+    Route::get('/generate-new-invoice', [App\Http\Controllers\AccountingController::class, 'showGenerateNewInvoiceForm'])->name('generate-new-invoice');
+    Route::post('/generate-new-invoice', [App\Http\Controllers\AccountingController::class, 'generateNewInvoice']);
+    Route::get('/view-invoice/{slug}', [App\Http\Controllers\AccountingController::class, 'viewInvoice'])->name('view-invoice');
+    Route::get('/decline-invoice/{slug}', [App\Http\Controllers\AccountingController::class, 'declineInvoice'])->name('decline-invoice');
+    Route::get('/approve-invoice/{slug}', [App\Http\Controllers\AccountingController::class, 'approveInvoice'])->name('approve-invoice');
+    Route::get('/send-invoice-via-email/{slug}', [App\Http\Controllers\AccountingController::class, 'sendInvoiceAsEmail'])->name('send-invoice-via-email');
+    Route::get('/receive-payment/{slug}', [App\Http\Controllers\AccountingController::class, 'receivePayment'])->name('receive-payment');
+    Route::post('/process-offline-receipt-payment', [App\Http\Controllers\AccountingController::class, 'processOfflineNewReceiptPayment'])->name('process-offline-payment');
+
+    /*Route::get('/generate-receipt', [App\Http\Controllers\Manager\AccountingController::class, 'showGenerateReceipt']);
+    Route::post('/generate-receipt', 'AccountingController@storeReceipt');
+    Route::post('/get-debit-note-details', 'AccountingController@getDebitNoteDetails');*/
+
+
+    #Report routes
+    Route::get('/trial-balance', [App\Http\Controllers\AccountingController::class, 'showTrialBalance'])->name('trial-balance');
+    Route::post('/trial-balance', [App\Http\Controllers\AccountingController::class, 'trialBalance']);
+    Route::get('/balance-sheet', [App\Http\Controllers\AccountingController::class, 'showBalanceSheet'])->name('balance-sheet');
+    Route::post('/balance-sheet', [App\Http\Controllers\AccountingController::class, 'balanceSheet']);
+    Route::get('/profit-or-loss', [App\Http\Controllers\AccountingController::class, 'showProfitOrLoss'])->name('profit-or-loss');
+    Route::post('/profit-or-loss', [App\Http\Controllers\AccountingController::class, 'profitOrLoss']);
+    Route::get('/journal-voucher', [App\Http\Controllers\AccountingController::class, 'showJournalVoucher'])->name('journal-voucher');
+    Route::post('/journal-voucher', [App\Http\Controllers\AccountingController::class, 'setNewJournalEntry']);
+});
+
+
+/*
 Route::group(['prefix'=>'/accounting', 'middleware'=>'auth', 'as'=>'accounting.'], function(){
 
     Route::get('/categories', [App\Http\Controllers\Portal\AccountingController::class, 'showManageCategories'])->name('categories');
@@ -366,7 +429,7 @@ Route::group(['prefix'=>'/accounting', 'middleware'=>'auth', 'as'=>'accounting.'
     #Cashbook routes
     Route::get('/accounts', [App\Http\Controllers\Portal\CashbookController::class, 'showManageAccounts'])->name('accounts');
     Route::post('/accounts', [App\Http\Controllers\Portal\CashbookController::class, 'addCashBook']);
-});
+});*/
 
 Route::group(['prefix'=>'app', 'middleware'=>'auth'],function(){
     Route::prefix('/settings')->group(function(){
@@ -407,6 +470,19 @@ Route::group(['domain'=>'{account}.'.env('APP_URL')],function(){
     })->name('org-homepage');
     Route::post('/process-frontend-form', [App\Http\Controllers\Controller::class, 'processFrontendForm'])->name('process-frontend-form');
     Route::get('/contact-us', [App\Http\Controllers\Controller::class, 'contactUs'])->name('contact-org');
+});
+
+
+Route::group(['prefix'=>'estates', 'middleware'=>'auth'],function(){
+   Route::match(['GET', 'POST'], '/', [App\Http\Controllers\Portal\EsateController::class, 'showEstates'])->name('estates');
+});
+
+Route::group(['prefix'=>'property','middleware'=>'auth'],function(){
+   Route::match(['GET', 'POST'],'/new', [App\Http\Controllers\Portal\PropertyController::class, 'showAddProperty'])->name('add-new-property');
+   Route::get('/manage', [App\Http\Controllers\Portal\PropertyController::class, 'showManagePropertiesView'])->name('manage-properties');
+   Route::get('/manage/{slug}', [App\Http\Controllers\Portal\PropertyController::class, 'showPropertyDetails'])->name('show-property-details');
+    Route::post('/property/delete/image', [App\Http\Controllers\Portal\PropertyController::class, 'deletePropertyImage'])->name('delete-property-image');
+    Route::post('/update-property-details', [App\Http\Controllers\Portal\PropertyController::class, 'updatePropertyDetails'])->name('update-property-details');
 });
 
 //Route::group(['prefix'=>'super-channel', 'middleware'=>'is_admin'],function(){

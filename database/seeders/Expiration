@@ -1,0 +1,160 @@
+<?php
+
+namespace App\Commands;
+
+use App\Models\ContributionTypeModel;
+use App\Models\Cooperators;
+use App\Models\GlModel;
+use App\Models\LoanApplicationModel;
+use App\Models\LoanDefaulter;
+use App\Models\LoanFeeModel;
+use App\Models\LoanInterestDurationModel;
+use App\Models\LoanModel;
+use App\Models\LoanRepaymentModel;
+use App\Models\LoanReqPay;
+use App\Models\LoanSetupModel;
+use App\Models\PaymentDetailsModel;
+use App\Models\SavingAccount;
+use CodeIgniter\CLI\BaseCommand;
+use CodeIgniter\CLI\CLI;
+use CodeIgniter\CLI\Commands;
+use Psr\Log\LoggerInterface;
+
+class UpfrontDailyLoanExpiration extends BaseCommand
+{
+
+  /**
+   * The Command's Group
+   *
+   * @var string
+   */
+  protected $group = 'UpfrontLoans';
+
+  /**
+   * The Command's Name
+   *
+   * @var string
+   */
+  protected $name = 'UpfrontDailyLoanExpiration';
+
+  /**
+   * The Command's Description
+   *
+   * @var string
+   */
+  protected $description = 'This command runs daily to check for loan expiration';
+
+  /**
+   * The Command's Usage
+   *
+   * @var string
+   */
+  protected $usage = 'command:name [arguments] [options]';
+
+  /**
+   * The Command's Arguments
+   *
+   * @var array
+   */
+  protected $arguments = [];
+
+  /**
+   * The Command's Options
+   *
+   * @var array
+   */
+  protected $options = [];
+
+  /**
+   * Actually execute a command.
+   *
+   * @param array $params
+   */
+  public function run(array $params)
+  {
+    $this->loanapp = new LoanApplicationModel();
+    $this->loansetup = new LoanSetupModel();
+    $this->loan = new LoanModel();
+    $this->paymentdetail = new PaymentDetailsModel();
+    $this->ct = new ContributionTypeModel();
+    $this->loanRepayment = new LoanRepaymentModel();
+    $this->loanreqpay = new LoanReqPay();
+    $this->gl = new GlModel();
+    $this->savingaccount = new SavingAccount();
+    $this->loandefaulter = new LoanDefaulter();
+    $this->cooperator = new Cooperators();
+    //
+    $outstandingLoans =  $this->loan->getAllUpfrontOutstandingLoansWithoutDefaultCharge();
+    #Compute Repayment
+    $refNo = substr(sha1(time()),29,40);
+    foreach($outstandingLoans as $outLoan){
+      //echo "Processing...\n";
+      $loanApp = $this->loanapp->getLoanApplicationDetail($outLoan->loan_app_id);
+      if(!empty($loanApp)){
+        //print_r($loanApp);
+        //echo "Loan ID: $outLoan->loan_id Loan App ID: $loanApp->loan_app_id \n";
+        $loanSetup = $this->loansetup->getLoanSetup($loanApp->loan_type ?? 1);
+        $cooperator = $this->cooperator->get_cooperator_staff_id($loanApp->cooperator_staff_id);
+
+        if(!empty($loanApp) && !empty($loanSetup) && !empty($cooperator)){
+          //Check for endDate
+          //echo "Loan ID: ".$outLoan->loan_id."\n";
+          if(is_null($outLoan->loan_end_date) || empty($outLoan->loan_end_date) ){
+            $numOfDays = 0;
+            switch ($outLoan->duration_type){
+              case 'D':
+                $numOfDays = $loanApp->duration;
+                break;
+              case 'M':
+                $numOfDays = ($loanApp->duration * 30);
+                break;
+            }
+            //echo "Number of days: ".$numOfDays;
+            $endDate = date('Y-m-d', strtotime($outLoan->disburse_date . " +{$numOfDays} days"));
+            $endDateUpdate = [
+              'loan_end_date'=>$endDate,
+            ];
+            $this->loan->update($outLoan->loan_id, $endDateUpdate);
+          }
+          //Check interest status
+          $interestStatus = 1;
+
+          if( strtotime( date('Y-m-d') )  >=  strtotime($outLoan->loan_end_date)){
+            $interestStatus = 0;
+          }
+          $updateInterestStatus = [
+            'interest_status'=>$interestStatus,
+          ];
+          //$this->loan->update($outLoan->loan_id, $updateInterestStatus);
+
+          $repayment = round($outLoan->amount/$loanApp->duration,2);
+          $contributionType = $this->ct->getLoanContributionType();
+          #Check holding account
+          $pdCr = $this->paymentdetail->getMemberBalanceByContributionType($outLoan->cooperator_staff_id, $contributionType->contribution_type_id, 1) ?? 0;
+          $pdDr = $this->paymentdetail->getMemberBalanceByContributionType($outLoan->cooperator_staff_id, $contributionType->contribution_type_id, 2) ?? 0;
+          $balance = round(($pdCr->amount ?? 0) - ($pdDr->amount ?? 0),2);
+          //print_r($pdDr);
+          if($balance >= $repayment){
+            //Sum up repayment
+            $sumLrCr = $this->loanRepayment->getMemberLoanRepayment($outLoan->cooperator_staff_id, $outLoan->loan_id, 1) ?? 0;
+            $sumLrDr = $this->loanRepayment->getMemberLoanRepaymentWithoutInterest($outLoan->cooperator_staff_id, $outLoan->loan_id, 2) ?? 0;
+            $interest = $this->loanRepayment->getMemberLoanRepaymentWithInterest($outLoan->cooperator_staff_id, $outLoan->loan_id, 2);
+            //(Principal -( credit - debit))
+            $balance = ($outLoan->amount + $interest->amount) - ($sumLrCr->amount - $sumLrDr->amount);
+            if($balance <= 1){
+              $loanUpdateData = [
+                'paid_back'=>1
+              ];
+              $this->loan->update($outLoan->loan_id, $loanUpdateData);
+              echo "Success! Repaid...";
+            }
+
+          }
+
+        }else{
+          echo "Nothing found!";
+        }
+      }
+    }
+  }
+}

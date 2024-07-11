@@ -77,6 +77,23 @@
                                     <div class="row mt-3">
                                         <div class="col-md-12">
                                             <div class="form-group">
+                                                <label for="">Which section/unit should attend to <strong>Frequency Assignment</strong>?</label>
+                                                <select name="frequency_assignment_handler" id="frequency_assignment_handler" class="form-control js-example-theme-single">
+                                                    <option disabled selected>-- Select section/unit --</option>
+                                                    @foreach($departments as $department)
+                                                        <option value="{{$department->cb_id}}" {{ !empty($app_licence_setting->frequency_assignment_handler) ? ($department->cb_id == $app_licence_setting->frequency_assignment_handler ? "selected" : '')  : 'selected'}} >{{$department->cb_name ?? '' }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('frequency_assignment_handler')
+                                                <i class="text-danger mt-2">{{$message}}</i>
+                                                @enderror
+                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($app_licence_setting) ?  $app_licence_setting->getDepartmentById($app_licence_setting->frequency_assignment_handler)->cb_name : '' }}</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
                                                 <label for="">Which section/unit should attend to <strong>Licence Renewal</strong>?</label>
                                                 <select name="licence_renewal" id="licence_renewal" class="form-control js-example-theme-single">
                                                     <option disabled selected>-- Select section/unit --</option>
@@ -91,6 +108,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="row mt-3">
                                         <div class="col-md-12">
                                             <div class="form-group">

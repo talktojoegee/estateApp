@@ -21,9 +21,9 @@
                 <div class="card">
                     <div class="card-header">
                         <a href="{{ route('manage-applications') }}" class="btn btn-secondary "> <i
-                                class="bx bx bxs-left-arrow"></i> Go back</a>
+                                class="bx bx bxs-left-arrow"></i> Go back </a>
                         @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
-                            @if(in_array(Auth::user()->id, $authIds))
+                            @if((in_array(Auth::user()->id, $authIds)) && ($userAction->ap_status == 0))
                                 <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#declineModal_" class="btn btn-danger ">  Decline <i
                                         class="bx bx-x"></i>
                                 </a>
@@ -80,8 +80,10 @@
                                 <span class="badge badge-soft-success">Paid</span>
                             @elseif($workflow->p_status == 5)
                                 <span class="badge badge-soft-success">Verified</span>
-                            @elseif($workflow->p_status == 3)
+                            @elseif($workflow->p_status == 6)
                                 <span class="badge badge-soft-warning">Licensed</span>
+                            @elseif($workflow->p_status == 7)
+                                <span class="badge badge-soft-warning">Assigned</span>
                             @endif
                         </div>
                     </div>
@@ -646,6 +648,58 @@
                         <div class="row mb-3">
                             <div class="form-group mt-1 col-md-12">
                                 <label for="">Comment</label> <br>
+                                <input type="hidden" name="status" value="1">
+                                <textarea name="comment" style="resize: none;" placeholder="Leave your comment here..." class="form-control">{{old('comment')}}</textarea>
+                                @error('comment') <i class="text-danger">{{$message}}</i>@enderror
+                                <input type="hidden" name="authId" value="{{ $pendingId }}">
+                            </div>
+                        </div>
+                        <div class="form-group d-flex justify-content-center mt-3">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary  waves-effect waves-light">Submit  <i class="bx bxs-right-arrow"></i> </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal right fade" id="declineModal_" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" style="width: 900px;">
+        <div class="modal-dialog w-100" role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h6 class="modal-title text-uppercase" style="text-align: center;" id="declinemyModalLabel2">Are you sure you want to decline this?</h6>
+                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p><strong class="text-danger">Note:</strong> This action cannot be undone. Are you sure you want to decline this?</p>
+                    <form autocomplete="off" action="{{route('update-workflow')}}" id="declinecreateIncomeForm" data-parsley-validate="" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row mb-3">
+                            <div class="col-md-12 col-sm-12 col-lg-12 mb-3">
+                                <div class="form-check form-switch form-switch-lg mb-3" dir="ltr">
+                                    <input class="form-check-input" type="checkbox" id="declinemarkedAsFinal" name="final">
+                                    <label class="form-check-label" for="markedAsFinal">Should your action be marked as final?</label>
+                                </div>
+                                <input type="hidden" name="workflowId" value="{{$workflow->p_id}}">
+                            </div>
+                            <div class="form-group mt-1 col-md-12 mt-3 " id="declinenextAuthWrapper">
+                                <label for="">Next Authorizing Person</label>
+                                <select name="nextAuth"  class="form-control">
+                                    <option disabled selected>-- Select next auth person --</option>
+                                    @foreach($persons as $person)
+                                        <option value="{{$person->id}}">{{ $person->title ?? '' }} {{ $person->first_name ?? '' }} {{ $person->last_name ?? '' }}</option>
+                                    @endforeach
+                                </select>
+                                @error('nextAuth') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="form-group mt-1 col-md-12">
+                                <label for="">Comment</label> <br>
                                 <input type="hidden" name="status" value="2">
                                 <textarea name="comment" style="resize: none;" placeholder="Leave your comment here..." class="form-control">{{old('comment')}}</textarea>
                                 @error('comment') <i class="text-danger">{{$message}}</i>@enderror
@@ -674,6 +728,8 @@
     <script>
         $(document).ready(function(){
             let isChecked = false;
+
+
             $('#markedAsFinal').on('click', function(){
                 isChecked = $(this).is(':checked')
 
@@ -684,6 +740,21 @@
                     $('#nextAuthWrapper').show();
                 }
             });
+
+
+            $('#declinemarkedAsFinal').on('click', function(){
+                isChecked = $(this).is(':checked')
+
+                if(isChecked){
+                    $('#declinenextAuthWrapper').hide();
+                }
+                else{
+                    $('#declinenextAuthWrapper').show();
+                }
+            });
+
+
+
             $('#commentForm').parsley().on('field:validated', function() {
                 let ok = $('.parsley-error').length === 0;
                 $('.bs-callout-info').toggleClass('hidden', !ok);

@@ -1,9 +1,9 @@
 @extends('layouts.master-layout')
 @section('title')
-    Manage Properties
+    All Properties
 @endsection
 @section('current-page')
-    Manage Properties
+    All Properties
 @endsection
 @section('extra-styles')
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
@@ -38,9 +38,9 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="row">
-                    <div class="col-xl-3 col-lg-6 col-sm-6 pe-0 ps-0 border-end">
+                    <div class="col-xl-4 col-lg-6 col-sm-6 pe-0 ps-0 border-end">
                         <div class="card-body text-center">
-                            <h6 class="mb-0 text-warning">Vacant</h6>
+                            <h6 class="mb-0 text-warning">Available</h6>
                             <h5 class="mb-1 mt-2 number-font">
                                 <span class="counter">{{ number_format($properties->where('status',0)->count() ) }}</span>
                             </h5>
@@ -51,9 +51,9 @@
                             </p>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-6 col-sm-6 pe-0 ps-0 border-end">
+                    <div class="col-xl-4 col-lg-6 col-sm-6 pe-0 ps-0 border-end">
                         <div class="card-body text-center">
-                            <h6 class="mb-0 text-primary">Taken</h6>
+                            <h6 class="mb-0 text-primary">Rented</h6>
                             <h5 class="mb-1 mt-2 number-font">
                                 <span class="counter">{{ number_format($properties->where('status',1)->count() ) }}</span>
                             </h5>
@@ -64,28 +64,15 @@
                             </p>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-6 col-sm-6 pe-0 ps-0 border-end">
-                        <div class="card-body text-center">
-                            <h6 class="mb-0 text-secondary">Maintenance | Renovation</h6>
-                            <h5 class="mb-1 mt-2 number-font">
-                                <span class="counter">{{ number_format($properties->where('status',3)->count() ) }}</span>
-                            </h5>
-                            <p class="mb-0 text-muted">
-                                <span class="mb-0 fs-13 ms-1">
-                                     {{ $properties->count() > 0 ?  floor( ($properties->where('status',3)->count()/$properties->count() )*100 ) : 0 }}%
-                                </span> of {{number_format($properties->count() )}}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-6 col-sm-6 pe-0 ps-0">
+                    <div class="col-xl-4 col-lg-6 col-sm-6 pe-0 ps-0">
                         <div class="card-body text-center">
                             <h6 class="mb-0 text-success">Sold</h6>
                             <h5 class="mb-1 mt-2 number-font">
-                                <span class="counter">{{ number_format($properties->where('status',4)->count() ) }}</span>
+                                <span class="counter">{{ number_format($properties->where('status',2)->count() ) }}</span>
                             </h5>
                             <p class="mb-0 text-muted">
                                 <span class="mb-0 fs-13 ms-1">
-                                     {{ $properties->count() > 0 ?  floor( ($properties->where('status',4)->count()/$properties->count() )*100 ) : 0 }}%
+                                     {{ $properties->count() > 0 ?  floor( ($properties->where('status',2)->count()/$properties->count() )*100 ) : 0 }}%
                                 </span> of {{number_format($properties->count() )}}
                             </p>
                         </div>
@@ -94,7 +81,7 @@
             </div>
         </div>
     </div>
-    @include('manager.property.partial._manage-menu')
+    @include('property.partial._manage-menu')
     <div class="row">
         <div class="col-md-12">
             <div class="card p-3">
@@ -106,48 +93,52 @@
                                 <th class="">#</th>
                                 <th class="wd-15p">Date</th>
                                 <th class="wd-15p">Property Name</th>
-                                <th class="wd-15p">Value(₦)</th>
-                                <th class="wd-15p">Location</th>
-                                <th class="wd-15p">Type</th>
+                                <th class="wd-15p" style="text-align: right;">Price(₦)</th>
+                                <th class="wd-15p">Building Type</th>
+                                <th class="wd-15p">Stage</th>
                                 <th class="wd-15p">Status</th>
                                 <th class="wd-15p">Action</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @php $serial = 1; @endphp
-                            @foreach($properties as $property)
+                            @foreach($properties as $key => $property)
                                 <tr>
-                                    <td>{{$serial++}}</td>
+                                    <td>{{ $key + 1 }}</td>
                                     <td>{{date('d M, Y', strtotime($property->created_at))}}</td>
                                     <td>
-                                        <a href="{{route('show-property-details', ['account'=>$account, 'slug'=>$property->slug])}}">
-                                            <img class="rounded avatar-sm" src="/assets/drive/property/{{$property->getGalleryFeaturedImageByPropertyId($property->id)->attachment ?? '' }}" alt="{{$property->property_name ?? '' }}">
-                                            {{ $property->property_name ?? ''  }}
+                                        <a href="{{route('show-property-details', ['slug'=>$property->slug])}}">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0 align-self-center me-3">
+                                                    <img src="/assets/drive/property/{{$property->getGalleryFeaturedImageByPropertyId($property->id)->attachment ?? '' }}" alt="{{$property->property_name ?? '' }}" class="rounded-circle avatar-xs">
+                                                </div>
+                                                <div class="flex-grow-1 overflow-hidden">
+                                                    <h6 class="text-truncate font-size-14 mb-1">{{ substr($property->property_name,0,35).'...' ?? ''  }}</h6>
+                                                </div>
+                                            </div>
                                         </a>
                                     </td>
                                     <td class="text-right" style="text-align: right;">{{ number_format($property->price,2)  }}</td>
-                                    <td>{{$property->getLocation->state_name ?? '' }}</td>
-                                    <td>{{$property->getPropertyType->type_name ?? '' }}</td>
+                                    <td>{{$property->getBuildingType->bt_name ?? '' }}</td>
+                                    <td>{{$property->getConstructionStage->cs_name ?? '' }}</td>
                                     <td>
                                         @switch($property->status)
                                             @case(0)
-                                                <label class='text-primary'>Vacant</label>
+                                                <label class='text-primary'>Available</label>
                                                 @break
                                             @case(1)
-                                                <label class='text-info'>Occupied</label>
+                                                <label class='text-info'>Rented</label>
                                                 @break
                                             @case(2)
-                                                <label class='text-warning'>Maintenance</label>
-                                                @break
-                                            @case(3)
                                                 <label class='text-warning'>Sold</label>
-                                                @break
-                                            @case(4)
-                                                <label class='text-success'>Listed</label>
                                                 @break
                                         @endswitch
                                     <td>
-                                        <a href="{{route('show-property-details', ['account'=>$account, 'slug'=>$property->slug])}}" class="btn btn-light text-custom">View <i class="bx bx-home-circle"></i> </a>
+                                        <div class="btn-group">
+                                            <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{route('show-property-details', [ 'slug'=>$property->slug])}}" > <i class="bx bxs-book-open"></i> View</a>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

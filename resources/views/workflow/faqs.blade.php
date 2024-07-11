@@ -15,9 +15,11 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Frequently Asked Questions</h4>
+                    @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
                     <div class="btn-group">
-                        <button data-toggle="modal" data-target="#directorModal" class="btn btn-sm btn-primary float-right"> <i class="ti-plus mr-2"></i> Add New FAQ</button>
+                        <button data-bs-toggle="modal" data-bs-target="#directorModal" class="btn btn-sm btn-primary float-right"> <i class="ti-plus mr-2"></i> Add New FAQ</button>
                     </div>
+                    @endif
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
@@ -44,67 +46,70 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-body">
-                                <!-- Default accordion -->
-                                <div id="accordion-one" class="accordion accordion-primary">
-                                    @php $index = 1; @endphp
-                                    @foreach($faqs as $faq)
-                                    <div class="accordion__item">
-                                        <div class="accordion__header rounded-lg" data-toggle="collapse" data-target="#default_collapse_{{$faq->id}}">
-                                            <span class="accordion__header--text"> <label for="" class="badge badge-danger" style="border-radius: 50%;">{{$index}}</label> {{$faq->question ?? '' }} </span>
-                                            <span class="accordion__header--indicator"></span>
-                                        </div>
-                                        <div id="default_collapse_{{$faq->id}}" class="collapse accordion__body {{$index == 1 ? 'show' : '' }}" data-parent="#accordion-one">
-                                            <div class="accordion__body--text">
-                                                {!! $faq->answer ?? '' !!}
-                                                <p class="text-right" style="cursor: pointer;" data-toggle="modal" data-target="#directorModal_{{$faq->id}}"><i class="ti-pencil text-warning text-right"></i></p>
 
-                                                <div class="modal fade" id="directorModal_{{$faq->id}}">
-                                                    <div class="modal-dialog modal-lg">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title"> <i class="ti-help mr-3"></i> Edit FAQ</h5>
-                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <form action="{{route('edit-faq')}}" method="post" autocomplete="off">
-                                                                @csrf
-                                                                <div class="modal-body">
-                                                                    <div class="row">
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <label for="">Question <sup class="text-danger">*</sup></label>
-                                                                                <input type="text" name="question" value="{{$faq->question ?? ''}}" placeholder="Question" class="form-control">
-                                                                                @error('question')
-                                                                                <i class="text-danger">{{$message}}</i>
-                                                                                @enderror
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-12">
-                                                                            <div class="form-group">
-                                                                                <label for="">Answer <sup class="text-danger">*</sup></label>
-                                                                                <textarea class="form-control content" name="answer" placeholder="Type answer here..." id="" style="resize:none;">{!! $faq->answer ?? '' !!}</textarea>
-                                                                                @error('answer')
-                                                                                <i class="text-danger">{{$message}}</i>
-                                                                                @enderror
-                                                                            </div>
-                                                                        </div>
+                                <div class="accordion" id="accordionExample" >
+                                    @foreach($faqs as $key => $faq)
+                                        <div class="accordion-item" >
+                                            <h2 class="accordion-header" id="headingOne_{{$key}}">
+                                                <button class="accordion-button fw-medium {{ $key != 0 ? 'collapsed' : null }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_{{$key}}" aria-expanded="true" aria-controls="collapseOne_{{$key}}">
+                                                    <span class="badge bg-danger rounded-pill" style="background: #ff0000 !important;">{{ $key + 1 }}</span> &nbsp;   {{$faq->question ?? '' }}
+                                                </button>
+                                            </h2>
+                                            <div id="collapseOne_{{$key}}" class="accordion-collapse collapse {{ $key == 0 ? 'show' : null }}" aria-labelledby="headingOne_{{$key}}" data-bs-parent="#accordionExample"  style="">
+                                                <div class="accordion-body" >
+                                                    <div class="text-muted" >
+                                                        {{$faq->answer ?? '' }}
+                                                        @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
+                                                        <p class="text-right" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#directorModal_{{$faq->id}}"><i class="bx bx-pencil text-warning text-right"></i></p>
+                                                        <div class="modal fade" id="directorModal_{{$faq->id}}">
+                                                            <div class="modal-dialog modal-lg">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title"> <i class="ti-help mr-3"></i> Edit FAQ</h5>
+                                                                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
+                                                                        </button>
                                                                     </div>
+                                                                    <form action="{{route('edit-faq')}}" method="post" autocomplete="off">
+                                                                        @csrf
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <div class="form-group">
+                                                                                        <label for="">Question <sup class="text-danger">*</sup></label>
+                                                                                        <input type="text" name="question" value="{{$faq->question ?? ''}}" placeholder="Question" class="form-control">
+                                                                                        @error('question')
+                                                                                        <i class="text-danger">{{$message}}</i>
+                                                                                        @enderror
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-12 mt-3">
+                                                                                    <div class="form-group">
+                                                                                        <label for="">Answer <sup class="text-danger">*</sup></label>
+                                                                                        <textarea class="form-control " name="answer" placeholder="Type answer here..." id="" style="resize:none;">{!! $faq->answer ?? '' !!}</textarea>
+                                                                                        @error('answer')
+                                                                                        <i class="text-danger">{{$message}}</i>
+                                                                                        @enderror
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer d-flex justify-content-center">
+                                                                            <input type="hidden" name="faq" value="{{$faq->id}}">
+                                                                            <button type="button" class="btn btn-danger light btn-sm" data-dismiss="modal">Close</button>
+                                                                            <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+                                                                        </div>
+                                                                    </form>
                                                                 </div>
-                                                                <div class="modal-footer d-flex justify-content-center">
-                                                                    <input type="hidden" name="faq" value="{{$faq->id}}">
-                                                                    <button type="button" class="btn btn-danger light btn-sm" data-dismiss="modal">Close</button>
-                                                                    <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
-                                                                </div>
-                                                            </form>
+                                                            </div>
                                                         </div>
+                                                        @endif
                                                     </div>
                                                 </div>
-                                                <input type="hidden" value="{{$index++}}">
                                             </div>
                                         </div>
-                                    </div>
                                     @endforeach
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -112,6 +117,7 @@
             </div>
         </div>
     </div>
+    @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
     <div class="modal fade" id="directorModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -133,10 +139,10 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12 mt-3">
                                 <div class="form-group">
                                     <label for="">Answer <sup class="text-danger">*</sup></label>
-                                    <textarea class="form-control content" name="answer" placeholder="Type answer here..." id="question" style="resize:none;">{{old('answer')}}</textarea>
+                                    <textarea class="form-control " name="answer" placeholder="Type answer here..." id="question" style="resize:none;">{{old('answer')}}</textarea>
                                     @error('answer')
                                     <i class="text-danger">{{$message}}</i>
                                     @enderror
@@ -152,10 +158,10 @@
             </div>
         </div>
     </div>
+    @endif
 @endsection
 
 @section('extra-scripts')
-    <script type="text/javascript" src="/bower_components/tinymce/tinymce.min.js"></script>
-    <script type="text/javascript" src="/bower_components/tinymce.js"></script>
+
 @endsection
 

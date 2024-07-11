@@ -11,10 +11,15 @@
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{route('new-radio-application')}}" key="t-bulksms">New Application</a></li>
                         <li><a href="{{route('manage-applications')}}" key="t-bulksms">My Applications</a></li>
-                        <li><a href="{{route('compose-sms')}}" key="t-bulksms">Assigned</a></li>
-                        <li><a href="{{route('compose-sms')}}" key="t-bulksms">Reports</a></li>
                     </ul>
                 </li>
+        <li>
+            <a href="{{route('certificates','all')}}" class="waves-effect">
+                <i class="bx bx-certification"></i>
+                <span key="t-chat">Certificates</span>
+            </a>
+        </li>
+
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="bx bx-briefcase"></i>
@@ -35,20 +40,22 @@
                         <span key="t-bulksms"> Invoice </span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{route('manage-invoices')}}" key="t-bulksms">Manage Invoices</a></li>
-                        <li><a href="{{route('top-up-transactions')}}" key="t-bulksms">Payments</a></li>
-                        <li><a href="{{route('compose-sms')}}" key="t-bulksms">Report</a></li>
+                        <li><a href="{{route('manage-invoices', 'invoices')}}" key="t-bulksms">All</a></li>
+                        <li><a href="{{route('manage-invoices', 'paid')}}" key="t-bulksms">Paid</a></li>
+                        <li><a href="{{route('manage-invoices', 'pending')}}" key="t-bulksms">Pending</a></li>
+                        <li><a href="{{route('manage-invoices', 'verified')}}" key="t-bulksms">Verified</a></li>
+                        <li><a href="{{route('manage-invoices', 'declined')}}" key="t-bulksms">Declined</a></li>
                     </ul>
                 </li>
 
             <li>
-                <a href="{{route('timeline')}}" class="waves-effect">
+                <a href="{{route('tickets')}}" class="waves-effect">
                     <i class="bx bx-support"></i>
                     <span key="t-chat">Support Ticket</span>
                 </a>
             </li>
             <li>
-                <a href="{{route('timeline')}}" class="waves-effect">
+                <a href="{{route('faqs')}}" class="waves-effect">
                     <i class="bx bx-question-mark"></i>
                     <span key="t-chat">FAQs</span>
                 </a>

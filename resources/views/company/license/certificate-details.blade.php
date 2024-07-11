@@ -71,28 +71,50 @@
                                     <div class="col-xl-12 col-md-12 col-sm-12">
                                         <div class="row">
                                             <div class="col-md-6 col-lg-6">
-                                                <p class="d-flex justify-content-center">
-                                                    @if(!empty($certificate->getAssignedBy->signature))
-                                                        <img src="{{url('storage/'.$certificate->getAssignedBy->signature) }}" height="75" width="150" alt="signature">
+                                                    @if(!empty($finalPerson->signature))
+                                                    <p class="d-flex justify-content-center">
+                                                        <img src="{{url('storage/'.$finalPerson->signature) }}" height="75" width="150" alt="signature">
+                                                    </p>
+                                                    <p class="d-flex justify-content-center">
+                                                        <strong>Digitally signed by: </strong> &nbsp;  {{$finalPerson->title ?? null}} {{$finalPerson->first_name ?? null}} {{$finalPerson->last_name ?? null }} {{$finalPerson->other_names ?? null }}
+                                                        <br> for. Honourable Minister
+                                                    </p>
                                                     @else
                                                         <p class="text-center" style="color: #ff0000;">Missing signature</p>
                                                     @endif
-                                                </p>
-                                                <p class="d-flex justify-content-center">
-                                                    for. Honourable Minister
-                                                </p>
+
                                             </div>
                                             <div class="col-md-6 col-lg-6">
-                                                <p class="d-flex justify-content-center">
-                                                    @if(!empty($certificate->getAssignedBy->signature))
-                                                        <img src="{{url('storage/'.$certificate->getAssignedBy->signature) }}" height="75" width="150" alt="signature">
-                                                @else
-                                                    <p class="text-center" style="color: #ff0000;">Missing signature</p>
+                                                @if(empty($lastForwarder))
+                                                    @if(!empty($finalPerson->signature))
+                                                        <p class="d-flex justify-content-center">
+                                                            <img src="{{url('storage/'.$finalPerson->signature) }}" height="75" width="150" alt="signature">
+                                                        </p>
+                                                        <p class="d-flex justify-content-center">
+                                                            {{$finalPerson->title ?? null}} {{$finalPerson->first_name ?? null}} {{$finalPerson->last_name ?? null }} {{$finalPerson->other_names ?? null }}
+                                                            an officer of the Ministry of Communications duly authorised in that behalf
+                                                        </p>
+                                                    @else
+                                                        <p class="text-center" style="color: #ff0000;">Missing signature</p>
                                                     @endif
-                                                </p>
-                                                <p class="d-flex justify-content-center">
-                                                    An officer of the Ministry of Communications duly authorised in that behalf
-                                                </p>
+
+                                                @else
+                                                    @if(!empty($lastForwarder->signature))
+                                                        <p class="d-flex justify-content-center">
+                                                            <img src="{{url('storage/'.$lastForwarder->signature) }}" height="75" width="150" alt="signature">
+                                                        </p>
+                                                        <p class="d-flex justify-content-center">
+                                                            <strong>{{$lastForwarder->title ?? null}} {{$lastForwarder->first_name ?? null}} {{$lastForwarder->last_name ?? null }} {{$lastForwarder->other_names ?? null }}</strong>
+                                                            &nbsp; an officer of the Ministry of Communications duly authorised in that behalf
+                                                        </p>
+                                                    @else
+                                                        <p class="d-flex justify-content-center" style="color: #ff0000;">Missing signature</p>
+                                                    @endif
+
+                                                @endif
+
+
+
                                             </div>
                                         </div>
                                     </div>

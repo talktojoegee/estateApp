@@ -1,9 +1,9 @@
 @extends('layouts.master-layout')
 @section('title')
-     Invoices
+{{$title ?? ''}}
 @endsection
 @section('current-page')
-     Invoices
+{{$title ?? ''}}
 @endsection
 @section('extra-styles')
     <link href="{{asset('assets/libs/select2/css/select2.min.css')}}" rel="stylesheet" type="text/css" />
@@ -25,7 +25,6 @@
 @section('main-content')
     <div class="container-fluid">
         <div class="row">
-            @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
             <div class="row">
                 <div class="col-xl-3 col-sm-6">
                     <div class="card">
@@ -102,85 +101,6 @@
                     </div>
                 </div>
             </div>
-
-            @else
-
-                <div class="row">
-                    <div class="col-xl-3 col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row mb-1">
-                                    <div class="col">
-                                        <p class="mb-1">Total</p>
-                                        <h5 class="mb-0 number-font">{{ number_format($invoices->count()) }}</h5>
-                                    </div>
-                                    <div class="col-auto mb-0">
-                                        <div class="dash-icon text-secondary1">
-                                            <i class="bx bxs-briefcase-alt-2"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Overall Requests</span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-3 col-sm-6" >
-                        <div class="card" >
-                            <div class="card-body" >
-                                <div class="row mb-1" >
-                                    <div class="col" >
-                                        <p class="mb-1">Declined</p>
-                                        <h5 class="mb-0 number-font">{{number_format($invoices->where('status',3)->count())}}</h5>
-                                    </div>
-                                    <div class="col-auto mb-0" >
-                                        <div class="dash-icon text-orange" >
-                                            <i class="bx bxs-book-open"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Declined</span></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-sm-6" >
-                        <div class="card" >
-                            <div class="card-body" >
-                                <div class="row mb-1" >
-                                    <div class="col" >
-                                        <p class="mb-1">Verified</p>
-                                        <h5 class="mb-0 number-font">{{number_format( $invoices->where('status',2)->count() )}}</h5>
-                                    </div>
-                                    <div class="col-auto mb-0" >
-                                        <div class="dash-icon text-secondary" >
-                                            <i class="bx bx-check-double"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Total Verified</span></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-sm-6" >
-                        <div class="card" >
-                            <div class="card-body" >
-                                <div class="row mb-1" >
-                                    <div class="col" >
-                                        <p class="mb-1">Pending</p>
-                                        <h3 class="mb-0 number-font">{{number_format( $invoices->where('status',0)->count() )}}</h3>
-                                    </div>
-                                    <div class="col-auto mb-0" >
-                                        <div class="dash-icon text-warning" >
-                                            <i class="bx bx-hourglass"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Total Pending </span></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
         </div>
 
         <div class="row">
@@ -212,11 +132,11 @@
                                 <tr role="row">
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >S/No.</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Date</th>
-                                    @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
-                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Generated By</th>
-                                    @endif
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Customer</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Ref. Code</th>
-                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Amount({{env('APP_CURRENCY')}})</th>
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Total({{env('APP_CURRENCY')}})</th>
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Paid({{env('APP_CURRENCY')}})</th>
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Balance({{env('APP_CURRENCY')}})</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Status</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Action</th>
                                 </tr>
@@ -229,13 +149,13 @@
                                     <tr role="row" class="odd">
                                         <td class="">{{$a++}}</td>
                                         <td class="sorting_1 text-left">{{ date('d M, Y', strtotime($flow->created_at)) }}</td>
-                                        @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
                                         <td class="">
                                             {{$flow->getAuthor->title ?? '' }} {{$flow->getAuthor->first_name ?? '' }} {{$flow->getAuthor->last_name ?? '' }} {{$flow->getAuthor->other_names ?? '' }}
                                         </td>
-                                        @endif
                                         <td class="">{{$flow->ref_no ?? ''}}</td>
                                         <td class="" style="text-align: right">{{number_format($flow->total,2)}}</td>
+                                        <td class="" style="text-align: right">{{number_format($flow->amount_paid ?? 0,2)}}</td>
+                                        <td class="" style="text-align: right">{{number_format(($flow->total ?? 0) - ($flow->amount_paid ?? 0),2)}}</td>
                                         <td class="">
                                             @switch($flow->status)
                                                 @case(0)
@@ -257,6 +177,9 @@
                                                 <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="{{route('show-invoice-detail', $flow->ref_no)}}" > <i class="bx bxs-book-open"></i> View</a>
+                                                    @if((($flow->total ?? 0) - ($flow->amount_paid ?? 0)) > 0)
+                                                        <a class="dropdown-item" href="{{route('show-invoice-detail', $flow->ref_no)}}" > <i class="bx bx-wallet-alt"></i> Receive Payment</a>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>

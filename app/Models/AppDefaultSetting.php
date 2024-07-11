@@ -25,12 +25,14 @@ class AppDefaultSetting extends Model
             $existing->new_app_section_handler = $request->new_app_section;
             $existing->licence_renewal_handler = $request->licence_renewal;
             $existing->engage_customer = $request->engage_customer;
+            $existing->frequency_assignment_handler = $request->frequency_assignment_handler;
             $existing->save();
         }else{
             $app = new AppDefaultSetting();
             $app->new_app_section_handler = $request->new_app_section;
             $app->licence_renewal_handler = $request->licence_renewal;
             $app->engage_customer = $request->engage_customer;
+            $app->frequency_assignment_handler = $request->frequency_assignment_handler;
             $app->save();
         }
     }

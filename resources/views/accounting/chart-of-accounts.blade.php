@@ -2,33 +2,31 @@
 @section('title')
     Chart of Accounts
 @endsection
-
 @section('current-page')
     Chart of Accounts
 @endsection
-@section('current-page-brief')
-    The table below shows you all registered accounts on <strong>{{config('app.name')}}.</strong> You can as well add to this list by clicking <code>add new account</code> button.
+@section('extra-styles')
+    <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+@endsection
+@section('breadcrumb-action-btn')
+ Chart of Accounts
 @endsection
 
-@section('event-area')
-    <div class="btn-group">
-        <a class="btn btn-secondary btn-mini" href="{{route('chart-of-accounts')}}"><i class="icofont icofont-tags"></i>Manage Accounts</a>
-        <a class="btn btn-primary btn-mini" href="{{route('new-chart-of-account')}}"><i class="icofont icofont-tasks"></i>Add New Account</a>
-    </div>
-@endsection
-@section('extra-styles')
-    <link rel="stylesheet" type="text/css" href="\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="\assets\pages\data-table\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
-@endsection
 @section('main-content')
 
     <div class="row ">
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
-                <div class="card-header mb-4">
-                    <h5 class="card-header-text text-uppercase">Chart of Accounts</h5></div>
-                <div class="card-block accordion-block">
+                <h5 class="modal-header text-uppercase">Chart of Accounts</h5></div>
+            <div class="card-header mb-4">
+                <a href="{{ url()->previous() }}" class="btn btn-secondary "> <i
+                        class="bx bx bxs-left-arrow"></i> Go back</a>
+                <a href="{{ route('new-chart-of-account') }}" class="btn btn-primary ">  Add New Account <i
+                        class="bx bx-list-plus"></i></a>
+
+                <div class="card-body accordion-block">
                     <div class="col-xs-12 col-sm-12 mb-4 ">
                         @if(count($charts) > 0)
                             <table id="complex-header" class="table table-striped table-bordered nowrap dataTable" id="chartOfAccountsTable" role="grid" aria-describedby="complex-header_info" style="width: 100%; margin:0px auto;">
@@ -56,7 +54,7 @@
                                             <td class="text-left">{{$a++}}</td>
                                             <td class="sorting_1 text-left">{{$report->glcode ?? ''}}</td>
                                             <td class="text-left">{{$report->account_name ?? ''}}</td>
-                                            <td class="text-left">{{$report->parent_account ?? ''}}</td>
+                                            <td class="text-left">{{ $report->getAccountByGlCode($report->parent_account)->account_name ?? null }} ({{ $report->parent_account }})</td>
                                             <td class="text-left">{{$report->type == 1 ? 'General' : 'Detail'}}</td>
                                         </tr>
                                     @endif
@@ -77,7 +75,7 @@
                                             <td class="text-left">{{$a++}}</td>
                                             <td class="sorting_1 text-left">{{$report->glcode ?? ''}}</td>
                                             <td class="text-left">{{$report->account_name ?? ''}}</td>
-                                            <td class="text-left">{{$report->parent_account ?? ''}}</td>
+                                            <td class="text-left">{{ $report->getAccountByGlCode($report->parent_account)->account_name ?? null }} ({{ $report->parent_account }})</td>
                                             <td class="text-left">{{$report->type == 1 ? 'General' : 'Detail'}}</td>
                                         </tr>
 
@@ -96,7 +94,7 @@
                                             <td class="text-left">{{$a++}}</td>
                                             <td class="sorting_1 text-left">{{$report->glcode ?? ''}}</td>
                                             <td class="text-left">{{$report->account_name ?? ''}}</td>
-                                            <td class="text-left">{{$report->parent_account ?? ''}}</td>
+                                            <td class="text-left">{{ $report->getAccountByGlCode($report->parent_account)->account_name ?? null }} ({{ $report->parent_account }})</td>
                                             <td class="text-left">{{$report->type == 1 ? 'General' : 'Detail'}}</td>
                                         </tr>
 
@@ -115,7 +113,7 @@
                                             <td class="text-left">{{$a++}}</td>
                                             <td class="sorting_1 text-left">{{$report->glcode ?? ''}}</td>
                                             <td class="text-left">{{$report->account_name ?? ''}}</td>
-                                            <td class="text-left">{{$report->parent_account ?? ''}}</td>
+                                            <td class="text-left">{{ $report->getAccountByGlCode($report->parent_account)->account_name ?? null }} ({{ $report->parent_account }})</td>
                                             <td class="text-left">{{$report->type == 1 ? 'General' : 'Detail'}}</td>
                                         </tr>
 
@@ -134,7 +132,7 @@
                                             <td class="text-left">{{$a++}}</td>
                                             <td class="sorting_1 text-left">{{$report->glcode ?? ''}}</td>
                                             <td class="text-left">{{$report->account_name ?? ''}}</td>
-                                            <td class="text-left">{{$report->parent_account ?? ''}}</td>
+                                            <td class="text-left">{{ $report->getAccountByGlCode($report->parent_account)->account_name ?? null }} ({{ $report->parent_account }})</td>
                                             <td class="text-left">{{$report->type == 1 ? 'General' : 'Detail'}}</td>
                                         </tr>
 
@@ -166,7 +164,9 @@
 @endsection
 
 @section('extra-scripts')
-    <script src="\bower_components\datatables.net\js\jquery.dataTables.min.js"></script>
-    <script src="\bower_components\datatables.net-bs4\js\dataTables.bootstrap4.min.js"></script>
-    <script src="\assets\pages\data-table\extensions\key-table\js\key-table-custom.js"></script>
+    <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="/assets/js/pages/datatables.init.js"></script>
 @endsection

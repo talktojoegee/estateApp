@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\AssignFrequency;
 use App\Models\AuthorizingPerson;
 use App\Models\CashBook;
 use App\Models\CashBookAccount;
@@ -64,7 +65,7 @@ class WorkflowController extends Controller
 
         $post = Post::publishPost(Auth::user()->id, $branch, $request->subject, $request->description, $request->type,
             $request->amount, $request->currency, null, null, 1, 2, $request->category);
-        AuthorizingPerson::publishAuthorizingPerson($post->p_id, $request->authPerson);
+        AuthorizingPerson::publishAuthorizingPerson($post->p_id, $request->authPerson,'Notified', 0);
         if ($request->hasFile('attachments')) {
             foreach($request->attachments as $attachment){
                 $extension = $attachment->getClientOriginalExtension();
@@ -105,6 +106,7 @@ class WorkflowController extends Controller
         $this->validate($request,[
             'postId'=>'required',
             'comment'=>'required',
+            //'type'=>'required'
         ],[
             'postId.required'=>'',
             'comment.required'=>'Type your comment in the field provided'
@@ -112,8 +114,8 @@ class WorkflowController extends Controller
         $userId = Auth::user()->id;
         $comment = $request->comment;
         //return response()->json(['userId'=>$userId, 'postId'=>$request->postId, 'comment'=>$comment]);
-        PostComment::leaveComment($request->postId, $userId, $comment);
-        $comments = PostComment::getCommentsByPostId($request->postId);
+        PostComment::leaveComment($request->postId, $userId, $comment,$request->type);
+        $comments = PostComment::getCommentsByPostId($request->postId, $request->type);
         return view('workflow.partials._comments',[
             'comments'=>$comments
         ]);
@@ -154,15 +156,31 @@ class WorkflowController extends Controller
             session()->flash("error", "Whoops! Something went wrong. Record not found.");
             return back();
         }
+        $authorizingPerson = AuthorizingPerson::getAuthorizingPerson($postId,$authId, $userId);
+        if(empty($authorizingPerson)){
+            abort(404);
+        }
         AuthorizingPerson::updateStatus($postId, $authId, $userId, $status, $request->comment, $final);
+        $type = $authorizingPerson->ap_type == 1 ? 1 : 0;
+        $routeName = $authorizingPerson->ap_type == 1 ? 'review-assignment' : 'show-application-details';
         if($final == 1){
-            Post::updatePostStatus($postId, $status);
+            //Post::updatePostStatus($postId, $status);
+            $post->p_status = $authorizingPerson->ap_type == 0 ? 2 : 6; //if frequency assignment is marked as final, issue license
+            $post->save();
             #User notification
-            $subject = "Update: License Application";
-            $body = "There was an update on your license application.";
+            $subject = "Good news!";
+            $body = $type == 1 ? "Your certificate is ready!" : "Your application is approved. Hold on...";
             ActivityLog::registerActivity($post->p_org_id, null, $post->p_posted_by, null, $subject, $body);
             Notification::setNewNotification($subject, $body,
-                'show-application-details', $post->p_slug, 1, $post->p_posted_by, $post->p_org_id);
+                $routeName, $post->p_slug, 1, $post->p_posted_by, $post->p_org_id);
+            //update assign frequency status
+            if($type == 1){
+                $records = AssignFrequency::getAssignedFrequenciesByPostId($postId);
+                foreach ($records as $record){
+                    $record->status = 1;//mark as active
+                    $record->save();
+                }
+            }
 
             #Push to cashbook
             //$workflow = $this->post->getPostById($postId);
@@ -180,9 +198,9 @@ class WorkflowController extends Controller
             $body = $final != 1 ? "There was an update on your license application." : "We're glad to inform you that your radio license application was approved. Await further actions.";
             ActivityLog::registerActivity($post->p_org_id, null, $post->p_posted_by, null, $subject, $body);
             Notification::setNewNotification($subject, $body,
-                'show-application-details', $post->p_slug, 1, $post->p_posted_by, $post->p_org_id);
+                $routeName, $post->p_slug, 1, $post->p_posted_by, $post->p_org_id);
 
-            AuthorizingPerson::publishAuthorizingPerson($postId, $request->nextAuth);
+            AuthorizingPerson::publishAuthorizingPerson($postId, $request->nextAuth, 'Notified of new license application',$type);
             #Next person notification
             //send a notification to the authorizing officer
             $title = "Update: License Application";
@@ -190,7 +208,7 @@ class WorkflowController extends Controller
             $log = "$user_title $authUser->first_name($authUser->email) forwarded an application to your desk.";
             ActivityLog::registerActivity($post->p_org_id, null, $request->nextAuth, null, $title, $log);
             Notification::setNewNotification($title, $log,
-                'show-application-details', $post->p_slug, 1, $request->nextAuth, $post->p_org_id);
+                $routeName, $post->p_slug, 1, $request->nextAuth, $post->p_org_id);
         }
 
         session()->flash("success", "Action successful!");

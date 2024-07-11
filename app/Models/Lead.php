@@ -72,7 +72,7 @@ class Lead extends Model
     }
 
     public function getAllOrgLeads(){
-        return Lead::where('org_id', Auth::user()->org_id)->orderBy('id', 'DESC')->get();
+        return Lead::orderBy('id', 'DESC')->get();
     }
 
     public function getLeadBySlug($slug){

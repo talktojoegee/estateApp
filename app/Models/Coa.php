@@ -23,7 +23,7 @@ class Coa extends Model
     public function getAllChartOfAccounts(){
         return Coa::all();
     }
-    public function getAllDetailChartOfAccounts(){
+    public function getAllChartOfAccountsByType(){
         return Coa::where('type', 1)->get();
     }
 

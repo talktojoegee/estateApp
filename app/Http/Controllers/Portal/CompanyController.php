@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\AssignFrequency;
 use App\Models\Organization;
 use App\Models\OrganizationDocument;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ class CompanyController extends Controller
         $this->company = new Organization();
         $this->companydoc = new OrganizationDocument();
         $this->log = new ActivityLog();
+        $this->assignfrequency = new AssignFrequency();
     }
 
     public function showCompanyProfile(){
@@ -73,4 +75,45 @@ class CompanyController extends Controller
         session()->flash("success", "Action successful.");
         return back();
     }
+
+
+    public function showCompanies($slug){
+        $authUser = Auth::user();
+        switch ($slug){
+            case 'all':
+                $allIds = $authUser->type == 1 ? $this->assignfrequency->getAllCertificatesByStatus([0,1,2])->pluck('org_id')->toArray() : $this->assignfrequency->getAllOrgCertificatesByStatus($authUser->org_id,[0,1,2])->pluck('org_id')->toArray();
+                return view('company.manage-companies',[
+                    'records'=>$this->company->getCompaniesByIds($allIds),
+                    'title'=>'Manage Companies'
+                ]);
+            case 'valid':
+                $validIds = $authUser->type == 1 ? $this->assignfrequency->getAllCertificatesByStatus([1])->pluck('org_id')->toArray() : $this->assignfrequency->getAllOrgCertificatesByStatus($authUser->org_id,[1])->pluck('org_id')->toArray();
+                return view('company.manage-companies',[
+                    'records'=>$this->company->getCompaniesByIds($validIds),
+                    'title'=>'Companies with Active License'
+                ]);
+            case 'expired':
+                $expiredIds = $authUser->type == 1 ? $this->assignfrequency->getAllCertificatesByStatus([2])->pluck('org_id')->toArray() : $this->assignfrequency->getAllOrgCertificatesByStatus($authUser->org_id,[2])->pluck('org_id')->toArray();
+                return view('company.manage-companies',[
+                    'records'=>$this->company->getCompaniesByIds($expiredIds),
+                    'title'=>'Companies with Expired License'
+                ]);
+            default:
+                abort(404);
+        }
+    }
+
+    public function showCompanyProfileByURL($slug){
+        $company = $this->company->getCompanyBySlug($slug);
+        if(empty($company)){
+            abort(404);
+        }
+        return view('company.index',[
+            'company'=>$this->company->getUserOrganization($company->id),
+            'logs'=>$this->log->getAllCompanyActivityLog($company->id),
+            'files'=>$this->companydoc->getCompanyDocuments($company->id),
+        ]);
+
+    }
+
 }

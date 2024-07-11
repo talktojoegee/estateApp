@@ -67,7 +67,7 @@ class AccountingController extends Controller
 
     public function showJournalVoucherForm(){
         return view('accounting.journal-voucher',[
-            'accounts'=>$this->coa->getAllDetailChartOfAccounts()
+            'accounts'=>$this->coa->getAllChartOfAccountsByType(1)
         ]);
     }
 

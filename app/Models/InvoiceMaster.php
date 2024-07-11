@@ -29,15 +29,56 @@ class InvoiceMaster extends Model
     }
 
 
-    public function createNewInvoice(Request $request, Post $post){
+    public function createNewInvoice(Request $request, $invoiceNo){
         $invoice = new InvoiceMaster();
         $invoice->post_id = $request->postId;
         $invoice->generated_by = Auth::user()->id;
-        $invoice->org_id = $post->p_org_id;
+        $invoice->org_id = 1;// $post->p_org_id;
         $invoice->total = $this->getTotal($request);
         $invoice->ref_no = substr(sha1(time()),30,40);
         $invoice->save();
         return $invoice;
+    }
+
+
+    public function newCustomerInvoice(Request $request, $invoice_no){
+        $invoice = new InvoiceMaster();
+        $invoice->property_id = $request->property;
+        $invoice->customer_id = $request->customer;
+        $invoice->invoice_no = !empty($invoice_no) ? $invoice_no->invoice_no + 1 : 100000;
+        $invoice->ref_no = substr(sha1(time()),32,40);
+        $invoice->invoice_type = $request->invoice_type;
+        $invoice->issue_date = $request->issue_date;
+        $invoice->due_date = $request->due_date;
+        $invoice->sub_total = $this->invoiceServiceTotal($request);
+        $invoice->total = $this->invoiceServiceTotal($request);
+        $invoice->generated_by = Auth::user()->id;
+        $invoice->slug = substr(sha1(time()), 21,40);
+        $invoice->save();
+        #Recent invoice ID
+        $invoiceId = $invoice->id;
+        $this->registerInvoiceItems($request, $invoiceId);
+        return $invoice;
+    }
+    public function registerInvoiceItems(Request $request, $invoiceId){
+        for($i = 0; $i<count($request->service); $i++){
+            $item = new InvoiceDetail();
+            $item->invoice_id = $invoiceId;
+            $item->item_id = 1; //no in use
+            $item->description = $request->service[$i];
+            $item->quantity = $request->quantity[$i];
+            $item->unit_cost = $request->amount[$i];
+            $item->amount = $request->quantity[$i] * $request->amount[$i];
+            $item->save();
+        }
+    }
+
+    public function invoiceServiceTotal(Request $request){
+        $total = 0;
+        for($i = 0; $i<count($request->service); $i++){
+            $total += ($request->amount[$i] * $request->quantity[$i]);
+        };
+        return $total;
     }
 
     public function getTotal($request){
@@ -52,15 +93,19 @@ class InvoiceMaster extends Model
         return InvoiceMaster::where('ref_no',$refNo)->first();
     }
 
-    public function getAllInvoices(){
-        return InvoiceMaster::orderBy('id', 'DESC')->get();
+    public function getAllInvoices($status){
+        return InvoiceMaster::whereIn('status', $status)->orderBy('id', 'DESC')->get();
     }
 
-    public function getAllCompanyInoices($orgId){
-        return InvoiceMaster::where('org_id', $orgId)->orderBy('id', 'DESC')->get();
+    public function getAllCompanyInoices($orgId, $status){
+        return InvoiceMaster::where('org_id', $orgId)->where('status', $status)->orderBy('id', 'DESC')->get();
     }
 
     public function getInoviceById($id){
         return InvoiceMaster::find($id);
+    }
+
+    public function getLatestInvoiceNo(){
+        return InvoiceMaster::orderBy('id', 'DESC')->first();
     }
 }

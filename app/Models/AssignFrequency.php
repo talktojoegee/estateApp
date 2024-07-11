@@ -31,15 +31,21 @@ class AssignFrequency extends Model
         return $this->belongsTo(User::class, 'assigned_by');
     }
 
+    public function getWorkstation(){
+        return $this->belongsTo(Workstation::class, 'station_id');
+    }
 
 
 
-    public static function addFrequencyDetails($postId,$detailId,$orgId,$frequency,$startDate,
+
+
+
+    public static function addFrequencyDetails($operation, $postId,$detailId,$orgId,$frequency,$startDate,
                                                $expiresAt,$stationId,$mode,$category,$band,$type,
                                                $batchCode, $slug, $make, $formNo, $emission, $maxEffect,
                                                $callSign, $licenseNo, $aerialXtics,$maxFreqTolerance,
                                                $formSerialNo){
-        $record = new AssignFrequency();
+        $record = $operation == 'new' ?  new AssignFrequency() : AssignFrequency::find($detailId);
         $record->post_id = $postId;
         $record->radio_detail_id = $detailId;
         $record->org_id = $orgId;
@@ -65,14 +71,21 @@ class AssignFrequency extends Model
         $record->max_freq_tolerance = $maxFreqTolerance;
         $record->form_serial_no = $formSerialNo;
         $record->save();
+        return $record;
     }
 
     public function getAllCertificates(){
         return AssignFrequency::orderBy('id', 'DESC')->get();
     }
+    public function getAllCertificatesByStatus($status){
+        return AssignFrequency::whereIn('status',$status)->orderBy('id', 'DESC')->get();
+    }
 
     public function getAllOrgCertificates($orgId){
         return AssignFrequency::where('org_id', $orgId)->orderBy('id', 'DESC')->get();
+    }
+    public function getAllOrgCertificatesByStatus($orgId, $status){
+        return AssignFrequency::where('org_id', $orgId)->whereIn('status', $status)->orderBy('id', 'DESC')->get();
     }
     public function getAllGroupedCertificates(){
         return AssignFrequency::groupBy('batch_code')->orderBy('id', 'DESC')->get();
@@ -88,5 +101,16 @@ class AssignFrequency extends Model
     public function getCertificateByLicenseBySlug($slug){
         return AssignFrequency::where('slug', $slug)->first();
     }
+
+    public function getAssignedFrequencyById($id){
+        return AssignFrequency::find($id);
+    }
+    public static function getAssignedFrequenciesByPostId($postId){
+        return AssignFrequency::where('post_id',$postId)->get();
+    }
+
+
+
+
 
 }

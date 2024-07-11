@@ -1,14 +1,12 @@
 @extends('layouts.master-layout')
 @section('title')
-    Assign License
+    Assign Frequency
 @endsection
 @section('current-page')
-    Assign License
+    Assign Frequency
 @endsection
 @section('extra-styles')
-    <link rel="stylesheet" href="/assets/libs/owl.carousel/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="/assets/libs/owl.carousel/assets/owl.theme.default.min.css">
-    <link href="/css/parsley.css" rel="stylesheet" type="text/css" />
+
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -76,6 +74,13 @@
                                                         @error('startDate') <i class="text-danger" style="color: #ff0000 !important;">{{$message}}</i>@enderror
                                                     </div>
                                                 </div>
+                                                <div class="col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">License No. <sup style="color: #ff0000 !important;">*</sup></label>
+                                                        <input type="text" value="{{ old('licenseNo') }}"  name="licenseNo" placeholder="Enter license number" class="form-control">
+                                                        @error('licenseNo') <i class="text-danger" style="color: #ff0000 !important;">{{$message}}</i>@enderror
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-12 col-lg-12 col-sm-12">
@@ -136,7 +141,7 @@
                                                             <td><span class="badge bg-danger rounded-pill" style="background: #ff0000 !important;">{{ number_format($detail->no_of_device ?? 0) }}</span> </td>
                                                         </tr>
                                                         @for($i = 0; $i<$detail->no_of_device; $i++)
-                                                            <tr>
+                                                            <tr class="mt-2">
                                                                 <td colspan="2">
                                                                     <div class="form-group">
                                                                         <span class="badge bg-danger rounded-pill" style="background: #ff0000 !important;">{{$i+1}}</span>
@@ -146,13 +151,13 @@
                                                                     </div>
                                                                 </td>
                                                                 <td colspan="2">
-                                                                    <div class="form-group mt-4">
+                                                                    <div class="form-group ">
                                                                         <label for="">Emission Bandwidth</label>
                                                                         <input name="emission[]" type="text" step="0.01" placeholder="Emission Bandwidth" class="form-control">
                                                                     </div>
                                                                 </td>
                                                                 <td colspan="3">
-                                                                    <div class="form-group mt-4">
+                                                                    <div class="form-group">
                                                                         <label for="">Max. Effective Radiated Power</label>
                                                                         <input name="effectiveRadiated[]" type="text" step="0.01" placeholder="Max. Effective Radiated Power" class="form-control">
                                                                     </div>

@@ -23,7 +23,7 @@ crumb-action-btn')
                     <div class="card-header">
                         <a href="{{ route('workflow') }}" class="btn btn-secondary "> <i
                                 class="bx bx bxs-left-arrow"></i> Go back</a>
-                        @if(in_array(Auth::user()->id, $authIds))
+                        @if((in_array(Auth::user()->id, $authIds)) && ($userAction->ap_status == 0))
                         <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#declineModal_" class="btn btn-danger ">  Decline <i
                                 class="bx bx-x"></i></a>
                             <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#approveModal_" class="btn btn-success ">  Approve <i
@@ -413,7 +413,8 @@ crumb-action-btn')
                 let url = "{{ route("comment-on-post") }}";
                 axios.post(url, {
                     comment,
-                    postId
+                    postId,
+                    type:0
                 })
                 .then(res=>{
                     $('#comment').val('');

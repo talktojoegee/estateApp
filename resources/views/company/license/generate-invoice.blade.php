@@ -177,7 +177,7 @@
                                                 <input type="number" onchange="Calc(this);" step="0.01" placeholder="Enter rate" name="rate[]" class="form-control rate">
                                             </td>
                                             <td>
-                                                <input type="number"  name="amount" readonly class="form-control amount">
+                                                <input type="number" step="0.01"  name="amount" readonly class="form-control amount">
                                             </td>
                                         </tr>
                                     @endforeach

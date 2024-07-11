@@ -2,6 +2,6 @@
 
     <div>
         <p>© <script>document.write(new Date().getFullYear())</script>
-            {{config('app.name')}}. Powered by HelloWorld</p>
+            {{config('app.name')}}. Powered by {{env('POWERED_BY')}}</p>
     </div>
 </div>

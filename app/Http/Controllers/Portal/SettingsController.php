@@ -374,11 +374,13 @@ class SettingsController extends Controller
         $this->validate($request,[
             'new_app_section'=>'required',
             'licence_renewal'=>'required',
-            'engage_customer'=>'required'
+            'engage_customer'=>'required',
+            'frequency_assignment_handler'
         ],[
             'new_app_section.required'=>'Kindly choose which section/unit should initiate new licence workflow process ',
             'licence_renewal.required'=>'Choose the section/unit that should initiate licence renewal process',
-            'engage_customer.required'=>'Which section or unit interacts with customers?'
+            'engage_customer.required'=>'Which section or unit interacts with customers?',
+            'frequency_assignment_handler.required'=>'Which section or unit should handle frequency assignment?'
         ]);
         $authUser = Auth::user();
         $this->appdefaultsettings->addAppDefaultSetting($request);
