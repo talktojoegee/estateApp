@@ -1,6 +1,6 @@
-<select name="parent_account" id="parent_account" class="form-control">
-    <option disabled selected>Select parent account</option>
-    @foreach ($accounts as $item)
-        <option value="{{$item->glcode}}">{{$item->account_name ?? ''}} - ({{$item->glcode ?? ''}})</option>
+<select name="parent_account" id="parent_account" class="form-control js-example-basic-single">
+    <option disabled selected>--Select parent account --</option>
+    @foreach($accounts as $account)
+        <option value="{{$account->glcode ?? ''}}">{{$account->glcode ?? ''}} - {{$account->account_name ?? ''}}</option>
     @endforeach
 </select>
