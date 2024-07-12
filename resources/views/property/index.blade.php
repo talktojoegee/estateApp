@@ -1,9 +1,9 @@
 @extends('layouts.master-layout')
 @section('title')
-    All Properties
+{{$title ?? ''}} Properties
 @endsection
 @section('current-page')
-    All Properties
+{{$title ?? ''}} Properties
 @endsection
 @section('extra-styles')
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
@@ -12,7 +12,7 @@
 
 @endsection
 @section('breadcrumb-action-btn')
-    Manage Properties
+{{$title ?? '' }} Properties
 @endsection
 
 @section('main-content')

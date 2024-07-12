@@ -14,11 +14,10 @@
                 </a>
                 <ul class="sub-menu" aria-expanded="false">
                     <li><a href="{{route('add-new-property')}}" key="t-bulksms">Add New</a></li>
-                    <li><a href="{{route('manage-properties')}}" key="t-bulksms">All Properties</a></li>
-                    <li><a href="{{route('certificates', 'expired')}}" key="t-bulksms">Sold</a></li>
-                    <li><a href="{{route('certificates', 'expired')}}" key="t-bulksms">Rented</a></li>
-                    <li><a href="{{route('certificates', 'expired')}}" key="t-bulksms">Available</a></li>
-                    <li><a href="{{route('certificates', 'expired')}}" key="t-bulksms">Property Assignment</a></li>
+                    <li><a href="{{route('manage-properties','all')}}" key="t-bulksms">All Properties</a></li>
+                    <li><a href="{{route('manage-properties', 'sold')}}" key="t-bulksms">Sold</a></li>
+                    <li><a href="{{route('manage-properties', 'rented')}}" key="t-bulksms">Rented</a></li>
+                    <li><a href="{{route('manage-properties', 'available')}}" key="t-bulksms">Available</a></li>
                 </ul>
             </li>
         <li>
@@ -64,11 +63,11 @@
             <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{route('manage-invoices', 'invoices')}}" key="t-bulksms">All Invoices</a></li>
                 <li><a href="{{route('new-invoice')}}" key="t-bulksms">New Invoice</a></li>
-                <li><a href="{{route('manage-invoices', 'paid')}}" key="t-bulksms">Paid</a></li>
+                <li><a href="{{route('manage-invoices', 'fully-paid')}}" key="t-bulksms">Fully-Paid</a></li>
+                <li><a href="{{route('manage-invoices', 'partly-paid')}}" key="t-bulksms">Partly-Paid</a></li>
                 <li><a href="{{route('manage-invoices', 'pending')}}" key="t-bulksms">Pending</a></li>
                 <li><a href="{{route('manage-invoices', 'verified')}}" key="t-bulksms">Verified</a></li>
                 <li><a href="{{route('manage-invoices', 'declined')}}" key="t-bulksms">Declined</a></li>
-                <li><a href="{{route('invoice-service')}}" key="t-bulksms">Service/Product</a></li>
             </ul>
         </li>
         <li>
@@ -107,19 +106,42 @@
                 <span key="t-bulksms"> Employee </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
-                @can('topup-bulksms')<li><a href="{{route('top-up')}}" key="t-bulksms">New Employee</a></li>@endcan
-                @can('access-bulksms-wallet')<li><a href="{{route('top-up-transactions')}}" key="t-bulksms">Manage Employee</a></li>@endcan
-                @can('send-bulksms')<li><a href="{{route('compose-sms')}}" key="t-bulksms">Supervisors</a></li>@endcan
+                <li><a href="{{route('top-up')}}" key="t-bulksms">New Employee</a></li>
+                <li><a href="{{route('top-up-transactions')}}" key="t-bulksms">Manage Employee</a></li>
+                <li><a href="{{route('compose-sms')}}" key="t-bulksms">Supervisors</a></li>
                 <li><a href="{{route('schedule-sms')}}" key="t-bulksms">Supervisor Assignment</a></li>
                 <li><a href="{{route('schedule-sms')}}" key="t-bulksms">Query</a></li>
-                <li><a href="{{route('schedule-sms')}}" key="t-bulksms">Settings</a></li>
             </ul>
         </li>
-        <li class="menu-title">Account</li>
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="bx bx-dollar-circle"></i>
-                <span key="t-bulksms"> Employee </span>
+                <i class="bx bx-calendar"></i>
+                <span key="t-bulksms"> Leave Management </span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{route('top-up')}}" key="t-bulksms">All Leave Applications</a></li>
+                <li><a href="{{route('top-up-transactions')}}" key="t-bulksms">Leave Accrual</a></li>
+                <li><a href="{{route('compose-sms')}}" key="t-bulksms">Leave Types</a></li>
+                <li><a href="{{route('schedule-sms')}}" key="t-bulksms">Public Holidays</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="bx bxs-cog"></i>
+                <span key="t-bulksms"> HR Settings </span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{route('top-up')}}" key="t-bulksms">Departments</a></li>
+                <li><a href="{{route('top-up-transactions')}}" key="t-bulksms">Job Roles</a></li>
+                <li><a href="{{route('compose-sms')}}" key="t-bulksms">Locations</a></li>
+                <li><a href="{{route('schedule-sms')}}" key="t-bulksms">Public Holidays</a></li>
+            </ul>
+        </li>
+        <li class="menu-title">Accounting</li>
+        <li>
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="bx bxs-business"></i>
+                <span key="t-bulksms"> Account </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{route('chart-of-accounts')}}" key="t-bulksms">Chart of Accounts</a></li>
@@ -129,16 +151,29 @@
                 <li><a href="{{route('profit-or-loss')}}" key="t-bulksms">Profit/Loss</a></li>
             </ul>
         </li>
-         <li>
+        <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="bx bx-calendar"></i>
-                <span key="t-bulksms"> Leave Management </span>
+                <i class="bx bx-wallet"></i>
+                <span key="t-bulksms"> Payroll </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
-                @can('topup-bulksms')<li><a href="{{route('top-up')}}" key="t-bulksms">Applications</a></li>@endcan
-                @can('access-bulksms-wallet')<li><a href="{{route('top-up-transactions')}}" key="t-bulksms">All</a></li>@endcan
-                @can('send-bulksms')<li><a href="{{route('compose-sms')}}" key="t-bulksms">Resigned</a></li>@endcan
-                <li><a href="{{route('schedule-sms')}}" key="t-bulksms">Terminated</a></li>
+                <li><a href="{{route('chart-of-accounts')}}" key="t-bulksms">Payment Definition</a></li>
+                <li><a href="{{route('journal-voucher')}}" key="t-bulksms">Tax Rates</a></li>
+                <li><a href="{{route('trial-balance')}}" key="t-bulksms">Salary Structure</a></li>
+                <li><a href="{{route('balance-sheet')}}" key="t-bulksms">Payroll Setup</a></li>
+                <li><a href="{{route('profit-or-loss')}}" key="t-bulksms">Salary Grades</a></li>
+                <li><a href="{{route('profit-or-loss')}}" key="t-bulksms">Salary Increment</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="bx bx-chart"></i>
+                <span key="t-bulksms"> Reports </span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{route('top-up')}}" key="t-bulksms">Property</a></li>
+                <li><a href="{{route('top-up-transactions')}}" key="t-bulksms">Customer</a></li>
             </ul>
         </li>
 

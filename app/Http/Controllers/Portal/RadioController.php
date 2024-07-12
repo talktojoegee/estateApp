@@ -10,6 +10,7 @@ use App\Models\AuthorizingPerson;
 use App\Models\ChurchBranch;
 use App\Models\InvoiceDetail;
 use App\Models\InvoiceMaster;
+use App\Models\InvoicePaymentHistory;
 use App\Models\InvoiceService;
 use App\Models\Lead;
 use App\Models\LicenceCategory;
@@ -19,6 +20,7 @@ use App\Models\PostAttachment;
 use App\Models\PostComment;
 use App\Models\PostRadioDetail;
 use App\Models\Property;
+use App\Models\Receipt;
 use App\Models\State;
 use App\Models\User;
 use App\Models\Workstation;
@@ -44,6 +46,8 @@ class RadioController extends Controller
         $this->invoiceservice = new InvoiceService();
         $this->lead = new Lead();
         $this->property = new Property();
+        $this->receipt = new Receipt();
+        $this->invoicepaymenthistory = new InvoicePaymentHistory();
 
     }
 
@@ -326,7 +330,7 @@ class RadioController extends Controller
     public function showNewInvoiceForm(){
         return view('company.invoice.new-invoice',[
             'customers'=>$this->lead->getAllOrgLeads(),
-            'properties'=>$this->property->getAllProperties()
+            'properties'=>$this->property->getAllProperties([0,1,2])
         ]);
     }
 
@@ -388,7 +392,7 @@ class RadioController extends Controller
         switch ($type){
             case 'invoices':
                 return view('company.invoice.index',[
-                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([0,1,2,3]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[0,1,2,3]),
+                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([0,1,2,3,4]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[0,1,2,3]),
                     'title'=>'Invoices'
                 ]);
             case 'pending':
@@ -396,14 +400,19 @@ class RadioController extends Controller
                     'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([0]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[0]),
                     'title'=>'Pending Invoices'
                 ]);
-            case 'paid':
+            case 'fully-paid':
                 return view('company.invoice.index',[
                     'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([1]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[1]),
-                    'title'=>'Paid Invoices'
+                    'title'=>'Fully-paid Invoices'
+                ]);
+            case 'partly-paid':
+                return view('company.invoice.index',[
+                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([2]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[1]),
+                    'title'=>'Partly-paid Invoices'
                 ]);
             case 'verified':
                 return view('company.invoice.index',[
-                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([2]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[2]),
+                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([4]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[2]),
                     'title'=>'Verified Invoices'
                 ]);
             case 'declined':
@@ -861,6 +870,46 @@ class RadioController extends Controller
                 return back();
             default:
                 abort(404);
+        }
+    }
+
+
+    public function receivePayment(Request $request){
+        $invoice = $this->invoicemaster->getInvoiceByRefNo($request->slug);
+        if(!empty($invoice)){
+            return view('company.invoice.receive-payment',['invoice'=>$invoice]);
+        }else{
+            session()->flash("error", " No record found.");
+            return back();
+        }
+    }
+
+    public function processPayment(Request $request){
+        $this->validate($request,[
+            'amount'=>'required',
+            'invoice'=>'required'
+        ],[
+            'amount.required'=>'Enter the amount paid.',
+            'invoice.required'=>''
+        ]);
+        $invoice = $this->invoicemaster->getInoviceById($request->invoice);
+        if(!empty($invoice)){
+            $balance = $invoice->total - $invoice->amount_paid;
+            if($request->amount > $balance){
+                session()->flash("error", "Whoops! The amount you entered is more than what's left as balance. ");
+                return back();
+            }
+
+            $this->invoicemaster->updateInvoicePayment($invoice, $request->amount);
+            $this->receipt->createNewReceipt(rand(9,9999), $invoice, $request->amount, 0); //($counter, $invoice, $amount, $charge)
+            $this->invoicepaymenthistory->logPayment($invoice->id, 33, $request->amount, 0);
+            //$activity = Auth::user()->first_name." received payment with an amount of (".env('APP_CURRENCY').$request->amount."). Invoice No.".$invoice->invoice_no;
+            //ActivityLog::logActivity(Auth::user()->tenant_id, Auth::user()->id, 0, 'Received Payment', $activity);
+            session()->flash("success", "Action successful");
+            return back();
+        }else{
+            session()->flash("error", "Invoice does not exist. Try again.");
+            return back();
         }
     }
 }

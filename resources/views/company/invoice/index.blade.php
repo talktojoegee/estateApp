@@ -133,7 +133,7 @@
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >S/No.</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Date</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Customer</th>
-                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Ref. Code</th>
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Due Date</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Total({{env('APP_CURRENCY')}})</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Paid({{env('APP_CURRENCY')}})</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Balance({{env('APP_CURRENCY')}})</th>
@@ -150,25 +150,28 @@
                                         <td class="">{{$a++}}</td>
                                         <td class="sorting_1 text-left">{{ date('d M, Y', strtotime($flow->created_at)) }}</td>
                                         <td class="">
-                                            {{$flow->getAuthor->title ?? '' }} {{$flow->getAuthor->first_name ?? '' }} {{$flow->getAuthor->last_name ?? '' }} {{$flow->getAuthor->other_names ?? '' }}
+                                            {{$flow->getCustomer->title ?? '' }} {{$flow->getCustomer->first_name ?? '' }} {{$flow->getCustomer->last_name ?? '' }}
                                         </td>
-                                        <td class="">{{$flow->ref_no ?? ''}}</td>
+                                        <td class="" style="color: #ff0000 !important;">{{ date('d M, Y', strtotime($flow->due_date)) }}</td>
                                         <td class="" style="text-align: right">{{number_format($flow->total,2)}}</td>
                                         <td class="" style="text-align: right">{{number_format($flow->amount_paid ?? 0,2)}}</td>
                                         <td class="" style="text-align: right">{{number_format(($flow->total ?? 0) - ($flow->amount_paid ?? 0),2)}}</td>
                                         <td class="">
                                             @switch($flow->status)
                                                 @case(0)
-                                                <span class="text-info">Pending</span>
+                                                <span class="text-warning">Pending</span>
                                                 @break
                                                 @case(1)
-                                                <span class="text-info">Paid</span>
+                                                <span class="text-secondary">Fully Paid</span>
                                                 @break
                                                 @case(2)
-                                                <span class="text-success">Verified</span>
+                                                <span class="text-secondary">Partly-paid</span>
                                                 @break
                                                 @case(3)
-                                                <span class="text-danger" style="color: #ff0000;">Declined</span>
+                                                <span class="text-danger" style="color: #ff0000 !important;">Declined</span>
+                                                @break
+                                                @case(4)
+                                                <span class="text-success" >Verified</span>
                                                 @break
                                             @endswitch
                                         </td>
@@ -178,7 +181,7 @@
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="{{route('show-invoice-detail', $flow->ref_no)}}" > <i class="bx bxs-book-open"></i> View</a>
                                                     @if((($flow->total ?? 0) - ($flow->amount_paid ?? 0)) > 0)
-                                                        <a class="dropdown-item" href="{{route('show-invoice-detail', $flow->ref_no)}}" > <i class="bx bx-wallet-alt"></i> Receive Payment</a>
+                                                        <a class="dropdown-item" href="{{route('receive-payment', $flow->ref_no)}}" > <i class="bx bx-wallet-alt"></i> Receive Payment</a>
                                                     @endif
                                                 </div>
                                             </div>

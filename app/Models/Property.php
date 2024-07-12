@@ -278,7 +278,7 @@ slug
         return Property::whereIn('location_id', $locationIds)->orderBy('id', 'DESC')->get();
     }
 
-    public function getAllProperties(){
-        return Property::orderBy('id', 'DESC')->get();
+    public function getAllProperties($status){
+        return Property::whereIn('status', $status)->orderBy('id', 'DESC')->get();
     }
 }

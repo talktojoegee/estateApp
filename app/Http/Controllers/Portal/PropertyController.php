@@ -49,9 +49,32 @@ class PropertyController extends Controller
         }
     }
 
-    public function showManagePropertiesView(){
+    public function showManagePropertiesView($type){
+        $properties = [];
+        $title = null;
+        switch ($type){
+            case 'all':
+                $properties = $this->property->getAllProperties([0,1,2]);
+                $title = 'All';
+            break;
+            case 'sold':
+                $properties = $this->property->getAllProperties([2]);
+                $title = 'Sold';
+            break;
+            case 'available':
+                $properties = $this->property->getAllProperties([0]);
+                $title = 'Available';
+            break;
+            case 'rented':
+                $properties = $this->property->getAllProperties([1]);
+                $title = 'Rented';
+            break;
+            default:
+                abort(404);
+        }
         return view('property.index',[
-            'properties'=>$this->property->getAllProperties()
+            'properties'=>$properties,
+            'title'=>$title
         ]);
     }
 

@@ -10,37 +10,31 @@
     Profit/Loss
 @endsection
 
-@section('event-area')
-    @include('manager.accounting.reports.partials._menu')
-@endsection
 @section('extra-styles')
-    <link rel="stylesheet" type="text/css" href="\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="\assets\pages\data-table\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="\assets\css\component.css">
+    <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 @endsection
 @section('main-content')
     <div class="row">
-        <div class="col-lg-12 col-xl-12">
+        <div class="col-lg-6 offset-lg-2 col-xl-6 offset-xl-2">
             <div class="card">
-                <div class="card-block">
+                <div class="card-body">
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
-                            <h5 class="sub-title">Accounting Period</h5>
+                            <h5 class="modal-header mb-3 text-uppercase">Accounting Period</h5>
                             <p>Enter date to generate a profit/loss accounting report.</p>
                             @if (session()->has('success'))
                                 <div class="alert alert-success background-success">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <i class="icofont icofont-close-line-circled text-white"></i>
+                                        <i class="bx bx-check-double text-white"></i>
                                     </button>
                                     {!! session()->get('success') !!}
                                 </div>
                             @endif
                             @if (session()->has('error'))
                                 <div class="alert alert-warning background-warning">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <i class="icofont icofont-close-line-circled text-white"></i>
-                                    </button>
+                                    <i class="bx bx-window-close text-white"></i>
                                     {!! session()->get('error') !!}
                                 </div>
                             @endif
@@ -49,14 +43,14 @@
                                     @csrf
                                     <div class="form-group">
                                         <div class="input-group input-group-button">
-                                                <span class="input-group-addon btn btn-primary" id="basic-addon9">
-                                                    <span class="">From</span>
-                                                </span>
-                                            <input type="date" class="form-control" name="start_date" placeholder="Start Date">
-                                            <span class="input-group-addon btn btn-primary" id="basic-addon9">
-                                                    <span class="">To</span>
-                                                </span>
-                                            <input type="date" class="form-control" name="end_date" placeholder="End Date">
+                                                <button class=" btn btn-primary" id="basic-addon9">
+                                                    From
+                                                </button>
+                                            <input type="date" value="{{ date('Y-m-d', strtotime("-90 days")) }}" class="form-control" name="start_date" placeholder="Start Date">
+                                            <button class=" btn btn-primary" id="basic-addon9">
+                                                   To
+                                                </button>
+                                            <input type="date" value="{{ date('Y-m-d', strtotime("+1 days")) }}" class="form-control" name="end_date" placeholder="End Date">
                                             <span class="input-group-addon btn btn-primary" id="basic-addon9">
                                                     <button class="btn btn-primary btn-mini" type="submit">Submit</button>
                                                 </span>
@@ -86,10 +80,10 @@
                                     <td><img src="/assets/images/logo.png" class="m-b-10" width="82" height="52" alt=""></td>
                                 </tr>
                                 <tr>
-                                    <td>Connexxion Telecom</td>
+                                    <td>Estate App</td>
                                 </tr>
                                 <tr>
-                                    <td>2A Iller Crescent Maitama, Abuja</td>
+                                    <td>Garki, Abuja</td>
                                 </tr>
                                 <tr>
                                     <td><a href="..\..\..\cdn-cgi\l\email-protection.htm#99fdfcf4f6d9fef4f8f0f5b7faf6f4" target="_top"><span class="__cf_email__" data-cfemail="690d0c0406290e04080005470a0604">[email&nbsp;protected]</span></a>
@@ -106,10 +100,10 @@
                 <div class="col-md-4">
                 </div>
             </div>
-            <div class="card-block">
+            <div class="card-body">
                 <div class="row invoive-info">
                     <div class="col-md-4 col-xs-12 invoice-client-info">
-                        <h6>Account Period:</h6>
+                        <h6 class="modal-header mb-3">Account Period:</h6>
                         <h6 class="m-0"><strong class="label label-info">From:</strong> {{date('d F, Y', strtotime($from))}} <strong class="label label-danger">To:</strong> {{date('d F, Y', strtotime($to))}}</h6>
                     </div>
                     <div class="col-md-4 col-sm-6">
@@ -239,9 +233,13 @@
 @endsection
 
 @section('extra-scripts')
-    <script src="\bower_components\datatables.net\js\jquery.dataTables.min.js"></script>
-    <script src="\bower_components\datatables.net-bs4\js\dataTables.bootstrap4.min.js"></script>
-    <script src="\assets\pages\data-table\extensions\key-table\js\key-table-custom.js"></script>
+    <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+    <script src="/assets/js/pages/datatables.init.js"></script>
     <script>
         $(document).ready(function(){
             $(document).on('click', '.approve', function(event){

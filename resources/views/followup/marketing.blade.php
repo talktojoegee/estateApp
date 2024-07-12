@@ -1,7 +1,7 @@
 
 @extends('layouts.master-layout')
 @section('current-page')
-    Follow-up Dashboard
+    Engagement Dashboard
 @endsection
 @section('extra-styles')
     <link rel="stylesheet" href="/css/nprogress.css">
@@ -80,7 +80,7 @@
                                     <div class="card">
                                         <div class="card-header bg-primary text-white">Performance Chart</div>
                                         <div class="card-body">
-                                            <p><strong>Note:</strong> Below you'll find a comparison chart. Indicating the total number of attendance, quantity of SMS that was sent, the number of people that were followed up and an insight into new members/first timers.</p>
+                                            <p><strong>Note:</strong> Below you'll find a comparison chart. Indicating the total number of resources, quantity of SMS that was sent, the number of people that were engaged</p>
                                             <div id="attendanceMedication" class="apex-charts" dir="ltr"></div>
                                             <div id="stacked-column-char" class="apex-charts" dir="ltr"></div>
                                         </div>
@@ -348,9 +348,9 @@
                                 colors: ['transparent']
                             },
                             series: [
-                                { name: "Attendance", data: attendanceData },
+                                { name: "Resources", data: attendanceData },
                                 { name: "Leads", data: leadsData },
-                                { name: "Follow-up", data: followupData },
+                                { name: "SMS", data: followupData },
                             ],
                             xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
                             yaxis: {

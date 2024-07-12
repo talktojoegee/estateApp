@@ -22,6 +22,22 @@ class InvoiceMaster extends Model
     public function getCompany(){
         return $this->belongsTo(Organization::class, 'org_id');
     }
+    public function getCustomer(){
+        return $this->belongsTo(Lead::class, 'customer_id');
+    }
+
+    public function getProperty(){
+            return $this->belongsTo(Property::class, 'property_id');
+   }
+
+
+    public function getInvoicePaymentLog(){
+        return $this->hasMany(InvoicePaymentHistory::class, 'invoice_id');
+    }
+
+    public function getAllInvoiceReceipts(){
+        return $this->hasMany(Receipt::class, 'invoice_id');
+    }
 
 
     public function getActionedBy(){
@@ -107,5 +123,12 @@ class InvoiceMaster extends Model
 
     public function getLatestInvoiceNo(){
         return InvoiceMaster::orderBy('id', 'DESC')->first();
+    }
+
+    public function updateInvoicePayment(InvoiceMaster $invoice, $amount){
+        $invoice->amount_paid += ($amount) ?? 0;
+        $invoice->status = $invoice->amount_paid >= $invoice->total  ? 1 : 2; //0=pending,1=fully-paid,2=partly-paid, 3=declined
+        $invoice->save();
+        return $invoice;
     }
 }

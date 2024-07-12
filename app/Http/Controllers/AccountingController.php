@@ -485,7 +485,7 @@ class AccountingController extends Controller
             return view('accounting.reports.trial-balance', ['reports'=> $reports, 'status'=>1, 'bfDr'=>$bfDr, 'bfCr'=>$bfCr,
                 'from'=>$start_date, 'to'=>$end_date]);
         }else{
-            session()->flash("error", "<strong>Ooops!</strong> There've been no financial transaction since inception.");
+            session()->flash("error", "Whoops! There have been no financial transaction since inception.");
             return back();
         }
     }
@@ -508,7 +508,7 @@ class AccountingController extends Controller
             $reports = $this->generalledger->getBalanceSheetReports($date);
             $revenue = $this->generalledger->getRevenue($date);
             $expense = $this->generalledger->getExpenses($date);
-            session()->flash("success", "<strong>Success!</strong> Balance sheet report generated.");
+            session()->flash("success", "Action successful.");
             return view('accounting.reports.balance-sheet', [
                 'reports'=> $reports, 'status'=>1,
                 'bfDr'=>$bfDr, 'bfCr'=>$bfCr,
@@ -517,7 +517,7 @@ class AccountingController extends Controller
                 'expense'=>$expense
             ]);
         }else{
-            session()->flash("error", "<strong>Ooops!</strong> There've been no financial transaction since inception.");
+            session()->flash("error", "Whoops! There have been no financial transaction since inception.");
             return back();
         }
     }
@@ -542,7 +542,7 @@ class AccountingController extends Controller
             $reports = $this->generalledger->getReports($start_date, $end_date);
             $revenue = $this->generalledger->getRevenueByDateRange($start_date, $end_date);
             $expense = $this->generalledger->getExpensesByDateRange($start_date, $end_date);
-            session()->flash("success", "<strong>Success!</strong> Profit/Loss report generated.");
+            session()->flash("success", "Action successful.");
             return view('accounting.reports.profit-or-loss', [
                 'reports'=> $reports, 'status'=>1,
                 'bfDr'=>$bfDr, 'bfCr'=>$bfCr,
@@ -552,7 +552,7 @@ class AccountingController extends Controller
                 'expense'=>$expense
             ]);
         }else{
-            session()->flash("error", "<strong>Ooops!</strong> There've been no financial transaction since inception.");
+            session()->flash("error", "Whoops! There have been no financial transaction since inception.");
             return back();
         }
     }
@@ -578,16 +578,16 @@ class AccountingController extends Controller
             $dr_total += $request->debit_amount[$i];
         }
         if(count($request->account) != count($request->debit_amount)){
-            session()->flash("error", "<strong>Whoops!</strong> Something went wrong. Try again.");
+            session()->flash("error", "Whoops! Something went wrong. Try again.");
             return back();
         }
 
         if($cr_total == $dr_total){
             $this->journalvoucher->setNewJournalVoucher($request);
-            session()->flash("success", "<strong>Success!</strong> New journal entry save.");
+            session()->flash("success", "Action successful");
             return back();
         }else{
-            session()->flash("error", "<strong>Ooops!</strong> The value of DR must be same with CR. Try again.");
+            session()->flash("error", "Whoops! The value of DR must be same with CR. Try again.");
             return redirect()->route('journal-entries');
         }
     }

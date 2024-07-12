@@ -141,9 +141,11 @@
                                             <input type="hidden" name="frequency" value="{{$frequency}}">
                                             <input type="hidden" name="timeLot" value="{{$timeLot}}">
                                             <input type="hidden" name="recurring" value="{{$recurring}}">
+                                            @if(!empty($phoneGroup) > 0)
                                             @foreach($phoneGroup as $pg)
                                                 <input type="hidden" name="phoneGroup[]" value="{{$pg}}">
                                             @endforeach
+                                        @endif
                                     </div>
                                     @endif
                                 </div>

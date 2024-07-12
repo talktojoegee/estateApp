@@ -10,9 +10,6 @@
     Balance Sheet
 @endsection
 
-@section('event-area')
-    @include('manager.accounting.reports.partials._menu')
-@endsection
 @section('extra-styles')
     <link rel="stylesheet" type="text/css" href="\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="\assets\pages\data-table\css\buttons.dataTables.min.css">
@@ -21,12 +18,12 @@
 @endsection
 @section('main-content')
     <div class="row">
-        <div class="col-lg-12 col-xl-12">
+        <div class="col-md-6 col-lg-6 col-xl-6 col-sm-6 offset-md-3 offset-lg-3">
             <div class="card">
-                <div class="card-block">
+                <div class="card-body">
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
-                            <h5 class="sub-title">Accounting Period</h5>
+                            <h5 class="modal-header mb-4 text-uppercase">Accounting Period</h5>
                             <p>Enter date to generate balance sheet up to that time.</p>
                             @if (session()->has('success'))
                                 <div class="alert alert-success background-success">
@@ -44,15 +41,15 @@
                                     {!! session()->get('error') !!}
                                 </div>
                             @endif
-                            <div class="col-md-6 col-lg-6 col-xl-6 col-sm-6 offset-md-3 offset-lg-3 ">
+                            <div class=" ">
                                     <form action="{{route('balance-sheet')}}" method="post">
                                         @csrf
                                     <div class="form-group">
                                         <div class="input-group input-group-button">
-                                                <span class="input-group-addon btn btn-primary" id="basic-addon9">
-                                                    <span class="">Date</span>
-                                                </span>
-                                            <input type="date" class="form-control" name="date" placeholder="Date">
+                                                <button class=" btn btn-primary" id="basic-addon9">
+                                                    Date
+                                                </button>
+                                            <input type="date" value="{{ date('Y-m-d', strtotime("+1 days")) }}" class="form-control" name="date" placeholder="Date">
                                             <span class="input-group-addon btn btn-primary" id="basic-addon9">
                                                     <button class="btn btn-primary btn-mini" type="submit">Submit</button>
                                                 </span>

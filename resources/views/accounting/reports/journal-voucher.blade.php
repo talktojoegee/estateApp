@@ -10,11 +10,9 @@
     Journal Voucher
 @endsection
 
-@section('event-area')
-    @include('manager.accounting.reports.partials._menu')
-@endsection
+
 @section('extra-styles')
-    <link rel="stylesheet" href="/assets/css/select2.css">
+    <link href="/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .select2-container {
             width: 100% !important;
@@ -26,8 +24,8 @@
     <div class="row ">
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
-                <div class="card-block">
-                    <h5 class="sub-title">Journal Voucher</h5>
+                <div class="card-body">
+                    <h5 class="modal-header mb-4">Journal Voucher</h5>
                     @if(session()->has('success'))
                         <div class="alert alert-success border-success" style="padding:5px;">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -119,7 +117,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="icofont icofont-ui-remove"></i>
+                                                <i class="bx bx-trash remove-line" style="color: #ff0000 !important; cursor: pointer;"></i>
                                             </td>
                                         </tr>
 
@@ -130,7 +128,7 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-12 col-sm-12 col-lg-12">
-                                <button class="btn btn-mini btn-primary add-line"> <i class="ti-plus mr-2"></i> Add Line</button>
+                                <button class="btn btn-mini btn-primary add-line"> <i class="bx bx-plus-circle mr-2"></i> Add Line</button>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -170,8 +168,9 @@
 @endsection
 
 @section('extra-scripts')
-    <script type="text/javascript" src="/js/custom/select2.min.js"></script>
-    <script src="/js/custom/axios.min.js"></script>
+    <script src="/assets/libs/select2/js/select2.min.js"></script>
+    <script src="/assets/js/pages/form-advanced.init.js"></script>
+    <script src="/assets/js/axios.min.js"></script>
     <script>
         var debitTotal = 0;
         var creditTotal = 0;

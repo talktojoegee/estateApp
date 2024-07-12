@@ -10,9 +10,6 @@
     Trial Balance
 @endsection
 
-@section('event-area')
-    @include('manager.accounting.reports.partials._menu')
-@endsection
 @section('extra-styles')
     <link rel="stylesheet" type="text/css" href="\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="\assets\pages\data-table\css\buttons.dataTables.min.css">
@@ -21,16 +18,16 @@
 @endsection
 @section('main-content')
     <div class="row">
-        <div class="col-lg-12 col-xl-12">
+        <div class="col-lg-6 col-xl-6 offset-lg-3 offset-xl-3">
             <div class="card">
-                <div class="card-block">
+                <div class="card-body">
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
-                            <h5 class="sub-title">Accounting Period</h5>
+                            <h5 class="modal-header mb-4">Accounting Period</h5>
                             @if (session()->has('success'))
                                 <div class="alert alert-success background-success">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <i class="icofont icofont-close-line-circled text-white"></i>
+                                        <i class="bx bx-check-double text-white"></i>
                                     </button>
                                     {!! session()->get('success') !!}
                                 </div>
@@ -38,7 +35,7 @@
                             @if (session()->has('error'))
                                 <div class="alert alert-warning background-warning">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <i class="icofont icofont-close-line-circled text-white"></i>
+                                        <i class="bx bx-x-circle text-white"></i>
                                     </button>
                                     {!! session()->get('error') !!}
                                 </div>
@@ -47,15 +44,15 @@
                                     <form action="{{route('trial-balance')}}" method="post">
                                         @csrf
                                     <div class="form-group">
-                                        <div class="input-group input-group-button">
-                                                <span class="input-group-addon btn btn-primary" id="basic-addon9">
-                                                    <span class="">From</span>
-                                                </span>
-                                            <input type="date" class="form-control" name="start_date" placeholder="Start Date">
-                                            <span class="input-group-addon btn btn-primary" id="basic-addon9">
-                                                    <span class="">To</span>
-                                                </span>
-                                            <input type="date" class="form-control" name="end_date" placeholder="End Date">
+                                        <div class="input-group ">
+                                                <button class=" btn btn-primary" id="basic-addon9">
+                                                    From
+                                                </button>
+                                            <input type="date" value="{{ date('Y-m-d', strtotime("-90 days")) }}" class="form-control" name="start_date" placeholder="Start Date">
+                                            <button class=" btn btn-primary" id="basic-addon9">
+                                                    To
+                                                </button>
+                                            <input type="date" value="{{date('Y-m-d', strtotime("+1 days"))}}" class="form-control" name="end_date" placeholder="End Date">
                                             <span class="input-group-addon btn btn-primary" id="basic-addon9">
                                                     <button class="btn btn-primary btn-mini" type="submit">Submit</button>
                                                 </span>

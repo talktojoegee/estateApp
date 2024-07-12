@@ -18,7 +18,7 @@
             <div class="col-xl-12 col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{ route('manage-applications') }}" class="btn btn-secondary "> <i
+                        <a href="{{route('manage-invoices', 'invoices')}}" class="btn btn-secondary "> <i
                                 class="bx bx bxs-left-arrow"></i> Go back</a>
 
                         @if(($invoice->status == 1) && \Illuminate\Support\Facades\Auth::user()->type == 1)
@@ -27,11 +27,6 @@
                             </a>
                             <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#verifyPayment" class="btn btn-success ">  Verify <i
                                     class="bx bx-check"></i>
-                            </a>
-                        @endif
-                        @if(\Illuminate\Support\Facades\Auth::user()->type != 1)
-                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#submitPayment" class="btn btn-warning ">  Submit Payment <i
-                                    class="bx bx-wallet"></i>
                             </a>
                         @endif
                     </div>
@@ -69,20 +64,23 @@
                         <div class="card-body"   >
                             <div id="printArea">
                                 <div class="invoice-title"   >
-                                    <h5 class="float-end font-size-16">Application Ref.: {{ strtoupper($workflow->p_title ?? '') }}
+                                    <h5 class="float-end font-size-16"> Ref.: {{ strtoupper($invoice->ref_no ?? '') }}
                                         <p class="mt-2"><strong>Status:</strong>
                                             @switch($invoice->status)
                                                 @case(0)
-                                                <small class="text-info">Pending</small>
+                                                <small class="text-warning">Pending</small>
                                                 @break
                                                 @case(1)
-                                                <small class="text-info">Paid</small>
+                                                <small class="text-secondary">Fully Paid</small>
                                                 @break
                                                 @case(2)
-                                                <small class="text-success">Verified</small>
+                                                <small class="text-secondary">Partly-paid</small>
                                                 @break
                                                 @case(3)
                                                 <small class="text-danger" style="color: #ff0000 !important;">Declined</small>
+                                                @break
+                                                @case(4)
+                                                <small class="text-success" >Verified</small>
                                                 @break
                                             @endswitch
                                         </p>
@@ -93,16 +91,7 @@
                                 </div>
                                 <hr>
                                 <div class="row"   >
-                                    <div class="col-sm-6"   >
-                                        <address>
-                                            <strong>Billed To:</strong><br>
-                                            {{$workflow->getCompany->organization_name ?? ''  }}<br>
-                                            {{$workflow->getCompany->phone_no ?? ''  }}<br>
-                                            {{$workflow->getCompany->email ?? ''  }}<br>
-                                            {{$workflow->getCompany->address ?? ''  }}
-                                        </address>
-                                    </div>
-                                    <div class="col-sm-6 text-sm-end"   >
+                                    <div class="col-sm-6 "   >
                                         <address class="mt-2 mt-sm-0">
                                             <strong>From:</strong><br>
                                             {{env('ORG_NAME')}}<br>
@@ -111,20 +100,38 @@
                                             {{env('ORG_ADDRESS')}}
                                         </address>
                                     </div>
+
+                                    <div class="col-sm-6 text-sm-end"   >
+                                        <address>
+                                            <strong>Billed To:</strong><br>
+                                            {{$invoice->getCustomer->first_name ?? ''  }} {{$invoice->getCustomer->last_name ?? ''  }}<br>
+                                            {{$invoice->getCustomer->phone ?? ''  }}<br>
+                                            {{$invoice->getCustomer->email ?? ''  }}<br>
+                                            {{$invoice->getCustomer->street ?? ''  }}
+                                        </address>
+                                    </div>
+
                                 </div>
+
                                 <div class="row"   >
                                     <div class="col-sm-6 mt-3"   >
                                         <address>
-                                            <strong>RC No.:</strong><br>
-                                            {{$workflow->getCompany->organization_code ?? '' }}<br>
-                                            <strong>Year of Incorporation:</strong><br>
-                                            {{ date('d M, Y', strtotime($workflow->getCompany->start_date)) ?? '' }}<br>
+                                            <strong>Invoice No.:</strong><br>
+                                            {{$invoice->invoice_no ?? '' }}<br>
+                                            <strong>Start Date:</strong><br>
+                                            <span class="text-success">{{ date('d M, Y', strtotime($invoice->start_date)) ?? '' }}</span><br>
+                                            <strong>Due Date:</strong><br>
+                                            <span class="text-danger" style="color: #ff0000 !important;">{{ date('d M, Y', strtotime($invoice->due_date)) ?? '' }}</span><br>
                                         </address>
                                     </div>
-                                    <div class="col-sm-6 mt-3 text-sm-end"   >
+                                    <div class="col-sm-6  text-sm-end"   >
                                         <address>
                                             <strong>Date Issued:</strong><br>
                                             {{date('d M, Y', strtotime($invoice->created_at))}}<br><br>
+                                        </address>
+                                        <address>
+                                            <strong>Property:</strong><br>
+                                            {{ $invoice->getProperty->property_name ?? '' }}<br><br>
                                         </address>
                                     </div>
                                 </div>
@@ -137,77 +144,38 @@
                                         <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Station</th>
-                                            <th>Mode</th>
-                                            <th>Category</th>
-                                            <th>Frequency</th>
-                                            <th>Type</th>
+                                            <th>Description</th>
                                             <th>Quantity</th>
-                                            <th style="text-align: right;">Rate({{env('APP_CURRENCY')}})</th>
-                                            <th style="text-align: right;">Amount({{env('APP_CURRENCY')}})</th>
+                                            <th style="text-align: right;">Cost({{env('APP_CURRENCY')}})</th>
+                                            <th style="text-align: right;">Total({{env('APP_CURRENCY')}})</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach($workflow->getRadioLicenseDetails as $key => $detail)
+                                        @foreach($invoice->getInvoiceDetail as $key => $detail)
                                             <tr>
                                                 <th>{{ $key +1  }}</th>
-                                                <td>{{$detail->getWorkstation->name ?? '' }}</td>
-                                                <td>{{$detail->operation_mode == 1 ? 'Simplex' : 'Duplex' }}</td>
-                                                <td>{{ $detail->getLicenseCategory->category_name ?? '' }}</td>
-                                                <td>
-                                                    @switch($detail->frequency_band)
-                                                        @case(1)
-                                                        MF/HF
-                                                        @break
-                                                        @case(2)
-                                                        VHF
-                                                        @break
-                                                        @case(3)
-                                                        UHF
-                                                        @break
-                                                        @case(4)
-                                                        SHF
-                                                        @break
-                                                    @endswitch
-                                                </td>
-                                                <td>
-                                                    @switch($detail->type_of_device)
-                                                        @case(1)
-                                                        Handheld
-                                                        @break
-                                                        @case(2)
-                                                        Base Station
-                                                        @break
-                                                        @case(3)
-                                                        Repeaters Station
-                                                        @break
-                                                        @case(4)
-                                                        Vehicular Station
-                                                        @break
-                                                    @endswitch
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="hidden" value="{{$detail->id}}" name="itemId[]">
-                                                    {{ number_format($detail->no_of_device ?? 0)  }}
-                                                </td>
-                                                <td style="text-align: right;">
-                                                    {{ number_format($detail->getInvoiceDetail->amount ?? 0) }}
-                                                </td>
-                                                <td style="text-align: right;">
-                                                    {{ number_format( ($detail->getInvoiceDetail->amount * $detail->no_of_device),2 ) }}
-                                                </td>
+                                                <td>{{$detail->description ?? '' }}</td>
+                                                <td>{{ number_format($detail->quantity ?? 0) }}</td>
+                                                <td style="text-align: right;">{{ number_format($detail->unit_cost ?? 0,2)  }}</td>
+                                                <td style="text-align: right;">{{ number_format(($detail->quantity ?? 0) * ($detail->unit_cost ?? 0),2)  }}</td>
                                             </tr>
                                         @endforeach
                                         <tr>
-                                            <td colspan="8" class="border-0 text-end">
-                                                <strong>Amount Paid</strong></td>
+                                            <td colspan="4" class="border-0 text-end">
+                                                <strong>Total</strong></td>
+                                            <td class="border-0 text-end"> <span>{{env('APP_CURRENCY')}}</span><span id="totalAmount">{{number_format($invoice->total ?? 0 ,2)}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="border-0 text-end">
+                                                <strong> Paid</strong></td>
                                             <td class="border-0 text-end"><span>{{env('APP_CURRENCY')}}</span><span>{{number_format($invoice->amount_paid ?? 0 ,2)}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="8" class="border-0 text-end">
-                                                <strong>Total</strong></td>
-                                            <td class="border-0 text-end"><h4 class="m-0"> <span>{{env('APP_CURRENCY')}}</span><span id="totalAmount">{{number_format($invoice->total ?? 0 ,2)}}</span></h4></td>
+                                            <td colspan="4" class="border-0 text-end">
+                                                <strong>Balance</strong></td>
+                                            <td class="border-0 text-end"> <span>{{env('APP_CURRENCY')}}</span><span id="balance">{{number_format(($invoice->total ?? 0) - ($invoice->amount_paid ?? 0) ,2)}}</span></td>
                                         </tr>
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -221,7 +189,7 @@
                         </div>
                     </div>
                 </div>
-                <input type="hidden" name="postId" value="{{$workflow->p_id}}" class="form-control">
+
         </div>
         @if($invoice->status >= 1) <!-- Paid,Verified,Declined -->
         <div class="row">
@@ -229,27 +197,49 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="modal-header">Payment History</h5>
-                        <div class="table-responsive">
-                            <table class="table table-striped mb-0">
-
-                                <thead>
-                                <tr>
-                                    <th>Remita Retrieval Reference(RRR)</th>
-                                    <th>Proof</th>
-                                    <th>Actioned By</th>
-                                    <th>Date Actioned</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>{{$invoice->rrr ?? '' }}</td>
-                                    <td><a href="{{ route('download-attachment',$invoice->attachment ?? '') }}">{{$invoice->attachment ?? '' }}</a></td>
-                                    <td>{{$invoice->getActionedBy->title ?? '' }} {{ $invoice->getActionedBy->first_name ?? '' }} {{$invoice->getActionedBy->last_name ?? '' }} {{ $invoice->getActionedBy->other_names ?? '' }}</td>
-                                    <td> {{ !is_null($invoice->date_actioned) ? date('d M, Y', strtotime($invoice->date_actioned)) : '...' }}</td>
-                                </tr>
-
-                                </tbody>
-                            </table>
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        Invoice # {{$invoice->invoice_no ?? ''}}
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+                                    <div class="accordion-body">
+                                        <div class="text-muted">
+                                            <div class="table-responsive">
+                                                <table class="table mb-0">
+                                                    <thead class="table-light">
+                                                    <tr class="text-uppercase">
+                                                        <th>#</th>
+                                                        <th>Date</th>
+                                                        <th>Receipt No.</th>
+                                                        <th>Issued By</th>
+                                                        <th style="text-align: right;">Amount({{env('APP_CURRENCY')}})</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @php $serial = 1; @endphp
+                                                    @foreach($invoice->getAllInvoiceReceipts as $log)
+                                                        <tr>
+                                                            <th scope="row">{{$serial++}}</th>
+                                                            <td>{{date('d M, Y h:ia', strtotime($log->created_at))}}</td>
+                                                            <td><a href="#" target="_blank">{{$log->receipt_no ?? '' }}</a></td>
+                                                            <td>{{$log->getIssuedBy->title ?? '' }} {{$log->getIssuedBy->first_name ?? '' }} {{$log->getIssuedBy->last_name ?? '' }} {{$log->getIssuedBy->other_names ?? '' }}</td>
+                                                            <td style="text-align: right;">{{number_format(($log->sub_total) ?? 0 ,2)}}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                    <tr>
+                                                        <th colspan="3">Total</th>
+                                                        <td colspan="3" style="text-align: right;"><strong>{{env('APP_CURRENCY')}}{{number_format($invoice->getAllInvoiceReceipts->sum('sub_total'),2)}}</strong></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
