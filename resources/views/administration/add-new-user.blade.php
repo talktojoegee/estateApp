@@ -1,6 +1,6 @@
 @extends('layouts.master-layout')
 @section('current-page')
-    Add New User
+    Add New Employee
 @endsection
 @section('extra-styles')
     <link href="/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="col-md-12 col-lx-12">
                                 <div class="modal-header mb-3" >
-                                    <h6 class="modal-title text-uppercase" id="myModalLabel2">Add New User</h6>
+                                    <h6 class="modal-title text-uppercase" id="myModalLabel2">Add New Employee</h6>
                                 </div>
                                 <form autocomplete="off" action="{{route('add-new-user')}}" enctype="multipart/form-data" method="post" id="addNewUser" data-parsley-validate="">
                                     @csrf
@@ -161,15 +161,15 @@
                                                                    class="form-control" placeholder="Type present address here...">{{old('presentAddress')}}</textarea>
                                                      </div>
                                                  </div>
-                                                 <div class="row mt-3">
+                                                 {{--<div class="row mt-3">
                                                      <div class="col-md-12">
                                                          <h6 class="text-uppercase text-primary">Location</h6>
                                                      </div>
-                                                 </div>
-                                                 <div class="col-md-6 col-sm-12 col-lg-6">
+                                                 </div>--}}
+                                                 <div class="col-md-6 col-sm-12 col-lg-6 mt-3">
                                                      <div class="form-group mt-1">
-                                                         <label for=""> Branch <span class="text-danger">*</span></label>
-                                                         <select name="branch" id="" data-parsley-required-message="Select branch" class="form-control select2">
+                                                         <label for=""> Department <span class="text-danger">*</span></label>
+                                                         <select name="branch" id="" data-parsley-required-message="Select department" class="form-control select2">
                                                              @foreach($branches as $branch)
                                                                  <option value="{{$branch->cb_id}}">{{$branch->cb_name ?? '' }}</option>
                                                              @endforeach
@@ -177,7 +177,7 @@
                                                          @error('branch') <i class="text-danger">{{$message}}</i>@enderror
                                                      </div>
                                                  </div>
-                                                 <div class="col-md-6 col-sm-12 col-lg-6">
+                                                 <div class="col-md-6 col-sm-12 col-lg-6 mt-3">
                                                      <div class="form-group mt-1">
                                                          <label for="">Assign Role <span class="text-danger">*</span></label>
                                                          <select name="role" data-parsley-required-message="Select role" id="role" class="form-control select2">

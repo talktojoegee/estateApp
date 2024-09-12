@@ -1,6 +1,6 @@
 @extends('layouts.master-layout')
 @section('current-page')
-    Lead Profile
+    Customer Profile
 @endsection
 @section('extra-styles')
     <link href="/css/parsley.css" rel="stylesheet" type="text/css" />
@@ -14,6 +14,12 @@
             color: orange;
         }
     </style>
+
+    <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -33,9 +39,7 @@
     @endif
 
     <div class="card">
-        <div class="card-header">
-            @include('followup.partial._top-navigation')
-        </div>
+
         <div class="row">
             <div class="col-xl-4">
                 <div class="card overflow-hidden">
@@ -43,8 +47,8 @@
                         <div class="row">
                             <div class="col-7">
                                 <div class="text-primary p-3">
-                                    <h5 class="text-primary">Lead Details</h5>
-                                    <p>Explore lead profile</p>
+                                    <h5 class="text-primary">Customer Details</h5>
+                                    <p>Explore customer profile</p>
                                 </div>
                             </div>
                             <div class="col-5 align-self-end">
@@ -94,6 +98,14 @@
                                     <td>{{$client->street ?? '' }}, {{$client->city ?? '' }} {{$client->state ?? '' }} {{$client->code ?? '' }}</td>
                                 </tr>
                                 <tr>
+                                    <th scope="row">Valuation :</th>
+                                    <td>{{env('APP_CURRENCY')}}{{ number_format($client->getCustomerValuation($client->id) ?? 0,2) ?? '' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"># of Properties :</th>
+                                    <td>{{ number_format($client->getNumberOfProperties($client->id) ?? 0) ?? '' }}</td>
+                                </tr>
+                                <tr>
                                     <th scope="row">Added By :</th>
                                     <td>{{$client->getAddedBy->first_name  ?? '' }} {{$client->getAddedBy->last_name  ?? '' }}</td>
                                 </tr>
@@ -117,7 +129,19 @@
                                 </a>
                             </li>
                             <li class="nav-item" >
+                                <a class="nav-link" data-bs-toggle="tab" href="#properties" role="tab">
+                                    <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                    <span class="d-none d-sm-block">Properties</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#documents" role="tab">
+                                    <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                    <span class="d-none d-sm-block">Documents</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" >
+                                <a class="nav-link" data-bs-toggle="tab" href="#sms" role="tab">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">SMS</span>
                                 </a>
@@ -261,6 +285,106 @@
                             <div class="tab-pane" id="documents" role="tabpanel">
                                 <div class="card">
                                     <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-xl-12 col-md-12 col-lg-12 d-flex justify-content-end">
+                                               <button class="btn btn-primary" data-bs-target="#newFileModal" data-bs-toggle="modal"> <i class="bx bx-plus-circle"></i> New File(s)</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-12">
+                                            <div class="card">
+                                                <div class="modal-header">
+                                                    <div class="modal-title text-uppercase">Browse <code>{{ $client->first_name ?? ''  }} {{ $client->last_name ?? ''  }}</code> documents </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        @if(count($client->getCustomerFiles) > 0)
+                                                            @foreach ($client->getCustomerFiles as $file)
+                                                                @include('storage.partials._lead-switch-format')
+                                                            @endforeach
+                                                        @else
+                                                            <div class="col-md-12 col-lg-12 d-flex justify-content-center">
+                                                                <p>No files or documents uploaded for <code>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</code>. </p>
+                                                            </div>
+                                                        @endif
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="properties" role="tabpanel">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="col-xl-12 col-md-12 col-lg-12">
+                                            <p>{{ $client->first_name ?? ''  }} {{ $client->last_name ?? '' }} has a total of <code>{{ number_format(count($client->getCustomerListOfProperties($client->id) ?? 0)) }}</code> with <strong>{{env('APP_NAME')}}</strong></p>
+                                            <div class="table-responsive">
+                                                <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="">#</th>
+                                                        <th class="wd-15p">Estate</th>
+                                                        <th class="wd-15p">House No.</th>
+                                                        <th class="wd-15p">Property Name</th>
+                                                        <th class="wd-15p" style="text-align: right;">Price(₦)</th>
+                                                        <th class="wd-15p">Status</th>
+                                                        <th class="wd-15p">Action</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @foreach($client->getCustomerListOfProperties($client->id) as $key => $property)
+                                                        <tr>
+                                                            <td>{{ $key + 1 }}</td>
+                                                            <td>{{$property->getEstate->e_name ?? '' }}</td>
+                                                            <td>{{ $property->house_no ?? '' }}</td>
+                                                            <td>
+                                                                <a href="{{route('show-property-details', ['slug'=>$property->slug])}}">
+                                                                    <div class="d-flex">
+                                                                        <div class="flex-shrink-0 align-self-center me-3">
+                                                                            <img src="/assets/drive/property/{{$property->getGalleryFeaturedImageByPropertyId($property->id)->attachment ?? 'placeholder.png' }}" alt="{{$property->property_name ?? '' }}" class="rounded-circle avatar-xs">
+                                                                        </div>
+                                                                        <div class="flex-grow-1 overflow-hidden">
+                                                                            <h6 class="text-truncate font-size-14 mb-1">{{ substr($property->property_name,0,35).'...' ?? ''  }}</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </td>
+                                                            <td class="text-right" style="text-align: right;">{{ number_format($property->price,2)  }}</td>
+
+                                                            <td>
+                                                                @switch($property->status)
+                                                                    @case(0)
+                                                                    <label class='text-primary'>Available</label>
+                                                                    @break
+                                                                    @case(1)
+                                                                    <label class='text-info'>Rented</label>
+                                                                    @break
+                                                                    @case(2)
+                                                                    <label class='text-warning'>Sold</label>
+                                                            @break
+                                                            @endswitch
+                                                            <td>
+                                                                <div class="btn-group">
+                                                                    <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                                                                    <div class="dropdown-menu">
+                                                                        <a class="dropdown-item" target="_blank" href="{{route('show-property-details', [ 'slug'=>$property->slug])}}" > <i class="bx bxs-book-open"></i> View</a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="sms" role="tabpanel">
+                                <div class="card">
+                                    <div class="card-body">
                                         <div class="col-xl-12 col-md-12 col-lg-12">
                                             <div class="d-flex justify-content-end">
                                                 <button type="button" data-bs-toggle="modal" data-bs-target="#sendSMS" class="btn btn-sm btn-primary">Send SMS <i class="bx bx-envelope"></i> </button>
@@ -393,6 +517,50 @@
             </div>
         </div>
     </div>
+
+    <div id="newFileModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="modal-header">
+                            <div class="modal-title text-uppercase">New Attachments</div>
+                        </div>
+                        <p class="card-title-desc mt-3">Upload documents for <code>{{$client->first_name ?? '' }} {{ $client->last_name ?? '' }}</code>  </p>
+
+                        <form action="{{route('upload-files')}}" autocomplete="off" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <div class="form-group mb-3">
+                                <label for="">File Name</label>
+                                <input type="text" name="fileName" placeholder="File Name" class="form-control">
+                                @error('fileName')
+                                <i class="text-danger mt-2">{{$message}}</i>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="">Attachment</label>
+                                <input type="file" name="attachments[]" class="form-control-file" multiple>
+                                @error('attachment')
+                                <i class="text-danger mt-2">{{$message}}</i>
+                                @enderror
+                                <input type="hidden" name="folder" value="0">
+                                <input type="hidden" name="lead" value="{{ $client->id }}">
+                            </div>
+                            <hr>
+                            <div class="form-group d-flex justify-content-center">
+                                <div class="btn-group">
+                                    <a href="{{url()->previous()}}" class="btn btn-warning btn-mini"><i class="bx bx-left-arrow mr-2"></i> Go Back</a>
+                                    <button type="submit" class="btn btn-primary"><i class="bx bx-cloud-upload mr-2"></i> Upload File(s)</button>
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('extra-scripts')
@@ -400,6 +568,15 @@
     <script src="/assets/js/pages/rating-init.js"></script>
     <script src="/js/parsley.js"></script>
     <script src="/js/axios.min.js"></script>
+
+    <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <!-- Datatable init js -->
+    <script src="/assets/js/pages/datatables.init.js"></script>
+
     <script>
         $(document).ready(function(){
             let route = "{{route('inline-preview-message')}}";

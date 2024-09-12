@@ -14,4 +14,8 @@ protected $primaryKey = 'cs_id';
     public static function getConstructionStages(){
         return ConstructionStage::all();
     }
+
+    public static function getConstructionStageByName($name){
+        return ConstructionStage::where('cs_name', $name)->first();
+    }
 }

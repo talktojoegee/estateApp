@@ -1,23 +1,30 @@
 @include('partials._header')
 <body data-sidebar="dark">
-<div id="layout-wrapper">
+<style>
+    .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6{
+        color: {{Auth::user()->getUsersWallpaper->caption_color ?? '#ffffff'}} !important;
+        /*color: #ccc !important;*/
+    }
+    #sidebar-menu ul li a i, body[data-sidebar=dark] #sidebar-menu ul li a{
+        color: {{Auth::user()->getUsersWallpaper->text_color ?? '#ffffff'}} !important;
+    }
+    body[data-sidebar=dark] .menu-title{
+        color: {{Auth::user()->getUsersWallpaper->text_color ?? '#ffffff'}} !important;
+    }
+</style>
+<div id="layout-wrapper" style="background: url('/assets/drive/wallpapers/{{Auth::user()->getUsersWallpaper->filename ?? ''}}'); background-size:cover; background-repeat: no-repeat;">
     @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
         @include('partials._admin-top-bar')
     @else
         @include('partials._top-bar')
     @endif
-
-    <div class="vertical-menu">
+    <div class="vertical-menu" style="background: none !important;">
         <div data-simplebar class="h-100">
-            @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
-                @include('partials._admin-sidebar')
-            @else
-                @include('partials._sidebar')
-            @endif
+            @include('partials._admin-sidebar')
         </div>
     </div>
   <!--  #1916FC-->
-    <div class="main-content">
+    <div class="main-content" >
         <div class="page-content">
             <div class="container-fluid">
                 <div class="row">

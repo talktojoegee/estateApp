@@ -30,11 +30,16 @@ class FileModel extends Model
                 $file->size = $size;
                 $file->client_id = $request->client ?? null;
                 $file->lead_id = $request->lead ?? null;
+                $file->type = isset($request->lead) ? 1 : 0;
                 $file->org_id = Auth::user()->org_id;
                 $file->save();
             }
         }
 
+    }
+
+    public function getUploadedBy(){
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 
 
@@ -47,7 +52,11 @@ class FileModel extends Model
     }
 
     public function getIndexFiles(){
-        return FileModel::where('folder_id',0)->where('org_id', Auth::user()->org_id)->get();
+        return FileModel::where('folder_id',0)->where('type', 0)->where('org_id', Auth::user()->org_id)->get();
+    }
+
+    public function getCustomerFiles($customerId){
+        return FileModel::where('lead_id', $customerId)->get();
     }
 
     public function downloadFile($file_name) {
@@ -78,5 +87,35 @@ class FileModel extends Model
 
     public function getClientDocuments($clientId, $orgId){
         return FileModel::where('client_id', $clientId)->where('org_id', $orgId)->orderBy('id', 'DESC')->get();
+    }
+
+    public function formatSizeUnits($bytes)
+    {
+        if ($bytes >= 1073741824)
+        {
+            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        }
+        elseif ($bytes >= 1048576)
+        {
+            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        }
+        elseif ($bytes >= 1024)
+        {
+            $bytes = number_format($bytes / 1024, 2) . ' KB';
+        }
+        elseif ($bytes > 1)
+        {
+            $bytes = $bytes . ' bytes';
+        }
+        elseif ($bytes == 1)
+        {
+            $bytes = $bytes . ' byte';
+        }
+        else
+        {
+            $bytes = '0 bytes';
+        }
+
+        return $bytes;
     }
 }

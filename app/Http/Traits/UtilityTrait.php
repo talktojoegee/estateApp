@@ -119,5 +119,27 @@ trait UtilityTrait {
             EmailQueue::queueEmail($id, $subject, $message);
         }
     }
+
+    function padNumber($number, $length) {
+        if ($number < 20000) {
+            // Pad the number with leading zeros
+            return str_pad($number, $length, '0', STR_PAD_LEFT);
+        }
+        return $number;  // Return the number as is if it's 20000 or greater
+    }
+
+    function numToOrdinalWord($num)
+    {
+        $first_word = array('eth','First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth','Thirteenth','Fourteenth','Fifteenth','Sixteenth','Seventeenth','Eighteenth','Nineteenth','Twentieth');
+        $second_word =array('','','Twenty','Thirthy','Forty','Fifty');
+
+        if($num <= 20)
+            return $first_word[$num];
+
+        $first_num = substr($num,-1,1);
+        $second_num = substr($num,-2,1);
+
+        return $string = str_replace('y-eth','ieth',$second_word[$second_num].'-'.$first_word[$first_num]);
+    }
 }
 ?>

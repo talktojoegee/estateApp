@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Models\ActivityLog;
 use App\Models\AppDefaultSetting;
 use App\Models\AppSmsSetting;
+use App\Models\ChartOfAccount;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role as SRole;
@@ -47,6 +48,8 @@ class SettingsController extends Controller
         $this->role = new Role();
         $this->appdefaultsettings = new AppDefaultSetting();
         $this->appsmsdefaultsettings = new AppSmsSetting();
+
+        $this->chartofaccount = new ChartOfAccount();
     }
 
     public function showSettingsView(){
@@ -364,30 +367,42 @@ class SettingsController extends Controller
     }
 
     public function showWorkflowSettingsForm(){
-        return view('settings.settings-workflow',[
-            'departments'=>$this->churchbranch->getAllChurchBranches(),
-            'app_licence_setting'=>$this->appdefaultsettings->getAppDefaultSettings(),
+        return view('settings.settings-accounting',[
+            'defaults'=>$this->appdefaultsettings->getAppDefaultSettings(),
+            'accounts'=>$this->chartofaccount->getAllDetailChartOfAccounts()
         ]);
     }
 
     public function appDefaultSettings(Request $request){
         $this->validate($request,[
-            'new_app_section'=>'required',
-            'licence_renewal'=>'required',
-            'engage_customer'=>'required',
-            'frequency_assignment_handler'
+            'property_account'=>'required',
+            'customer_account'=>'required',
+            'vendor_account'=>'required',
+            'tax_account'=>'required',
+            'refund_account'=>'required',
+            'charges_account'=>'required',
+            'salary_account'=>'required',
+            'employee_account'=>'required',
+            'workflow_account'=>'required',
+            'general_account'=>'required',
         ],[
-            'new_app_section.required'=>'Kindly choose which section/unit should initiate new licence workflow process ',
-            'licence_renewal.required'=>'Choose the section/unit that should initiate licence renewal process',
-            'engage_customer.required'=>'Which section or unit interacts with customers?',
-            'frequency_assignment_handler.required'=>'Which section or unit should handle frequency assignment?'
+            'property_account.required'=>'Choose a default account for properties. ',
+            'customer_account.required'=>'Choose a default account for customers',
+            'vendor_account.required'=>'Choose a default account for vendors',
+            'tax_account.required'=>'Choose a default account for tax',
+            'refund_account.required'=>'Choose a default account for refund',
+            'charges_account.required'=>'Choose a default account for charges',
+            'salary_account.required'=>'Choose a default account for salaries',
+            'workflow_account.required'=>'Choose a default account for workflow',
+            'employee_account.required'=>'Choose a default account for employees',
+            'general_account.required'=>'Choose a general account',
         ]);
         $authUser = Auth::user();
         $this->appdefaultsettings->addAppDefaultSetting($request);
-        $log = "$authUser->first_name($authUser->email) updated application default settings for: new licence application, renewal and customer engagement";
-        $title = "Application default settings(licence & customer engagement)";
+        $log = "$authUser->first_name($authUser->email) updated accounting default settings";
+        $title = "Account Default settings";
         ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, $title, $log);
-        session()->flash("success",  "Your settings were saved successfully.");
+        session()->flash("success",  "Action successful.");
         return back();
     }
 

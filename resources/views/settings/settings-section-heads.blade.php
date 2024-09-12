@@ -1,6 +1,6 @@
 @extends('layouts.master-layout')
 @section('current-page')
-    Section Heads
+    Supervisors
 @endsection
 @section('extra-styles')
     <link rel="stylesheet" href="/css/nprogress.css">
@@ -49,7 +49,7 @@
         <div class="row">
             <div class="col-md-12 col-sm-12 mt-4">
                 <div class="d-flex justify-content-between modal-header">
-                    <div class="h6 text-left pl-5 text-uppercase text-primary"> Section Heads</div>
+                    <div class="h6 text-left pl-5 text-uppercase text-primary"> Supervisors</div>
                     <a href="{{url()->previous()}}" class="btn btn-secondary mr-3" > <i class="bx bx-arrow-back"></i>  Go back</a>
                 </div>
 
@@ -60,9 +60,9 @@
                             <div class="row w-100">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="">Section</label>
+                                        <label for="">Department</label>
                                         <select name="department"  id="department" class="form-control js-example-theme-single">
-                                            <option disabled selected>--Select section--</option>
+                                            <option disabled selected>--Select Department--</option>
                                             @foreach($branches as $depart)
                                                 <option value="{{$depart->cb_id}}">{{$depart->cb_name ?? '' }}</option>
                                             @endforeach
@@ -98,8 +98,8 @@
                                 <thead>
                                 <tr>
                                     <th class="">#</th>
-                                    <th class="wd-15p">Section</th>
-                                    <th class="wd-15p">Head</th>
+                                    <th class="wd-15p">Department</th>
+                                    <th class="wd-15p">Supervisor</th>
                                 </tr>
                                 </thead>
                                 <tbody>

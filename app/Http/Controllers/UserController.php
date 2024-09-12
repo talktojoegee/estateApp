@@ -12,6 +12,7 @@ use App\Models\ModuleManager;
 use App\Models\Post;
 use App\Models\PostCorrespondingPerson;
 use App\Models\Role;
+use App\Models\Wallpaper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -32,6 +33,7 @@ class UserController extends Controller
 
         $this->post = new Post();
         $this->postcorrespondingpersons = new PostCorrespondingPerson();
+        $this->wallpaper = new Wallpaper();
     }
 
     public function customerDashboard(){
@@ -107,17 +109,19 @@ class UserController extends Controller
                 $log = Auth::user()->first_name." ".Auth::user()->last_name." viewed your profile";
                 ActivityLog::registerActivity(Auth::user()->org_id, null, $user->id, null, 'Profile View', $log);
             }
-            if($user->type == 1){ //admin
-                return view('administration.profile',[
+            //if($user->type == 1){ //admin
+                return view('company.persons.profile',[
+                //return view('administration.profile',[
                     'user'=>$user,
                     'modules'=>$this->modulemanager->getModules(),
                     'roles'=>$this->role->getRoles(),
-                    'posts'=>$this->post->getPostsByIds($postIds),
+                   // 'posts'=>$this->post->getPostsByIds($postIds),
                     'countries'=>$this->country->getCountries(),
                     'branches'=>$this->churchbranch->getAllChurchBranches(),
                     'maritalstatus'=>$this->maritalstatus->getMaritalStatuses(),
+                    'wallpapers'=>$this->wallpaper->getAllWallpapers()
                 ]);
-            }else{
+            /*else{
                 return view('company.persons.profile',[
                     'user'=>$user,
                     //'modules'=>$this->modulemanager->getModules(),
@@ -127,10 +131,11 @@ class UserController extends Controller
                     //'branches'=>$this->churchbranch->getAllChurchBranches(),
                     'maritalstatus'=>$this->maritalstatus->getMaritalStatuses(),
                 ]);
-            }
+            }*/
 
 
         }else{
+            session()->flash("error", 'Whoops! No record found.');
             return back();
         }
     }
@@ -305,5 +310,22 @@ class UserController extends Controller
             'maritalstatus'=>$this->maritalstatus->getMaritalStatuses(),
             'roles'=>$this->role->getRoles()
         ]);
+    }
+    public function switchWallpaper(Request $request){
+        $this->validate($request,[
+            "wallpaper"=>"required"
+        ],[
+            "wallpaper.required"=>"Choose wallpaper"
+        ]);
+        $user = User::find(Auth::user()->id);
+        $user->wallpaper = $request->wallpaper;
+        $user->save();
+        if($user){
+            return response()->json(['message'=>'Success! Wallpaper changed.'], 200);
+        }else{
+            return response()->json(['error'=>'Whoops! Could not change wallpaper.'], 400);
+
+        }
+
     }
 }

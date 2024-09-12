@@ -503,8 +503,8 @@ class RadioController extends Controller
         $invoice->actioned_by = Auth::user()->id;
         $invoice->comment = $request->comment ?? null;
         $invoice->date_actioned = now();
-        $invoice->status = $request->status;
-        $invoice->amount_paid = $request->status == 2 ? $invoice->total : 0;
+        //$invoice->status = $request->status;
+        //$invoice->amount_paid = $request->status == 2 ? $invoice->total : 0;
         $invoice->save();
         //update post/license application too
         $post = $this->post->getPostById($invoice->post_id);
@@ -909,6 +909,116 @@ class RadioController extends Controller
             return back();
         }else{
             session()->flash("error", "Invoice does not exist. Try again.");
+            return back();
+        }
+    }
+
+
+
+
+    public function showManageReceipts(){
+        return view('company.receipt.manage-receipts',[
+            'receipts'=>$this->receipt->getAllTenantReceipts()
+        ]);
+    }
+
+    public function showManageReceiptDetails(Request $request){
+        $receipt = $this->receipt->getReceipt($request->slug);
+        if(!empty($receipt)){
+            return view('company.receipt.receipt-details',[
+                'receipt'=>$receipt
+            ]);
+        }else{
+            session()->flash("error", "No record found.");
+            return back();
+        }
+    }
+
+    public function approveReceipt(Request $request){
+        $receipt = $this->receipt->approveReceipt($request->ref);
+        if($receipt == 1){
+            session()->flash("success", "Receipt approved and posted to ledger. ");
+            return redirect()->route('show-manage-receipts');
+        }else{
+            session()->flash("error", "Something went wrong. Please try again or contact admin.");
+            return redirect()->route('show-manage-receipts');
+        }
+    }
+
+    public function declineReceipt(Request $request){
+        $receipt = $this->receipt->declineReceipt($request->ref);
+        if($receipt == 1){
+            session()->flash("success", "Receipt declined. ");
+            return redirect()->route('show-manage-receipts');
+        }else{
+            session()->flash("error", "Something went wrong. Please try again or contact admin.");
+            return redirect()->route('show-manage-receipts');
+        }
+    }
+
+/*
+    public function sendReceiptAsEmail(Request $request){
+        $receipt = $this->receipt->getReceipt($request->ref);
+        if(!empty($receipt)){
+            #Applicant
+            if($receipt->receipt_type == 1){
+                $applicant = $this->leaseapplication->getTenantLeaseApplicationById(Auth::user()->tenant_id,$receipt->applicant_id);
+                if(!empty($applicant)){
+                    $this->receipt->sendReceiptAsEmailService($receipt, $applicant);
+                    $activity = Auth::user()->first_name." sent receipt via email. Receipt No.".$receipt->receipt_no;
+                    ActivityLog::logActivity(Auth::user()->tenant_id, Auth::user()->id, 0, 'Receipt Emailed', $activity);
+                    session()->flash("success", " Receipt sent");
+                    return back();
+                }else{
+                    session()->flash("error", "There's no record for this applicant.");
+                    return back();
+                }
+            }elseif($receipt->receipt_type == 2 || $receipt->receipt_type == 3){
+                $tenant = $this->user->getTenantUserByUserTypeById(2, Auth::user()->id,$receipt->user_id);
+                if(!empty($tenant)){
+                    $tenant_app = $this->leaseapplication->getTenantLeaseApplicationById(Auth::user()->tenant_id,$receipt->applicant_id);
+                    $this->receipt->sendReceiptAsEmailService($receipt, $tenant_app);
+                    $activity = Auth::user()->first_name." sent receipt via email. Receipt No.".$receipt->receipt_no;
+                    ActivityLog::logActivity(Auth::user()->tenant_id, Auth::user()->id, 0, 'Receipt Emailed', $activity);
+                    session()->flash("success", " Receipt sent.");
+                    return back();
+                }else{
+                    session()->flash("error", "There's no record for this tenant.");
+                    return back();
+                }
+            }
+        }else{
+            session()->flash("error", " No record found.");
+            return back();
+        }
+    }*/
+
+
+    public function sendReceiptAsEmail(Request $request){
+        $receipt = $this->receipt->getReceipt($request->ref);
+        if(!empty($receipt)){
+            $customer = $this->lead->getLeadById($receipt->customer_id);
+            if(empty($customer)){
+                abort(404);
+            }
+            session()->flash("success", "Email sent in demo mode");
+            return back();
+            #Applicant
+            //if($receipt->receipt_type == 1){
+                //$applicant = $this->leaseapplication->getTenantLeaseApplicationById(Auth::user()->tenant_id,$receipt->applicant_id);
+               /* if(!empty($applicant)){
+                    $this->receipt->sendReceiptAsEmailService($receipt, $applicant);
+                    $activity = Auth::user()->first_name." sent receipt via email. Receipt No.".$receipt->receipt_no;
+                    ActivityLog::logActivity(Auth::user()->tenant_id, Auth::user()->id, 0, 'Receipt Emailed', $activity);
+                    session()->flash("success", " Receipt sent");
+                    return back();
+                }else{
+                    session()->flash("error", "There's no record for this applicant.");
+                    return back();
+                }*/
+            //}
+        }else{
+            session()->flash("error", " No record found.");
             return back();
         }
     }

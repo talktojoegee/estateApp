@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Estate;
 use App\Models\EstateAmenity;
 use App\Models\EstateAmenityValue;
+use App\Models\Property;
+use App\Models\Receipt;
 use App\Models\State;
 use Illuminate\Http\Request;
 
@@ -17,6 +19,8 @@ class EsateController extends Controller
         $this->estate = new Estate();
         $this->estateamenity = new EstateAmenity();
         $this->state = new State();
+        $this->property = new Property();
+        $this->receipt = new Receipt();
     }
 
     public function showEstates(Request $request){
@@ -34,6 +38,7 @@ class EsateController extends Controller
                     'address'=>'required',
                     'state'=>'required',
                     'city'=>'required',
+                    'referenceCode'=>'required',
                     'amenities'=>'required|array',
                     'amenities.*'=>'required'
                 ],[
@@ -41,10 +46,17 @@ class EsateController extends Controller
                     "address.required"=>"Where is this estate located?",
                     "state.required"=>"In which state is it located?",
                     "city.required"=>"Enter city name",
+                    "referenceCode.required"=>"Enter a unique reference code",
                     "amenities.required"=>"At least one estate amenity is required",
                     "amenities.*"=>"At least one estate amenity is required",
                     "amenities.array"=>"At least one estate amenity is required",
                 ]);
+                $code = Estate::getEstateByRefCode($request->referenceCode);
+                if(!empty($code)){
+                    session()->flash("error", "Whoops! This estate reference code is already in use.");
+                    return back();
+                }
+
                 $estate = $this->estate->addNewEstate($request);
                 if(empty($estate)){
                     session()->flash("error", "Whoops! Something went wrong.");
@@ -64,6 +76,23 @@ class EsateController extends Controller
 
         }
 
+    }
+
+    public function showEstateView($slug){
+        $estate = $this->estate->getEstateBySlug($slug);
+        if(!empty($estate)){
+            //get IDs of properties in this estate
+            $propertyIds = $this->property->getPropertiesByEstateId($estate->e_id)->pluck('id')->toArray();
+            $customerIds = $this->property->getPropertiesByEstateId($estate->e_id)->pluck('occupied_by')->toArray();
+            return dd(array_unique($customerIds));
+            return view('estate.view',[
+                'record'=>$estate,
+                'receipts'=>$this->receipt->getReceiptsByPropertyIds($propertyIds),
+                ]);
+        }else{
+            session()->flash("error", "Whoops! No record found.");
+            return back();
+        }
     }
 
 

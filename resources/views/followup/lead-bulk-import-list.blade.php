@@ -1,7 +1,10 @@
 
 @extends('layouts.master-layout')
+@section('title')
+    Manage Bulk Import
+@endsection
 @section('current-page')
-    Manage Bulk  Leads
+    Manage Bulk  Import
 @endsection
 @section('extra-styles')
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />

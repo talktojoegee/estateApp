@@ -1,5 +1,10 @@
 
 @extends('layouts.master-layout')
+
+@section('title')
+    Manage Estates
+@endsection
+
 @section('current-page')
     Manage Estates
 @endsection
@@ -49,7 +54,7 @@
                                     <div class="row mb-1">
                                         <div class="col">
                                             <p class="mb-1">Estates</p>
-                                            <h5 class="mb-0 number-font">{{ number_format( $estates->count() ) }}</h5>
+                                            <h5 class="mb-0 text-info number-font">{{ number_format( $estates->count() ) }}</h5>
                                         </div>
                                         <div class="col-auto mb-0">
                                             <div class="dash-icon text-secondary1">
@@ -68,7 +73,7 @@
                                     <div class="row mb-1" >
                                         <div class="col" >
                                             <p class="mb-1">Properties</p>
-                                            <h5 class="mb-0 number-font">{{number_format(67)}}</h5>
+                                            <h5 class="mb-0 text-info number-font">{{number_format(67)}}</h5>
                                         </div>
                                         <div class="col-auto mb-0" >
                                             <div class="dash-icon text-orange" >
@@ -98,7 +103,6 @@
                                             <tr>
                                                 <th class="">#</th>
                                                 <th class="wd-15p">Date</th>
-                                                <th class="wd-15p">Added By</th>
                                                 <th class="wd-15p">Name</th>
                                                 <th class="wd-15p">State</th>
                                                 <th class="wd-15p">City</th>
@@ -111,8 +115,7 @@
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{date('d M, Y', strtotime($estate->created_at))}}</td>
-                                                    <td>{{$estate->getAddedBy->title ?? '' }} {{$estate->getAddedBy->first_name ?? '' }} {{$estate->getAddedBy->last_name ?? '' }} {{$estate->getAddedBy->other_names ?? '' }}</td>
-                                                    <td><a href="">{{ $estate->e_name ?? ''  }}</a> </td>
+                                                    <td><a href="{{route('show-estate-view', $estate->e_slug)}}">{{ $estate->e_name ?? ''  }}</a> </td>
                                                     <td>{{$estate->getState->name ?? '' }}</td>
                                                     <td>{{$estate->e_city ?? ''}}</td>
                                                     <td>
@@ -122,7 +125,8 @@
                                                         <div class="btn-group">
                                                             <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                                             <div class="dropdown-menu">
-                                                                <a class="dropdown-item" href="#" > <i class="bx bxs-book-open"></i> View</a>
+                                                                <a class="dropdown-item" href="{{route('show-estate-view', $estate->e_slug)}}" > <i class="bx bxs-book-open text-info"></i> View</a>
+                                                                <a class="dropdown-item" href="#" > <i class="bx bx-pencil text-warning"></i> Edit</a>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -173,6 +177,11 @@
                                 <label for="">City <span class="text-danger">*</span></label> <br>
                                 <input type="text" name="city" placeholder="City" class="form-control">
                                 @error('city') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                            <div class="form-group mt-3 col-md-6">
+                                <label for="">Reference Code <span class="text-danger">*</span></label> <br>
+                                <input type="text" name="referenceCode" placeholder="Enter a unique Reference Code. Example RAY for Raylight" class="form-control">
+                                @error('referenceCode') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                         </div>
                         <div class="row mb-3">

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -47,6 +48,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function getUsersWallpaper(){
+        return $this->belongsTo(Wallpaper::class, 'wallpaper');
+    }
     public function getUserCountry(){
         return $this->belongsTo(Country::class, 'country_id');
     }
@@ -330,6 +334,19 @@ class User extends Authenticatable
 
     public function getToken($token){
         return User::select('api_token')->where('api_token', $token)->first();
+    }
+
+    public function getTopSellingUsers($start, $end, $counter){
+        return User::select('users.id', 'users.first_name','users.image',
+            'users.email','users.title','users.last_name','users.cellphone_no','users.slug',
+            DB::raw('COUNT(receipts.issued_by) as sales_count'))
+            ->leftJoin('receipts', 'users.id', '=', 'receipts.issued_by')
+            ->whereBetween('receipts.payment_date', [$start, $end])
+            ->groupBy('users.id', 'users.first_name')
+            ->orderBy('sales_count', 'desc')
+            ->take($counter)
+            ->get();
+
     }
 
 /*

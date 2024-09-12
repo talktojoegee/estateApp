@@ -41,9 +41,9 @@ Route::get("/test-report", [App\Http\Controllers\Portal\ReportsController::class
 
 Route::group(['middleware'=>'auth'], function(){
     Route::get('/dashboard', [App\Http\Controllers\Portal\DashboardController::class, 'showDashboard'])->name('dashboard');
-    Route::get('/sections', [App\Http\Controllers\Portal\BranchController::class, 'showChurchBranches'])->name('church-branches');
+    Route::get('/departments', [App\Http\Controllers\Portal\BranchController::class, 'showChurchBranches'])->name('church-branches');
     Route::post('/assign-section-head', [App\Http\Controllers\Portal\BranchController::class, 'assignSectionHead'])->name('assign-section-head');
-    Route::get('/sections/{slug}', [App\Http\Controllers\Portal\BranchController::class, 'showChurchBranchDetails'])->name('church-branch-details');
+    Route::get('/department/{slug}', [App\Http\Controllers\Portal\BranchController::class, 'showChurchBranchDetails'])->name('church-branch-details');
 });
 
 Route::get('/attendance-medication-chart', [App\Http\Controllers\Portal\DashboardController::class, 'getAttendanceMedicationChart'])->name('attendance-medication-chart');
@@ -160,7 +160,7 @@ Route::group(['prefix'=>'/financials', 'middleware'=>'auth'],function(){
 
 });
 
-Route::prefix('/follow-up')->group(function(){
+Route::prefix('/sales')->group(function(){
     Route::get('/dashboard', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'marketing'])->name('marketing-dashboard');
     Route::get('/dashboard-filter', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'filterSalesRevenueReportDashboard'])->name('marketing-dashboard-filter');
     Route::get('/leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showLeads'])->name('leads');
@@ -262,6 +262,7 @@ Route::group(['prefix'=>'/reports', 'middleware'=>'auth'],function(){
     Route::get('/filter-practitioner-report', [App\Http\Controllers\Portal\ReportsController::class, 'filterPractitionerReport'])->name('filter-practitioner-report');
     Route::get('/clients', [App\Http\Controllers\Portal\ReportsController::class, 'showClientReport'])->name('client-report');
     Route::get('/followup-dashboard-chart', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showFollowupDashboardStatistics'])->name('followup-dashboard-chart');
+    //Route::get('/followup-dashboard-chart-range', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showFollowupDashboardStatisticsRange'])->name('followup-dashboard-chart-range');
 
 });
 
@@ -290,7 +291,7 @@ Route::group(['prefix'=>'/website', 'middleware'=>'auth'], function(){
 
 //Radio License activities
 
-Route::group(['prefix'=>'/license', 'middleware'=>'auth'], function(){
+Route::group(['prefix'=>'/sales', 'middleware'=>'auth'], function(){
     Route::get('/workstations', [App\Http\Controllers\Portal\RadioController::class, 'showWorkstations'])->name('show-workstations');
     Route::get('/new-workstation', [App\Http\Controllers\Portal\RadioController::class, 'showCreateWorkstationForm'])->name('show-create-workstation');
     Route::post('/new-workstation', [App\Http\Controllers\Portal\RadioController::class, 'storeWorkstation']);
@@ -314,6 +315,13 @@ Route::group(['prefix'=>'/license', 'middleware'=>'auth'], function(){
     Route::match(['GET', 'POST', 'PUT'],'/invoice-service', [App\Http\Controllers\Portal\RadioController::class,'handleInvoiceService'])->name('invoice-service');
     Route::get('/receive-payment/{slug}', [App\Http\Controllers\Portal\RadioController::class, 'receivePayment'])->name('receive-payment');
     Route::post('/process-payment', [App\Http\Controllers\Portal\RadioController::class, 'processPayment'])->name('process-payment');
+
+    #Receipts
+    Route::get('/receipts/all', [App\Http\Controllers\Portal\RadioController::class, 'showManageReceipts'])->name('show-manage-receipts');
+    Route::get('/receipts/{slug}', [App\Http\Controllers\Portal\RadioController::class, 'showManageReceiptDetails'])->name('view-receipt');
+    Route::get('/receipt/approve/{ref}', [App\Http\Controllers\Portal\RadioController::class, 'approveReceipt'])->name('approve-receipt');
+    Route::get('/receipt/decline/{ref}', [App\Http\Controllers\Portal\RadioController::class, 'declineReceipt'])->name('decline-receipt');
+    Route::get('/receipt/send-receipt-as-email/{ref}', [App\Http\Controllers\Portal\RadioController::class, 'sendReceiptAsEmail'])->name('send-receipt-as-email');
 
     #Show application by status
     Route::get('/category/{type}', [App\Http\Controllers\Portal\RadioController::class, 'showApplicationCategory'])->name('show-application-status');
@@ -371,6 +379,7 @@ Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::post('/update-user-account', [App\Http\Controllers\UserController::class, 'updateUserProfile'])->name('update-user-account');
     Route::post('/delete-user', [App\Http\Controllers\UserController::class, 'deleteUser'])->name('delete-user');
     Route::post('/grant-permission', [App\Http\Controllers\UserController::class, 'grantPermission'])->name('grant-permission');
+    Route::post('/switch-wallpaper', [App\Http\Controllers\UserController::class, 'switchWallpaper'])->name('switch-wallpaper');
 });
 
 
@@ -442,8 +451,8 @@ Route::group(['prefix'=>'app', 'middleware'=>'auth'],function(){
 
         Route::get('/sms-settings', [App\Http\Controllers\Portal\SettingsController::class, 'showSMSSettingsForm'])->name('sms-settings');
         Route::post('/sms-settings', [App\Http\Controllers\Portal\SettingsController::class, 'appDefaultSmsSettings']);
-        Route::get('/workflow-settings', [App\Http\Controllers\Portal\SettingsController::class, 'showWorkflowSettingsForm'])->name('workflow-settings');
-        Route::post('/workflow-settings', [App\Http\Controllers\Portal\SettingsController::class, 'appDefaultSettings']);
+        Route::get('/accounting-settings', [App\Http\Controllers\Portal\SettingsController::class, 'showWorkflowSettingsForm'])->name('accounting-settings');
+        Route::post('/accounting-settings', [App\Http\Controllers\Portal\SettingsController::class, 'appDefaultSettings']);
 
 
         Route::get('/manage-roles', [App\Http\Controllers\Portal\SettingsController::class, 'manageRoles'])->name('manage-roles');
@@ -477,6 +486,7 @@ Route::group(['domain'=>'{account}.'.env('APP_URL')],function(){
 
 Route::group(['prefix'=>'estates', 'middleware'=>'auth'],function(){
    Route::match(['GET', 'POST'], '/', [App\Http\Controllers\Portal\EsateController::class, 'showEstates'])->name('estates');
+   Route::match(['GET'], '/view/{slug}', [App\Http\Controllers\Portal\EsateController::class, 'showEstateView'])->name('show-estate-view');
 });
 
 Route::group(['prefix'=>'property','middleware'=>'auth'],function(){
@@ -485,6 +495,17 @@ Route::group(['prefix'=>'property','middleware'=>'auth'],function(){
    Route::get('/manage/{slug}', [App\Http\Controllers\Portal\PropertyController::class, 'showPropertyDetails'])->name('show-property-details');
     Route::post('/property/delete/image', [App\Http\Controllers\Portal\PropertyController::class, 'deletePropertyImage'])->name('delete-property-image');
     Route::post('/update-property-details', [App\Http\Controllers\Portal\PropertyController::class, 'updatePropertyDetails'])->name('update-property-details');
+    Route::match(['GET', 'POST'],'/import/properties', [App\Http\Controllers\Portal\PropertyController::class, 'showBulkPropertyImportForm'])->name('show-bulk-property-import-form');
+    Route::match(['GET'],'/show/import/properties', [App\Http\Controllers\Portal\PropertyController::class, 'manageImportedProperties'])->name('show-imported-properties');
+    Route::match(['GET'],'/show/import/properties/{batchCode}', [App\Http\Controllers\Portal\PropertyController::class, 'showImportedPropertiesDetailList'])->name('show-imported-properties-details');
+    Route::match(['POST'],'update-imported-properties', [App\Http\Controllers\Portal\PropertyController::class, 'updateImportedProperties'])->name('update-imported-properties');
+    Route::match(['POST', 'GET'],'property-allocation', [App\Http\Controllers\Portal\PropertyController::class, 'showPropertyAllocation'])->name('property-allocation');
+    Route::match(['POST'],'property-list', [App\Http\Controllers\Portal\PropertyController::class, 'showProperties'])->name('property-list');
+
+
+    Route::get('/delete-property-entry/{recordId}', [App\Http\Controllers\Portal\PropertyController::class, 'deletePropertyRecord'])->name('delete-property-record');
+    Route::get('/discard-property-record/{batchCode}', [App\Http\Controllers\Portal\PropertyController::class, 'discardPropertyRecord'])->name('discard-property-record');
+    Route::get('/post-property-record/{batchCode}', [App\Http\Controllers\Portal\PropertyController::class, 'postPropertyRecord'])->name('post-property-record');
 });
 
 //Route::group(['prefix'=>'super-channel', 'middleware'=>'is_admin'],function(){

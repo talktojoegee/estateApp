@@ -1,7 +1,11 @@
 
 @extends('layouts.master-layout')
+
+@section('title')
+    Customers
+@endsection
 @section('current-page')
-    Leads
+    Customers
 @endsection
 @section('extra-styles')
     <link rel="stylesheet" href="/css/nprogress.css">
@@ -48,11 +52,11 @@
                                     Bulk Action <i class="bx bx-upload"></i>
                                 </a>
                                 <div class="dropdown-menu" style="">
-                                    <a class="dropdown-item" href="{{ route("bulk-import-leads") }}">Bulk Import Leads</a>
+                                    <a class="dropdown-item" href="{{ route("bulk-import-leads") }}">Bulk Import Customers</a>
                                     <a class="dropdown-item" href="{{ route('manage-bulk-lead-list') }}">Manage List</a>
                                 </div>
                             </div>
-                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#lead" class="btn btn-primary ml-2"> Create Lead <i class="bx bxs-briefcase-alt-2"></i> </a>
+                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#lead" class="btn btn-primary ml-2"> Create Customer <i class="bx bxs-briefcase-alt-2"></i> </a>
                         </div>
 
                     </div>
@@ -68,8 +72,9 @@
                                             <th class="">#</th>
                                             <th class="wd-15p">Date</th>
                                             <th class="wd-15p">Name</th>
-                                            <th class="wd-15p">Email</th>
                                             <th class="wd-15p">Phone No.</th>
+                                            <th class="wd-15p"># of Properties</th>
+                                            <th class="wd-15p" style="text-align: right;">Valuation({{env('APP_CURRENCY')}})</th>
                                             <th class="wd-15p">Source</th>
                                             <th class="wd-15p">Action</th>
                                         </tr>
@@ -80,11 +85,12 @@
                                             <tr>
                                                 <td>{{$index++}}</td>
                                                 <td>{{date('M d, Y', strtotime($lead->entry_date))}}</td>
-                                                <td>{{$lead->first_name ?? '' }} {{$lead->last_name ?? '' }}
+                                                <td><a href="{{route('lead-profile', $lead->slug)}}">{{$lead->first_name ?? '' }} {{$lead->last_name ?? '' }}</a>
                                                     <sup class="badge rounded-pill bg-success">{{$lead->getStatus->status ?? '' }}</sup>
                                                 </td>
-                                                <td>{{$lead->email ?? '' }}</td>
                                                 <td>{{$lead->phone ?? '' }}</td>
+                                                <td>{{ number_format($lead->getNumberOfProperties($lead->id) ?? 0) ?? '' }}</td>
+                                                <td style="text-align: right;">{{ number_format($lead->getCustomerValuation($lead->id) ?? 0,2) }}</td>
                                                 <td> <span class="badge rounded-pill bg-info"> {{$lead->getSource->source ?? '' }} </span> </td>
                                                 <td>
                                                     <div class="btn-group">
@@ -110,7 +116,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h4 class="modal-title" id="myModalLabel2">Create Lead</h4>
+                    <h4 class="modal-title" id="myModalLabel2">Create Customer</h4>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 

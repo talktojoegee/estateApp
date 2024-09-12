@@ -96,7 +96,7 @@ class CloudStorageController extends Controller
     }
     public function renameAttachment(Request $request){
         $this->validate($request,[
-            'directory'=>'required',
+            //'directory'=>'required',
             'key'=>'required',
             'newName'=>'required'
         ],[

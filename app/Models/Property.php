@@ -6,49 +6,73 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Property extends Model
 {
     use HasFactory;
-
-    /*
-     *
-
-occupied_by
-frequency
-currency_id
-
-sold_to
-date_sold
-location_id
-address
-built_on
-
-status
-bedrooms
-living_rooms
-kitchen
-borehole
-pool
-security
-car_park
-garage
-laundry
-store_room
-balcony
-elevator
-play_ground
-lounge
-guest_toilet
-anteroom
-fitted_wardrobe
-bq
-penthouse
-gate_house
-gen_house
-slug
-     */
+    protected $fillable =
+        [
+            'master_id',
+            'entry_date',
+            'estate_id',
+            'added_by',
+            'occupied_by',
+            'property_title',
+            'property_name',
+            'house_no',
+            'shop_no',
+            'plot_no',
+            'no_of_office_rooms',
+            'office_ensuite_toilet_bathroom',
+            'no_of_shops',
+            'building_type',
+            'total_no_bedrooms',
+            'with_bq',
+            'no_of_floors',
+            'no_of_toilets',
+            'no_of_car_parking',
+            'no_of_units',
+            'frequency',
+            'currency_id',
+            'price',
+            'payment_status',
+            'amount_paid',
+            'property_condition',
+            'construction_stage',
+            'land_size',
+            'gl_id',
+            'sold_to',
+            'date_sold',
+            'location_id',
+            'address',
+            'built_on',
+            'description',
+            'status',
+            'bedrooms',
+            'living_rooms',
+            'kitchen',
+            'borehole',
+            'pool',
+            'security',
+            'car_park',
+            'garage',
+            'laundry',
+            'store_room',
+            'balcony',
+            'elevator',
+            'play_ground',
+            'lounge',
+            'guest_toilet',
+            'anteroom',
+            'fitted_wardrobe',
+            'bq',
+            'penthouse',
+            'gate_house',
+            'gen_house',
+            'slug',
+        ];
 
     public function addProperty(Request $request){
         $property = new Property();
@@ -210,6 +234,10 @@ slug
         return $this->belongsTo(User::class, 'occupied_by');
     }
 
+    public function getSoldTo(){
+        return $this->belongsTo(Lead::class, 'sold_to');
+    }
+
     public function getPropertyGalleryImages(){
         return $this->hasMany(PropertyGallery::class, 'property_id');
     }
@@ -277,8 +305,48 @@ slug
     public function getAllTenantPropertiesByLocationIds($locationIds){
         return Property::whereIn('location_id', $locationIds)->orderBy('id', 'DESC')->get();
     }
+    public function getPropertyList($propertyIds){
+        return Property::whereIn('id', $propertyIds)->orderBy('id', 'DESC')->get();
+    }
+
+   public function getPropertiesByEstateId($estateId){
+        return Property::where('estate_id', $estateId)->where('status',0)->orderBy('id', 'DESC')->get();
+    }
 
     public function getAllProperties($status){
         return Property::whereIn('status', $status)->orderBy('id', 'DESC')->get();
+    }
+
+    public function getTopSellingLocationsWithin($start, $end, $counter){
+        return Property::select('estate_id',
+            DB::raw('SUM( total) as amount'),
+            DB::raw('COUNT( estate_id) as estate_count'),
+            'estates.e_name', 'estates.e_slug'
+        )
+            ->join('receipts', 'properties.id', '=', 'receipts.property_id')
+            ->join('estates', 'estates.e_id', '=', 'properties.estate_id')
+            ->whereBetween('receipts.payment_date', [$start, $end])
+            ->groupBy('estate_id')
+            ->orderBy('estate_count', 'desc')
+            ->take($counter)
+            ->get();
+    }
+    public function getUnderperformingLocationsWithin($start, $end, $counter){
+        return Estate::select(
+            'estates.e_id',
+            'estates.e_name',
+            'estates.e_slug',
+            DB::raw('COUNT(properties.id) as estate_count'),
+            DB::raw('IFNULL(SUM(receipts.total), 0) as amount')
+        )
+            ->leftJoin('properties', 'estates.e_id', '=', 'properties.estate_id')
+            ->leftJoin('receipts', function($join) use ($start, $end) {
+                $join->on('properties.id', '=', 'receipts.property_id')
+                    ->whereBetween('receipts.payment_date', [$start, $end]);  // Filter receipts by date range
+            })
+            ->groupBy('estates.e_id', 'estates.e_name', 'estates.e_slug')
+            ->orderBy('amount', 'asc')  // Order by total sales amount (underperforming)
+            ->take($counter)
+            ->get();
     }
 }

@@ -41,7 +41,7 @@
                     <div class="col-xl-4 col-lg-6 col-sm-6 pe-0 ps-0 border-end">
                         <div class="card-body text-center">
                             <h6 class="mb-0 text-warning">Available</h6>
-                            <h5 class="mb-1 mt-2 number-font">
+                            <h5 class="mb-1 text-warning mt-2 number-font">
                                 <span class="counter">{{ number_format($properties->where('status',0)->count() ) }}</span>
                             </h5>
                             <p class="mb-0 text-muted">
@@ -54,7 +54,7 @@
                     <div class="col-xl-4 col-lg-6 col-sm-6 pe-0 ps-0 border-end">
                         <div class="card-body text-center">
                             <h6 class="mb-0 text-primary">Rented</h6>
-                            <h5 class="mb-1 mt-2 number-font">
+                            <h5 class="mb-1 text-primary mt-2 number-font">
                                 <span class="counter">{{ number_format($properties->where('status',1)->count() ) }}</span>
                             </h5>
                             <p class="mb-0 text-muted">
@@ -67,7 +67,7 @@
                     <div class="col-xl-4 col-lg-6 col-sm-6 pe-0 ps-0">
                         <div class="card-body text-center">
                             <h6 class="mb-0 text-success">Sold</h6>
-                            <h5 class="mb-1 mt-2 number-font">
+                            <h5 class="mb-1 text-success mt-2 number-font">
                                 <span class="counter">{{ number_format($properties->where('status',2)->count() ) }}</span>
                             </h5>
                             <p class="mb-0 text-muted">
@@ -92,10 +92,11 @@
                             <tr>
                                 <th class="">#</th>
                                 <th class="wd-15p">Date</th>
+                                <th class="wd-15p">Estate</th>
+                                <th class="wd-15p">House No.</th>
                                 <th class="wd-15p">Property Name</th>
                                 <th class="wd-15p" style="text-align: right;">Price(₦)</th>
                                 <th class="wd-15p">Building Type</th>
-                                <th class="wd-15p">Stage</th>
                                 <th class="wd-15p">Status</th>
                                 <th class="wd-15p">Action</th>
                             </tr>
@@ -105,21 +106,22 @@
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{date('d M, Y', strtotime($property->created_at))}}</td>
+                                    <td>{{$property->getEstate->e_name ?? '' }}</td>
+                                    <td>{{ $property->house_no ?? '' }}</td>
                                     <td>
                                         <a href="{{route('show-property-details', ['slug'=>$property->slug])}}">
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 align-self-center me-3">
-                                                    <img src="/assets/drive/property/{{$property->getGalleryFeaturedImageByPropertyId($property->id)->attachment ?? '' }}" alt="{{$property->property_name ?? '' }}" class="rounded-circle avatar-xs">
+                                                    <img src="/assets/drive/property/{{$property->getGalleryFeaturedImageByPropertyId($property->id)->attachment ?? 'placeholder.png' }}" alt="{{$property->property_name ?? '' }}" class="rounded-circle avatar-xs">
                                                 </div>
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <h6 class="text-truncate font-size-14 mb-1">{{ substr($property->property_name,0,35).'...' ?? ''  }}</h6>
+                                                    <h6 class="text-truncate text-info font-size-14 mb-1">{{ substr($property->property_name,0,35).'...' ?? ''  }}</h6>
                                                 </div>
                                             </div>
                                         </a>
                                     </td>
                                     <td class="text-right" style="text-align: right;">{{ number_format($property->price,2)  }}</td>
                                     <td>{{$property->getBuildingType->bt_name ?? '' }}</td>
-                                    <td>{{$property->getConstructionStage->cs_name ?? '' }}</td>
                                     <td>
                                         @switch($property->status)
                                             @case(0)

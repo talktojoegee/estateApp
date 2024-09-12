@@ -13,4 +13,9 @@ class BqOption extends Model
     public static function getBQOptions(){
         return BqOption::all();
     }
+
+
+    public static function getBQOptionByName($name){
+        return BqOption::where('bqo_name', $name)->first();
+    }
 }

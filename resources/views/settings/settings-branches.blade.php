@@ -1,6 +1,6 @@
 @extends('layouts.master-layout')
 @section('current-page')
-    Sections
+    Departments
 @endsection
 @section('extra-styles')
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
@@ -47,8 +47,8 @@
                 </div>
                 <div class="col-md-9 mt-4">
                     <div class="d-flex justify-content-between">
-                        <div class="h6 text-left text-uppercase text-primary">Manage Sections</div>
-                        <button class="btn btn-primary mr-3" data-bs-toggle="modal" data-bs-target="#addBranchModal"> <i class="bx bx-plus-circle"></i> Add Section</button>
+                        <div class="h6 text-left text-uppercase text-primary">Manage Departments</div>
+                        <button class="btn btn-primary mr-3" data-bs-toggle="modal" data-bs-target="#addBranchModal"> <i class="bx bx-plus-circle"></i> Add Department</button>
                     </div>
                     <div class="container pb-5">
                         <div class="table-responsive mt-3">
@@ -81,7 +81,7 @@
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header bg-danger text-white" style="border-radius: 0px;">
-                                                            <h6 class="modal-title text-uppercase" id="myModalLabel2_{{$branch->cb_id}}">Edit Section</h6>
+                                                            <h6 class="modal-title text-uppercase" id="myModalLabel2_{{$branch->cb_id}}">Edit Department</h6>
                                                             <button type="button"  class="btn-close text-white" style="margin: 0px; padding: 0px;" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
 
@@ -89,7 +89,7 @@
                                                             <form autocomplete="off" autcomplete="off" action="{{route('edit-branch-settings')}}" method="post" data-parsley-validate="">
                                                                 @csrf
                                                                 <div class="form-group mt-3">
-                                                                    <label for="">Section Name <span class="text-danger">*</span></label>
+                                                                    <label for="">Department Name <span class="text-danger">*</span></label>
                                                                     <input type="text" value="{{$branch->cb_name ?? '' }}" name="branchName" required placeholder="Section Name" data-parsley-required-message="What will you call this section?" class="form-control">
                                                                     @error('branchName') <i class="text-danger">{{$message}}</i>@enderror
                                                                 </div>
@@ -122,7 +122,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h6 class="modal-title text-uppercase" id="myModalLabel2">Add New Section</h6>
+                    <h6 class="modal-title text-uppercase" id="myModalLabel2">Add New Department</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -131,7 +131,7 @@
                         @csrf
 
                         <div class="form-group mt-3">
-                            <label for="">Section Name <span class="text-danger">*</span></label>
+                            <label for="">Department Name <span class="text-danger">*</span></label>
                             <input type="text" name="branchName" required placeholder="Section Name" data-parsley-required-message="What will you call this section?" class="form-control">
                             @error('branchName') <i class="text-danger">{{$message}}</i>@enderror
                         </div>

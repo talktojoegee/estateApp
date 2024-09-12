@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceMaster extends Model
 {
@@ -56,6 +57,41 @@ class InvoiceMaster extends Model
         return $invoice;
     }
 
+    public function generateInvoice($propertyId, $customerId, $invoiceNo,
+                                    $invoiceType,$issueDate,$dueDate,$subTotal,
+                                    $total, $amount_paid,$status, $service, $quantity, $amount){
+        $invoice = new InvoiceMaster();
+        $invoice->property_id = $propertyId;
+        $invoice->customer_id = $customerId;
+        $invoice->invoice_no = $invoiceNo;
+        $invoice->ref_no = substr(sha1((time() + $invoiceNo)),32,40);
+        $invoice->invoice_type = $invoiceType;
+        $invoice->issue_date = $issueDate;
+        $invoice->due_date = $dueDate;
+        $invoice->sub_total = $subTotal ?? 0;
+        $invoice->total = $total ?? 0;
+        $invoice->amount_paid = $amount_paid ?? 0;
+        $invoice->generated_by = Auth::user()->id;
+        $invoice->slug = substr(sha1( (time() + $invoiceNo) ), 21,40);
+        $invoice->status = $status;
+        $invoice->save();
+        #Recent invoice ID
+        $invoiceId = $invoice->id;
+        $this->generateInvoiceItems($service, $quantity, $amount, $invoiceId);
+        return $invoice;
+    }
+    public function generateInvoiceItems($service, $quantity = 1, $amount, $invoiceId){
+        $item = new InvoiceDetail();
+        $item->invoice_id = $invoiceId;
+        $item->item_id = 1; //no in use
+        $item->description = $service;
+        $item->quantity = $quantity;
+        $item->unit_cost = $amount;
+        $item->amount = $quantity * $amount;
+        $item->save();
+
+    }
+
 
     public function newCustomerInvoice(Request $request, $invoice_no){
         $invoice = new InvoiceMaster();
@@ -76,6 +112,8 @@ class InvoiceMaster extends Model
         $this->registerInvoiceItems($request, $invoiceId);
         return $invoice;
     }
+
+
     public function registerInvoiceItems(Request $request, $invoiceId){
         for($i = 0; $i<count($request->service); $i++){
             $item = new InvoiceDetail();
@@ -130,5 +168,19 @@ class InvoiceMaster extends Model
         $invoice->status = $invoice->amount_paid >= $invoice->total  ? 1 : 2; //0=pending,1=fully-paid,2=partly-paid, 3=declined
         $invoice->save();
         return $invoice;
+    }
+
+
+    public function getTotalInvoiceByDateRange($startDate, $endDate){
+        return InvoiceMaster::select(
+            DB::raw("DATE_FORMAT(issue_date, '%m-%Y') monthYear"),
+            DB::raw("YEAR(issue_date) year, MONTH(issue_date) month"),
+            DB::raw("SUM(sub_total) total"),
+            'issue_date',
+        )->whereBetween('issue_date', [$startDate, $endDate])
+            //->where('a_branch_id', Auth::user()->branch)
+            ->orderBy('month', 'ASC')
+            ->groupby('year','month')
+            ->get();
     }
 }

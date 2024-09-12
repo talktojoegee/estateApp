@@ -9,6 +9,7 @@
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{asset('assets/css/toastify.min.css')}}">
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -134,6 +135,12 @@
                                 <span class="d-none d-sm-block">Settings</span>
                             </a>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" data-bs-toggle="tab" href="#wallpaper" role="tab" aria-selected="false" tabindex="-1">
+                                <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                <span class="d-none d-sm-block">Wallpapers</span>
+                            </a>
+                        </li>
                         @endif
                         <li class="nav-item" role="presentation">
                             <a class="nav-link active" data-bs-toggle="tab" href="#log" role="tab" aria-selected="false" tabindex="-1">
@@ -247,13 +254,13 @@
                                                         @error('maritalStatus') <i class="text-danger">{{$message}}</i>@enderror
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-sm-12 col-lg-6">
+                                                <!-- <div class="col-md-6 col-sm-12 col-lg-6">
                                                     <div class="form-check form-switch mt-3">
                                                         <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="type"
-                                                            {{$user->type == 2 ? 'checked' : null  }}>
+                                                            {$user->type == 2 ? 'checked' : null  }}>
                                                         <label class="form-check-label" for="flexSwitchCheckChecked">Is this person a director?</label>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 <div class="col-md-6 col-sm-12 col-lg-6">
                                                     <div class="form-check form-switch mt-3">
                                                         <input class="form-check-input" type="checkbox" id="genderSwitchCheck" name="gender" {{$user->gender == 1 ? 'checked' : null  }}>
@@ -270,7 +277,7 @@
                                                 <div class="col-md-12 col-sm-12 col-lg-12">
                                                     <div class="form-group d-flex justify-content-center mt-3">
                                                         <div class="btn-group">
-                                                            <button type="submit" class="btn btn-primary  waves-effect waves-light">Save changes <i class="bx bxs-check-circle"></i> </button>
+                                                            <button type="submit" class="btn btn-primary  waves-effect waves-light" >Save changes <i class="bx bxs-check-circle"></i> </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -309,6 +316,34 @@
 
 
                         </div>
+                            <div class="tab-pane" id="wallpaper" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-md-12 col-lg-12 d-flex justify-content-end">
+                                        <div class="btn-group">
+                                            <button class="btn btn-primary" id="saveWallpaperChanges" type="button">Save changes <i class="bx bx-check-double"></i> </button>
+                                            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#wallpaperUpload">Upload Wallpaper <i class="bx bx-upload"></i> </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="height: 500px; overflow-y: scroll;" id="theme-collection">
+                                    @foreach ($wallpapers as $theme)
+                                        <div class="col-lg-4 col-sm-6">
+                                            <div class="form-check form-radio-outline form-radio-primary mb-3" >
+                                                <input class="form-check-input" type="radio" name="backgroundTheme" value="{{$theme->id}}" data-background="{{$theme->filename}}" {{ $theme->id == Auth::user()->wallpaper ? "checked" : null }}>
+                                                <label class="form-check-label" for="formRadio1">
+                                                    {{$theme->wallpaper_name ?? ''}} @if($theme->id == Auth::user()->wallpaper) <span class="badge rounded-pill bg-danger" style="background: #FF0000 !important;">Active</span> @endif
+                                                </label>
+                                            </div>
+
+                                            <div class="thumbnail">
+                                                <div class="thumb" style="cursor: pointer;">
+                                                    <img src="/assets/drive/wallpapers/{{$theme->filename ?? ''}}" alt="{{$theme->wallpaper_name ?? ''}}" class="img-fluid img-thumbnail theme-wrapper" data-themeid="{{$theme->id}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
                         @endif
                         <div class="tab-pane active" id="log" role="tabpanel" >
                             <p>Here's a record of @if(Auth::user()->id != $user->id )  <code>{{$user->title ?? '' }} {{$user->first_name ?? '' }} {{$user->last_name ?? '' }} {{$user->other_names ?? '' }}'s</code> @else <code>your</code> @endif activities across board.</p>
@@ -372,6 +407,45 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="wallpaperUpload" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="card">
+                                <div class="card-block" style="background: #EEF2F4;">
+                                    <h6 class="sub-title">Use Your Own Theme</h6>
+                                    <form id="customeThemeForm" data-parsley-validate>
+                                        <div class="form-group">
+                                            <label for="">Background Image</label> <br>
+                                            <img src="/assets/drive/wallpapers/{{Auth::user()->getUsersWallpaper->filename ?? ''}}" class="mb-2" height="48" width="48" alt="">
+                                            <input type="file" required name="custom_background_image" id="custom_background_image" class="form-control-file">
+                                        </div>
+                                        <div class="checkbox-fade fade-in-primary">
+                                            <label>
+                                                <input type="checkbox"  name="custom_color_scheme" id="custom_color_scheme">
+                                                <span class="cr">
+                                                        <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                                </span>
+                                                <span>Dark Color Scheme</span>
+                                            </label>
+                                        </div>
+                                        <p><strong class="text-danger">Note:</strong> The default color scheme is light.</p>
+                                        <div class="btn-group d-flex justify-content-center">
+                                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="bx bx-stop text-white mr-2"></i> Close</button>
+                                            <button type="submit" class="btn btn-primary btn-sm waves-light" id="customBackgroundBtn"> <i class="bx bx-check-circle text-white mr-2"></i> Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('extra-scripts')
@@ -380,7 +454,13 @@
     <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
     <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
     <script src="/assets/js/pages/datatables.init.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script type="text/javascript" src="{{asset('/assets/js/notify.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/assets/js/toastify.min.js')}}"></script>
     <script>
+        let theme = null;
+        let scheme = null;
+        let themeId = null;
         $(document).ready(function(){
             let currentImagePath = "{{url('storage/'.$user->image)}}";
             $('#clientAssignmentWrapper').hide();
@@ -399,6 +479,41 @@
                     reader.readAsDataURL(file);
                 }
             });
+
+
+            $('input[name="backgroundTheme"]').click(function(){
+                if($(this).prop("checked") == true){
+                    theme = $(this).data('background');
+                    scheme = $(this).data('scheme');
+                    themeId = $(this).val();
+                    let location = "/assets/drive/wallpapers/"+theme;
+                    $('#layout-wrapper').css("background","url(" + location + ")");
+                    $('#layout-wrapper').css("background-size","cover");
+                    $('#layout-wrapper').css("background-repeat","no-repeat");
+                    //$('.pcoded-mtext').css("color",scheme);
+                    //$('.pcoded-navigatio-lavel').css("color",scheme);
+                }
+
+            });
+
+            $(document).on('click', '#saveWallpaperChanges', function(e){
+                e.preventDefault();
+                if(theme == null){
+                    $.notify("Whoops!! You haven't chosen a theme.", "error");
+                }else{
+                    $('#saveWallpaperChanges').text("Processing...");
+                    axios.post("{{route('switch-wallpaper')}}",{wallpaper:themeId})
+                        .then(response=>{
+                            //$('#themeModal').modal('hide');
+                            $.notify(response.data.message, "success");
+                            $('#saveThemeChangesBtn').text("Save changes");
+                        })
+                        .catch(error=>{
+                            $.notify("Whoops! Something went wrong. Try again", "error");
+                        });
+                }
+            });
+
         });
     </script>
 @endsection

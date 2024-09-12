@@ -23,7 +23,7 @@
                             </label>
                             <select name="to"  class=" form-control memoTo" >
                                 <option disabled selected data-select2-id="4">-- Select receiver --</option>
-                                <option value="2">Branch</option>
+                                <option value="2">Department</option>
                                 <option value="4">Individual(s)</option>
                             </select>
                             @error('to') <i class="text-danger">{{ $message }}</i> @enderror

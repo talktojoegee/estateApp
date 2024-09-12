@@ -8,7 +8,11 @@
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
+    <style>
+        .bg-primary{
+            background: #01204D !important;
+        }
+    </style>
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -47,7 +51,7 @@
                                 </div>
                                 <div class="col-xxl-4 col-md-4 col-sm-4">
                                     <div class="card">
-                                        <div class="card-header bg-primary text-white">Select</div>
+                                        <div class="card-header bg-primary text-white" >Select</div>
                                         <div class="card-header m-4">
                                             <form action="{{route('marketing-dashboard-filter')}}" class="" method="get">
                                                 @csrf
@@ -61,16 +65,16 @@
                                                 </div>
                                                 <div class="form-group mt-3 dateInputs">
                                                     <label for="" class="text-success">From</label>
-                                                    <input type="date" class="form-control" name="from">
+                                                    <input type="date" class="form-control" name="from" id="from">
                                                     @error('from') <i class="text-danger">{{$message}}</i> @enderror
                                                 </div>
                                                 <div class="form-group mt-3 dateInputs">
                                                     <label for="" class="text-danger">To</label>
-                                                    <input type="date" class="form-control" name="to">
+                                                    <input type="date" class="form-control" name="to" id="to">
                                                     @error('to') <i class="text-danger">{{$message}}</i> @enderror
                                                 </div>
                                                 <div class="mt-3 form-group d-flex justify-content-center">
-                                                    <button class="btn btn-primary btn-sm">Submit <i class="bx bx-filter"></i> </button>
+                                                    <button class="btn btn-primary btn-sm" id="submit">Submit <i class="bx bx-filter"></i> </button>
                                                 </div>
                                             </form>
                                         </div>
@@ -78,15 +82,215 @@
                                 </div>
                                 <div class="col-xxl-8 col-md-8 col-sm-8">
                                     <div class="card">
-                                        <div class="card-header bg-primary text-white">Performance Chart</div>
+                                        <div class="card-header bg-primary text-white" >Invoice, Sales Performance Chart</div>
                                         <div class="card-body">
-                                            <p><strong>Note:</strong> Below you'll find a comparison chart. Indicating the total number of resources, quantity of SMS that was sent, the number of people that were engaged</p>
+                                            <p><strong>Note:</strong> Below you'll find a comparison chart. Plotting the total sum of invoice issued to customers against payment done.</p>
                                             <div id="attendanceMedication" class="apex-charts" dir="ltr"></div>
-                                            <div id="stacked-column-char" class="apex-charts" dir="ltr"></div>
+                                            <div class="table-responsive mt-3" id="invoiceSalesTable">
+                                                <table class="table table-bordered mb-0">
+                                                    <thead class="table-light" id="headers">
+                                                    <tr ></tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr class=" text-white" style="background: #0171C1 !important;" id="trInvoice"></tr>
+                                                    <tr class="text-white" style="background: #FE3A6A !important;" id="trSales"></tr>
+                                                    <tr class="text-white" style="background: #EBBC18 !important;" id="trLead"></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white" >Top 10 Selling Estates</div>
+                    <div class="card-body">
+                        <p>Showing top 10 selling estates @if($search == 0)<code>3 months ago.</code> Between <code>{{ date('d M, Y', strtotime("-90 days")) }}</code> to <code>{{ date('d M, Y', strtotime(now())) }}</code> @else
+                                <span><strong class="text-success">From:</strong> {{date('d M, Y', strtotime($from))}}</span>
+                                <span><strong class="text-danger">To:</strong> {{date('d M, Y', strtotime($to))}}</span>
+                            @endif</p>
+                        <div class="table-responsive">
+                            <table class="table align-middle table-nowrap mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th class="align-middle">S/No.</th>
+                                    <th class="align-middle">Name</th>
+                                    <th class="align-middle">Quantity</th>
+                                    <th class="align-middle" style="text-align: right;">Amount({{env('APP_CURRENCY')}})</th>
+                                    <th class="align-middle">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if(count($topSelling) > 0)
+                                @foreach($topSelling as $key => $record)
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td><a href="{{route('show-estate-view', $record->e_slug)}}" class="text-info fw-bold">{{$record->e_name ?? '' }}</a> </td>
+                                        <td>{{ number_format($record->estate_count ?? 0) }}</td>
+                                        <td style="text-align: right;">{{ number_format($record->amount ?? 0) }}</td>
+                                        <td>
+                                            <a href="{{route('show-estate-view', $record->e_slug)}}" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" >
+                                                View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                                @else
+
+                                    <tr>
+                                        <td colspan="5" class="text-center">No data found</td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-6">
+                <div class="card">
+                    <div class="card-header text-white" style="background: #FF0000 !important;" >10 Under-performing Estates in Terms of Sales</div>
+                    <div class="card-body">
+                        <p>Showing top 10 under-performing estates @if($search == 0)<code>3 months ago.</code> Between <code>{{ date('d M, Y', strtotime("-90 days")) }}</code> to <code>{{ date('d M, Y', strtotime(now())) }}</code> @else
+                                <span><strong class="text-success">From:</strong> {{date('d M, Y', strtotime($from))}}</span>
+                                <span><strong class="text-danger">To:</strong> {{date('d M, Y', strtotime($to))}}</span>
+                            @endif</p>
+                        <div class="table-responsive">
+                            <table class="table align-middle table-nowrap mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th class="align-middle">S/No.</th>
+                                    <th class="align-middle">Name</th>
+                                    <th class="align-middle">Quantity</th>
+                                    <th class="align-middle" style="text-align: right;">Amount({{env('APP_CURRENCY')}})</th>
+                                    <th class="align-middle">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if(count($underperforming) > 0)
+                                    @foreach($underperforming as $key => $under)
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td><a href="{{route('show-estate-view', $under->e_slug)}}" class="text-info fw-bold">{{$under->e_name ?? '' }}</a> </td>
+                                            <td>{{ number_format($under->estate_count ?? 0) }}</td>
+                                            <td style="text-align: right;">{{ number_format($under->amount ?? 0) }}</td>
+                                            <td>
+                                                <a href="{{route('show-estate-view', $under->e_slug)}}" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" >
+                                                    View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+                                @else
+
+                                    <tr>
+                                        <td colspan="5" class="text-center">No data found</td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white" >Properties Sold in the Last 30 Days</div>
+                    <div class="card-body">
+                        <p>Showing properties sold in the last <code>30 days.</code> Between <code>{{ date('d M, Y', strtotime("-30 days")) }}</code> to <code>{{ date('d M, Y', strtotime(now())) }}</code>
+                            </p>
+                        <div class="table-responsive">
+                            <table id="datatable" class="table align-middle table-nowrap mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th class="align-middle">S/No.</th>
+                                    <th class="align-middle">Ref. Code</th>
+                                    <th class="align-middle">Name</th>
+                                    <th class="align-middle">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if(count($last30Properties) > 0)
+                                    @foreach($last30Properties as $key => $prop)
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td><a href="{{route('show-property-details', $prop->slug)}}" class="text-info fw-bold">{{$prop->property_code ?? '' }}</a> </td>
+                                            <td><a href="{{route('show-property-details', $prop->slug)}}" class="text-info fw-bold">{{$prop->property_name ?? '' }}</a> </td>
+                                            <td>
+                                                <a href="{{route('show-property-details', $prop->slug)}}" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" >
+                                                    View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+                                @else
+
+                                    <tr>
+                                        <td colspan="5" class="text-center">No data found</td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white" >Top 10 employees with the Most Sales</div>
+                    <div class="card-body">
+                        <p>Showing top 10 employees with the most sales @if($search == 0)<code>3 months ago.</code> Between <code>{{ date('d M, Y', strtotime("-90 days")) }}</code> to <code>{{ date('d M, Y', strtotime(now())) }}</code> @else
+                                <span><strong class="text-success">From:</strong> {{date('d M, Y', strtotime($from))}}</span>
+                                <span><strong class="text-danger">To:</strong> {{date('d M, Y', strtotime($to))}}</span>
+                            @endif</p>
+                        <div class="table-responsive mt-3">
+                            <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+                                <thead>
+                                <tr>
+                                    <th class="">#</th>
+                                    <th class="wd-15p">Name</th>
+                                    <th class="wd-15p">Mobile No.</th>
+                                    <th class="wd-15p">Quantity</th>
+                                    <th class="wd-15p">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @php $index = 1; @endphp
+                                @foreach($users as $user)
+                                    <tr>
+                                        <td>{{$index++}}</td>
+                                        <td>
+                                            <img src="{{url('storage/'.$user->image)}}" style="width: 24px; height: 24px;" alt="{{$user->first_name ?? '' }} {{$user->last_name ?? '' }}" class="rounded-circle avatar-sm">
+                                            <a href="{{route('user-profile', $user->slug)}}">{{$user->title ?? '' }} {{$user->first_name ?? '' }} {{$user->last_name ?? '' }}</a> </td>
+                                        <td>{{$user->cellphone_no ?? '' }} </td>
+                                        <td>{{ number_format($user->sales_count ?? 0)  }} </td>
+
+                                        <td>
+                                            <div class="btn-group">
+                                                <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="{{route('user-profile', $user->slug)}}"> <i class="bx bxs-user"></i> View Profile</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,17 +323,18 @@
     <script>
         const incomeData = [0,0,0,0,0,0,0,0,0,0,0,0];
         const expenseData = [0,0,0,0,0,0,0,0,0,0,0,0];
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
         const smsData = [0,0,0,0,0,0,0,0,0,0,0,0];
-        const leadsData = [0,0,0,0,0,0,0,0,0,0,0,0];
-        const followupData = [0,0,0,0,0,0,0,0,0,0,0,0];
-        const attendanceData = [0,0,0,0,0,0,0,0,0,0,0,0];
+
         //const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+        const leadsData = [0,0,0,0,0,0,0,0,0,0,0,0];
+        const salesData = [0,0,0,0,0,0,0,0,0,0,0,0];
+        const invoiceData = [0,0,0,0,0,0,0,0,0,0,0,0];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
         const search = "{{$search}}";
-        const url = parseInt(search) === 0 ? "{{route('revenue-statistics') }}" : "{{route('revenue-statistics-range')}}";
-        const url2 = "{{route('followup-dashboard-chart') }}";
+        //const url = parseInt(search) === 0 ? "{{route('revenue-statistics') }}" : "{{route('revenue-statistics-range')}}";
+        let url2 = "{{route('followup-dashboard-chart') }}";
         $(document).ready(function(){
             $('.dateInputs').hide();
             $('#filterType').on('change', function(e){
@@ -141,78 +346,32 @@
                 }
             });
 
-            /*Bar chart*/
-            axios.get(url)
+
+
+            /** Comparison chart[Invoice,Sales,Customers] **/
+            const urlParams = new URLSearchParams(window.location.search);
+            // Extract specific parameters
+            let from = urlParams.get('from'); // Get the 'from' parameter
+            let to = urlParams.get('to');
+            const params = {
+                from,
+                to,
+            };
+            handleRequest(url2, params)
+
+        });
+
+
+        function handleRequest(url, params){
+            axios.get(url2, {params:params})
                 .then(res=> {
-                    const income = res.data.income;
-                    income.map((inc) => {
-                        switch (inc.month) {
-                            case 1:
-                                plotGraph(1, 1, inc.amount);
-                                break;
-                            case 2:
-                                plotGraph(2, 1, inc.amount);
-                                break;
-                            case 3:
-                                plotGraph(3, 1, inc.amount);
-                                break;
-                            case 4:
-                                plotGraph(4, 1, inc.amount);
-                                break;
-                            case 5:
-                                plotGraph(5, 1, inc.amount);
-                                break;
-                            case 6:
-                                plotGraph(6, 1, inc.amount);
-                                break;
-                            case 7:
-                                plotGraph(7, 1, inc.amount);
-                                break;
-                            case 8:
-                                plotGraph(8, 1, inc.amount);
-                                break;
-                            case 9:
-                                plotGraph(9, 1, inc.amount);
-                                break;
-                            case 10:
-                                plotGraph(10, 1, inc.amount);
-                                break;
-                            case 11:
-                                plotGraph(11, 1, inc.amount);
-                                break;
-                            case 12:
-                                plotGraph(12, 1, inc.amount);
-                                break;
-                        }
-
-                    });
-                    //then
-                    var options = {
-                            chart: { height: 360, type: "bar", stacked: !0, toolbar: { show: !1 }, zoom: { enabled: !0 } },
-                            plotOptions: { bar: { horizontal: !1, columnWidth: "15%", endingShape: "rounded" } },
-                            dataLabels: { enabled: !1 },
-                            series: [
-                                { name: "Performance", data: incomeData },
-                            ],
-                            xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
-                            colors: ["#34c38f", "#f1b44c"],
-                            legend: { position: "bottom" },
-                            fill: { opacity: 1 },
-                        },
-                        chart = new ApexCharts(document.querySelector("#stacked-column-chart"), options);
-                    chart.render();
-
-                });
-
-
-            /** Comparison chart[SMS, Attendance, Leads, Followup] **/
-            axios.get(url2)
-                .then(res=> {
-                    const attendance = res.data.attendance;
+                    //console.log(res.data);
+                    const invoice = res.data.invoice;
+                    const sales = res.data.sales;
                     const leads = res.data.leads;
-                    const followup = res.data.followup;
-                    //Men
-                    attendance.map((m) => {
+
+
+                    invoice.map((m) => {
                         switch (m.month) {
                             case 1:
                                 plotAttendanceMedicationGraph(1, 1, m.total);
@@ -253,7 +412,7 @@
                         }
 
                     });
-                    //Women
+
                     leads.map((w) => {
                         switch (w.month) {
                             case 1:
@@ -295,8 +454,8 @@
                         }
 
                     });
-                    //Children
-                    followup.map((c) => {
+
+                    sales.map((c) => {
                         switch (c.month) {
                             case 1:
                                 plotAttendanceMedicationGraph(1, 3, c.total);
@@ -337,6 +496,8 @@
                         }
 
                     });
+
+                    populateTable();
                     //then
                     const options2 = {
                             chart: { height: 360, type: "bar", toolbar: { show: !1 }, zoom: { enabled: !0 } },
@@ -348,14 +509,14 @@
                                 colors: ['transparent']
                             },
                             series: [
-                                { name: "Resources", data: attendanceData },
-                                { name: "Leads", data: leadsData },
-                                { name: "SMS", data: followupData },
+                                { name: "Invoice", data: invoiceData },
+                                { name: "Sales", data: salesData },
+                                 { name: "Customers", data: leadsData },
                             ],
                             xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
                             yaxis: {
                                 title: {
-                                    text: 'Performance'
+                                    text: 'Invoice vs Sales'
                                 }
                             },
                             tooltip: {
@@ -373,7 +534,7 @@
                     chart.render();
 
                 });
-        });
+        }
 
         function plotGraph(index,type, value){
             if(parseInt(type) === 1){
@@ -381,13 +542,38 @@
             }
         }
 
+        function populateTable() {
+            // Clear any existing rows
+            $('#dynamic-table tbody').empty();
+            $('#headers tr').empty();
+            $.each(months, function(index, val){
+                let tr = `<td style="text-align: right;">${val}</th>`;
+                $('#headers tr').append(tr);
+            });
+
+            // Loop through data and append rows to the table body
+            $.each(invoiceData, function(index, item) {
+                let row = `<td style="text-align: right;">${item.toLocaleString()}</td>`;
+                $('#trInvoice').append(row);
+            });
+            $.each(salesData, function(index, item) {
+                let salesRow = `<td style="text-align: right;">${item.toLocaleString()}</td>`;
+                $('#trSales').append(salesRow);
+            });
+
+            $.each(leadsData, function(index, lead) {
+                let leadRow = `<td style="text-align: right;">${lead.toLocaleString()}</td>`;
+                $('#trLead').append(leadRow);
+            });
+        }
+
         function plotAttendanceMedicationGraph(index,type, value){
             if(parseInt(type) === 1){
-                attendanceData[index-1] = value;
+                invoiceData[index-1] = value;
             }else if(parseInt(type) === 2){
                 leadsData[index-1] = value;
             }else{
-                followupData[index-1] = value;
+                salesData[index-1] = value;
             }
         }
     </script>

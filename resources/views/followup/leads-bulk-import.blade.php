@@ -1,7 +1,10 @@
 
 @extends('layouts.master-layout')
+@section('title')
+    Import Contacts
+@endsection
 @section('current-page')
-    Bulk Import Leads
+    Import Contacts
 @endsection
 @section('extra-styles')
     <link rel="stylesheet" href="/css/nprogress.css">

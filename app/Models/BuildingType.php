@@ -14,4 +14,8 @@ class BuildingType extends Model
     public static function getBuildingTypes(){
         return BuildingType::all();
     }
+
+    public static function getBuildingTypeByName($name){
+        return BuildingType::where('bt_name', $name)->first();
+    }
 }

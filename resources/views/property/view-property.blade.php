@@ -44,11 +44,17 @@
                     </div>
                     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner" role="listbox">
-                            @foreach($property->getPropertyGalleryImages as $key=>$image)
-                            <div class="carousel-item {{$key == 0 ? 'active' : ''}}">
-                                <img class="d-block img-fluid" src="/assets/drive/property/{{$image->attachment ?? '' }}" alt="Property image">
-                            </div>
-                            @endforeach
+                            @if(count($property->getPropertyGalleryImages) > 0)
+                                @foreach($property->getPropertyGalleryImages as $key=>$image)
+                                <div class="carousel-item {{$key == 0 ? 'active' : ''}}">
+                                    <img class="d-block img-fluid" src="/assets/drive/property/{{$image->attachment ?? '' }}" alt="Property image">
+                                </div>
+                                @endforeach
+                            @else
+                                <div class="carousel-item active">
+                                    <img class="d-block img-fluid" src="/assets/drive/property/placeholder.png" alt="Property image">
+                                </div>
+                            @endif
                         </div>
                         <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -166,7 +172,7 @@
 
                             </tr>
                             <tr>
-                                <th scope="row" > Sold To: &nbsp; &nbsp; <span class="text-info"> {{$property->getAddedBy->title ?? '' }} {{$property->getAddedBy->first_name ?? '' }} {{$property->getAddedBy->last_name ?? '' }} {{$property->getAddedBy->other_names ?? '' }} </span></th>
+                                <th scope="row" > Sold To: &nbsp; &nbsp; <span class="text-info">  {{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getAddedBy->other_names ?? '' }} </span></th>
                                 <th scope="row" >Date Sold: &nbsp; &nbsp;
                                     <span class="text-info">-</span>
                                 </th>

@@ -19,21 +19,40 @@ class AppDefaultSetting extends Model
         return AppDefaultSetting::first();
     }
 
+
+
     public function addAppDefaultSetting(Request $request){
         $existing = $this->getAppDefaultSettings();
         if(!empty($existing)){
-            $existing->new_app_section_handler = $request->new_app_section;
-            $existing->licence_renewal_handler = $request->licence_renewal;
-            $existing->engage_customer = $request->engage_customer;
-            $existing->frequency_assignment_handler = $request->frequency_assignment_handler;
+            $existing->property_account = $request->property_account;
+            $existing->customer_account = $request->customer_account;
+            $existing->vendor_account = $request->vendor_account;
+            $existing->tax_account = $request->tax_account;
+            $existing->refund_account = $request->refund_account;
+            $existing->charges_account = $request->charges_account;
+            $existing->salary_account = $request->salary_account;
+            $existing->employee_account = $request->employee_account;
+            $existing->workflow_account = $request->workflow_account;
+            $existing->general_account = $request->general_account;
             $existing->save();
         }else{
             $app = new AppDefaultSetting();
-            $app->new_app_section_handler = $request->new_app_section;
-            $app->licence_renewal_handler = $request->licence_renewal;
-            $app->engage_customer = $request->engage_customer;
-            $app->frequency_assignment_handler = $request->frequency_assignment_handler;
+            $app->property_account = $request->property_account;
+            $app->customer_account = $request->customer_account;
+            $app->vendor_account = $request->vendor_account;
+            $app->tax_account = $request->tax_account;
+            $app->refund_account = $request->refund_account;
+            $app->charges_account = $request->charges_account;
+            $app->salary_account = $request->salary_account;
+            $app->employee_account = $request->employee_account;
+            $app->workflow_account = $request->workflow_account;
+            $app->general_account = $request->general_account;
             $app->save();
         }
+    }
+
+
+    public function getAccountByGLCode($glCode){
+        return ChartOfAccount::where('glcode',$glCode)->first();
     }
 }

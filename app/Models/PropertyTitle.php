@@ -15,4 +15,8 @@ class PropertyTitle extends Model
     public static function getPropertyTitles(){
         return PropertyTitle::all();
     }
+
+    public static function getPropertyTitleByName($name){
+        return PropertyTitle::where('pt_name',$name)->first();
+    }
 }

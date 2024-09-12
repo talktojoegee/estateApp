@@ -96,8 +96,9 @@
                                             <strong>From:</strong><br>
                                             {{env('ORG_NAME')}}<br>
                                             {{env('ORG_PHONE')}}<br>
-                                            {{env('ORG_EMAIL')}}<br>
-                                            {{env('ORG_ADDRESS')}}
+                                            <a href="mailto:{{env('ORG_EMAIL')}}">{{env('ORG_EMAIL')}}</a><br>
+                                            {!! env('ORG_ADDRESS') !!} <br>
+                                            <a target="_blank" href="http://www.{{env('ORG_WEBSITE')}}">{{env('ORG_WEBSITE')}}</a>
                                         </address>
                                     </div>
 
@@ -119,7 +120,7 @@
                                             <strong>Invoice No.:</strong><br>
                                             {{$invoice->invoice_no ?? '' }}<br>
                                             <strong>Start Date:</strong><br>
-                                            <span class="text-success">{{ date('d M, Y', strtotime($invoice->start_date)) ?? '' }}</span><br>
+                                            <span class="text-success">{{ date('d M, Y', strtotime($invoice->issue_date)) ?? '' }}</span><br>
                                             <strong>Due Date:</strong><br>
                                             <span class="text-danger" style="color: #ff0000 !important;">{{ date('d M, Y', strtotime($invoice->due_date)) ?? '' }}</span><br>
                                         </address>
@@ -305,7 +306,7 @@
                             <div class="form-group mt-1 col-md-12">
                                 <label for="">Comment<sup style="color: #ff0000;">*</sup></label> <br>
                                 <input type="hidden" name="invoiceId" value="{{$invoice->id}}">
-                                <input type="hidden" name="status" value="2">
+                                <input type="hidden" name="status" value="4">
                                 <textarea name="comment" style="resize: none;" placeholder="Leave your comment here..." class="form-control">{{old('comment')}}</textarea>
                                 @error('comment') <i class="text-danger" style="color: #ff0000;">{{$message}}</i>@enderror
 

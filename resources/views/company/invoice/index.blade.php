@@ -51,8 +51,8 @@
                         <div class="card-body" >
                             <div class="row mb-1" >
                                 <div class="col" >
-                                    <p class="mb-1">Declined</p>
-                                    <h5 class="mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $invoices->where('status',3)->sum('total') )}}</h5>
+                                    <p class="mb-1">Partly-paid</p>
+                                    <h5 class="mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $invoices->where('status',2)->sum('total') )}}</h5>
                                 </div>
                                 <div class="col-auto mb-0" >
                                     <div class="dash-icon text-orange" >
@@ -60,7 +60,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Declined<code>({{number_format($invoices->where('status',3)->count())}})</code></span></span>
+                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Partly-paid<code>({{number_format($invoices->where('status',2)->count())}})</code></span></span>
                         </div>
                     </div>
                 </div>
@@ -69,8 +69,8 @@
                         <div class="card-body" >
                             <div class="row mb-1" >
                                 <div class="col" >
-                                    <p class="mb-1">Verified</p>
-                                    <h5 class="mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $invoices->where('status',2)->sum('amount_paid') )}}</h5>
+                                    <p class="mb-1">Fully-paid</p>
+                                    <h5 class="mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $invoices->where('status',1)->sum('amount_paid') )}}</h5>
                                 </div>
                                 <div class="col-auto mb-0" >
                                     <div class="dash-icon text-secondary" >
@@ -78,7 +78,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Total Verified<code>({{number_format( $invoices->where('status',2)->count() )}})</code></span></span>
+                            <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Total Fully-paid<code>({{number_format( $invoices->where('status',1)->count() )}})</code></span></span>
                         </div>
                     </div>
                 </div>
@@ -132,6 +132,7 @@
                                 <tr role="row">
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >S/No.</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Date</th>
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Invoice No.</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Customer</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Due Date</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Total({{env('APP_CURRENCY')}})</th>
@@ -149,8 +150,9 @@
                                     <tr role="row" class="odd">
                                         <td class="">{{$a++}}</td>
                                         <td class="sorting_1 text-left">{{ date('d M, Y', strtotime($flow->created_at)) }}</td>
+                                        <td><a href="{{route('show-invoice-detail', $flow->ref_no)}}">{{$flow->invoice_no ?? '' }}</a></td>
                                         <td class="">
-                                            {{$flow->getCustomer->title ?? '' }} {{$flow->getCustomer->first_name ?? '' }} {{$flow->getCustomer->last_name ?? '' }}
+                                            <a target="_blank" href="{{route('lead-profile', $flow->getCustomer->slug)}}">{{$flow->getCustomer->title ?? '' }} {{$flow->getCustomer->first_name ?? '' }} {{$flow->getCustomer->last_name ?? '' }}</a>
                                         </td>
                                         <td class="" style="color: #ff0000 !important;">{{ date('d M, Y', strtotime($flow->due_date)) }}</td>
                                         <td class="" style="text-align: right">{{number_format($flow->total,2)}}</td>

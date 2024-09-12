@@ -16,6 +16,9 @@ class Lead extends Model
     public function getLogs(){
         return $this->hasMany(ActivityLog::class, 'lead_id')->orderBy('id', 'DESC');
     }
+    public function getCustomerFiles(){
+        return $this->hasMany(FileModel::class, 'lead_id')->orderBy('id', 'DESC');
+    }
     public function getAddedBy(){
         return $this->belongsTo(User::class, 'added_by');
     }
@@ -72,7 +75,7 @@ class Lead extends Model
     }
 
     public function getAllOrgLeads(){
-        return Lead::orderBy('id', 'DESC')->get();
+        return Lead::orderBy('first_name', 'ASC')->get();
     }
 
     public function getLeadBySlug($slug){
@@ -82,6 +85,9 @@ class Lead extends Model
     public function getLeadById($id){
         return Lead::find($id);
     }
+
+
+
 
 
     public function getLeadByMonthYear($month, $year){
@@ -99,6 +105,18 @@ class Lead extends Model
             ->orderBy('month', 'ASC')
             ->groupby('year','month')
             ->get();
+    }
+
+
+    public static function getCustomerValuation($customerId){
+        return Receipt::where('customer_id', $customerId)->sum('total');
+    }
+
+    public static function getNumberOfProperties($customerId){
+        return Property::where('sold_to', $customerId)->count();
+    }
+    public static function getCustomerListOfProperties($customerId){
+        return Property::where('sold_to', $customerId)->orWhere('occupied_by', $customerId)->get();
     }
 
 

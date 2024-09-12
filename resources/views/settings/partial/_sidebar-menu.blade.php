@@ -15,17 +15,17 @@
         </a>
         <a href="{{route('branches-settings')}}" class="{{  Request::routeIs('branches-settings') ? 'is-active-setting' : ''}}">
             <div class="sidebar-item">
-                <span class="">Section Settings</span>
+                <span class="">Department Settings</span>
             </div>
         </a>
-        <a href="{{route('workflow-settings')}}" class="{{  Request::routeIs('workflow-settings') ? 'is-active-setting' : ''}}">
+        <a href="{{route('accounting-settings')}}" class="{{  Request::routeIs('accounting-settings') ? 'is-active-setting' : ''}}">
             <div class="sidebar-item">
-                <span class="">Workflow Settings</span>
+                <span class="">Accounting Settings</span>
             </div>
         </a>
         <a href="{{route('church-branches')}}" class="{{  Request::routeIs('church-branches') ? 'is-active-setting' : ''}}">
             <div class="sidebar-item">
-                <span class="">Section Heads Settings</span>
+                <span class="">Supervisor Settings</span>
             </div>
         </a>
     </div>

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Receipt extends Model
 {
@@ -17,6 +18,13 @@ class Receipt extends Model
 
     public function getIssuedBy(){
         return $this->belongsTo(User::class, 'issued_by');
+    }
+
+    public function getCustomer(){
+        return $this->belongsTo(Lead::class, 'customer_id');
+    }
+    public function getInvoice(){
+        return $this->belongsTo(InvoiceMaster::class, 'invoice_id');
     }
 
 
@@ -63,6 +71,57 @@ class Receipt extends Model
 
 
     public function generateTransactionRef(){
-        return substr(sha1(time()),32,40);
+        return substr(sha1((time()+ rand(99,999))),32,40);
+    }
+
+    public function getAllTenantReceipts(){
+        return  Receipt::orderBy('id', 'DESC')->get();
+    }
+    public function getReceiptsByPropertyIds($propertyIds){
+        return  Receipt::whereIn('property_id', $propertyIds)->orderBy('id', 'DESC')->get();
+    }
+
+    public function getAllTenantReceiptsThisYear(){
+        return  Receipt::whereYear('created_at', date('Y'))->orderBy('id', 'DESC')->get();
+    }
+
+
+    public function getReceipt($slug){
+        $receipt = Receipt::where('trans_ref', $slug)->first();
+        return $receipt;
+    }
+
+
+    public function sendReceiptAsEmail($slug){
+        $receipt = Receipt::where('trans_ref', $slug)->first();
+        #Email task
+    }
+
+    public function getLatestReceipt(){
+        return Receipt::orderBy('id', 'DESC')->first();
+    }
+
+    public function getTotalSalesByDateRange($startDate, $endDate){
+        return Receipt::select(
+            DB::raw("DATE_FORMAT(payment_date, '%m-%Y') monthYear"),
+            DB::raw("YEAR(payment_date) year, MONTH(payment_date) month"),
+            DB::raw("SUM(sub_total) total"),
+            'payment_date',
+        )->whereBetween('payment_date', [$startDate, $endDate])
+            ->orderBy('month', 'ASC')
+            ->groupby('year','month')
+            ->get();
+    }
+
+
+    public function getListOfPropertiesSoldRange($start, $end){
+        return Receipt::select(
+            'property_id',
+            'payment_date',
+            'issued_by'
+        )->whereBetween('payment_date', [$start, $end])
+            //->orderBy('month', 'ASC')
+            ->groupby('property_id')
+            ->get();
     }
 }

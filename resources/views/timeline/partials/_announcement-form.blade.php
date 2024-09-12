@@ -24,7 +24,7 @@
                             <select name="to" id="" class=" form-control memoTo" >
                                 <option disabled selected >-- Select receiver --</option>
                                 <option value="1">Everyone</option>
-                                <option value="2">Branch</option>
+                                <option value="2">Department</option>
                                 <option value="3">Region</option>
                             </select>
                             @error('to') <i class="text-danger">{{ $message }}</i> @enderror

@@ -28,6 +28,7 @@
                                 <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#deletePractitionerModal" class="btn btn-danger btn-sm btn-icon-text">
                                   <i class="bx bx-x-circle"></i>  Deactivate Account
                                 </a>
+
                                 @else
                                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#deletePractitionerModal" class="btn btn-success btn-sm btn-icon-text">
                                         <i class="bx bx-check-circle"></i>  Activate Account
@@ -332,13 +333,13 @@
                                                         @error('maritalStatus') <i class="text-danger">{{$message}}</i>@enderror
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-sm-12 col-lg-6">
+                                                <!-- <div class="col-md-6 col-sm-12 col-lg-6">
                                                     <div class="form-check form-switch mt-3">
                                                         <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="pastor"
-                                                            {{$user->pastor == 1 ? 'checked' : null  }}>
+                                                            {$user->pastor == 1 ? 'checked' : null  }}>
                                                         <label class="form-check-label" for="flexSwitchCheckChecked">Is this person a pastor?</label>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 <div class="col-md-6 col-sm-12 col-lg-6">
                                                     <div class="form-check form-switch mt-3">
                                                         <input class="form-check-input" type="checkbox" id="genderSwitchCheck" name="gender" {{$user->gender == 1 ? 'checked' : null  }}>

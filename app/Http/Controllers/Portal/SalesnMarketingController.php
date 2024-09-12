@@ -16,6 +16,8 @@ use App\Models\CashBookAccount;
 use App\Models\CashBookAttachment;
 use App\Models\Client;
 use App\Models\Currency;
+use App\Models\FolderModel;
+use App\Models\InvoiceMaster;
 use App\Models\Lead;
 use App\Models\LeadBulkImportDetail;
 use App\Models\LeadBulkImportMaster;
@@ -28,10 +30,13 @@ use App\Models\Message;
 use App\Models\Notification;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\Property;
+use App\Models\Receipt;
 use App\Models\Remittance;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\TransactionCategory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Excel;
@@ -40,6 +45,7 @@ use Illuminate\Support\Str;
 class SalesnMarketingController extends Controller
 {
     use OkraOpenBankingTrait;
+    protected $from, $to;
 
     public function __construct(){
         $this->middleware('auth');
@@ -69,6 +75,12 @@ class SalesnMarketingController extends Controller
         $this->leadfollowupmaster = new LeadFollowupScheduleMaster();
         $this->leadfollowupdetail = new LeadFollowupScheduleDetail();
         $this->attendance = new Attendance();
+
+        $this->invicemaster = new InvoiceMaster();
+        $this->receipt = new Receipt();
+        $this->property = new Property();
+        $this->user = new User();
+        //$this->folder = new FolderModel();
     }
 
     public function showAllProducts()
@@ -343,25 +355,37 @@ class SalesnMarketingController extends Controller
 
 
     public function marketing(){
+        $start = $request->from ?? date('Y-m-d', strtotime("-90 days"));
+        $end = $request->to ?? date('Y-m-d');
+        $topSelling = $this->property->getTopSellingLocationsWithin($start, $end, 10);
+        $underperforming = $this->property->getUnderperformingLocationsWithin($start, $end, 10);
+        $last30Days = $this->receipt->getListOfPropertiesSoldRange(date('Y-m-d', strtotime("-30 days")), $end);
+        $last30Ids = $last30Days->pluck('property_id')->toArray();
+        //return dd(Auth::user()->getUserRole->name);
         return view('followup.marketing',[
             'search'=>0,
             'from'=>now(),
             'to'=>now(),
-            //'sales'=>$this->sale->getAllOrgSales(),
+            'topSelling'=>$topSelling,
+            'underperforming'=>$underperforming,
+            'last30Properties'=>$this->property->getPropertyList($last30Ids),
+            'users'=>$this->user->getTopSellingUsers($start, $end,10)
+            //'users'=>$this->user->getUserByIds($issuedByIds)
         ]);
     }
 
-    public function showFollowupDashboardStatistics(){
-        $start = date('Y-m-d', strtotime("-90 days"));
-        $end = date('Y-m-d');
-        $masterIds = $this->leadfollowupmaster->getLeadFollowupMasterIdsByDateRange($start, $end);
+    public function showFollowupDashboardStatistics(Request $request){
+        $start = $request->from ?? date('Y-m-d', strtotime("-90 days"));
+        $end = $request->to ?? date('Y-m-d');
         return response()->json([
-            //'sms'=>$this->attendance->getThisYearAttendanceStat('a_no_men'),
-            'followup'=>$this->leadfollowupdetail->getTotalLeadFollowupDetailsByIds($masterIds),
+            //sales,invoice,customers||leads
+            'sales'=>$this->receipt->getTotalSalesByDateRange($start, $end),
             'leads'=>$this->lead->getTotalLeadsByDateRange($start, $end),
-            'attendance'=>$this->attendance->getTotalAttendanceByDateRange($start, $end),
+            'invoice'=>$this->invicemaster->getTotalInvoiceByDateRange($start, $end),
         ],200);
     }
+
+
     public function filterSalesRevenueReportDashboard(Request $request){
         $this->validate($request, [
             'filterType'=>'required'
@@ -378,19 +402,37 @@ class SalesnMarketingController extends Controller
             ]);
         }
         if($request->filterType == 1){
-            $income = $this->sale->getAllOrgSales();
+            $from = date('Y-m-d', strtotime("-90 days"));
+            $to = date('Y-m-d');
+            $topSelling = $this->property->getTopSellingLocationsWithin($from, $to, 10);
+            $underperforming = $this->property->getUnderperformingLocationsWithin($from, $to, 10);
+            $last30Days = $this->receipt->getListOfPropertiesSoldRange(date('Y-m-d', strtotime("-30 days")), $to);
+            $last30Ids = $last30Days->pluck('property_id')->toArray();
             return view('followup.marketing',[
-                'income'=>$income,
+                'topSelling'=>$topSelling,
+                'underperforming'=>$underperforming,
+                'last30Properties'=>$this->property->getPropertyList($last30Ids),
+                'users'=>$this->user->getTopSellingUsers($from, $to,10),
                 'search'=>1,
                 'from'=>now(),
                 'to'=>now(),
                 'filterType'=>$request->filterType
             ]);
         }else if($request->filterType == 2){
-            $income = $this->sale->getRangeOrgSalesReport($request->from, $request->to);
-            $this->income = $this->sale->getSalesStatRange($request->from, $request->to);
+            $this->from = $request->from;
+            $this->to = $request->to;
+            $topSelling = $this->property->getTopSellingLocationsWithin($request->from, $request->to, 10);
+            $underperforming = $this->property->getUnderperformingLocationsWithin($request->from, $request->to, 10);
+            $last30Days = $this->receipt->getListOfPropertiesSoldRange(date('Y-m-d', strtotime("-30 days")), $request->to);
+            $last30Ids = $last30Days->pluck('property_id')->toArray();
+
+            /*$income = $this->sale->getRangeOrgSalesReport($request->from, $request->to);
+            $this->income = $this->sale->getSalesStatRange($request->from, $request->to);*/
             return view('followup.marketing',[
-                'income'=>$income,
+                'topSelling'=>$topSelling,
+                'underperforming'=>$underperforming,
+                'last30Properties'=>$this->property->getPropertyList($last30Ids),
+                'users'=>$this->user->getTopSellingUsers($request->from, $request->to,10),
                 'search'=>1,
                 'from'=>$request->from,
                 'to'=>$request->to,
@@ -398,6 +440,9 @@ class SalesnMarketingController extends Controller
             ]);
         }
     }
+    /*protected function getDateRange($from, $to){
+        return array("from"=>$from, "to"=>$to);
+    }*/
     public function showLeads(){
         return view('followup.leads',[
             'sources'=>$this->leadsource->getLeadSources(),
@@ -436,7 +481,8 @@ class SalesnMarketingController extends Controller
         $lead = $this->lead->getLeadBySlug($slug);
         if(!empty($lead)){
             return view('followup.lead-profile',[
-                'client'=>$lead
+                'client'=>$lead,
+               // 'folders'=>$this->folder->getAllFolders(),
             ]);
         }else{
             return back();
