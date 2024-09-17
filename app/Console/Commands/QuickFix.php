@@ -7,6 +7,7 @@ use App\Models\Estate;
 use App\Models\InvoiceMaster;
 use App\Models\Property;
 use App\Models\Receipt;
+use App\Models\SalaryStructure;
 use App\Models\Wallpaper;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -145,5 +146,11 @@ class QuickFix extends Command
        /* $allottee = [
             'First',
         ]*/
+
+        $structures = SalaryStructure::all();
+        foreach($structures as $structure){
+            $structure->slug = Str::slug($structure->ss_name).substr(sha1(time()),29,40);
+            $structure->save();
+        }
     }
 }

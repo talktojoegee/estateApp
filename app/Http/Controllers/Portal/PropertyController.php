@@ -13,6 +13,7 @@ use App\Models\Estate;
 use App\Models\InvoiceMaster;
 use App\Models\Lead;
 use App\Models\Property;
+use App\Models\PropertyAllocation;
 use App\Models\PropertyBulkImportDetail;
 use App\Models\PropertyBulkImportMaster;
 use App\Models\PropertyGallery;
@@ -39,6 +40,7 @@ class PropertyController extends Controller
         $this->invoicemaster = new InvoiceMaster();
         $this->lead = new Lead();
         $this->receipt = new Receipt();
+        $this->propertyallocation = new PropertyAllocation();
 
     }
 
@@ -371,14 +373,110 @@ class PropertyController extends Controller
 
 
     public function showPropertyAllocation(Request $request){
+        //return dd($this->property->getAvailablePropertiesByEstateId(13)->pluck('id')->toArray());
         $method = $request->getMethod();
         switch ($method){
             case 'POST':
-                return 'post';
+                $this->validate($request,[
+                    "estate"=>"required",
+                    "counter"=>"required",
+                    "status"=>"required",
+                    "property"=>"required|array",
+                    "property.*"=>"required",
+                    "customer"=>"required|array",
+                    "customer.*"=>"required",
+                    "allottee"=>"required|array",
+                    "allottee.*"=>"required",
+                ],[
+                    "estate.required"=>"Choose an estate",
+                    "counter.required"=>"",
+                    "status.required"=>"Were these properties sold or rented?",
+                    "property.required"=>"Information about property is missing",
+                    "customer.*"=>"Choose who to allocate property to",
+                    "customer.required"=>"Choose who to allocate property to",
+                    "allottee.*"=>"Indicate level of allocation",
+                    "allottee.required"=>"Indicate level of allocation",
+                ]);
+                $counter = $request->counter;
+                if((count($request->property) < $counter) || (count($request->customer) < $counter) || (count($request->allottee) < $counter)){
+                    session()->flash("error", "Whoops! All fields are required. Assign corresponding values for each record/property.");
+                    return back();
+                }
+                $estateId = $request->estate;
+                $propertyCounter = count($request->property);
+                if($propertyCounter <= 0){
+                    session()->flash("error", "Something went wrong. Try again.");
+                    return back();
+                }
+                foreach($request->property as $key => $property){
+                    $property = $this->property->getPropertyById($request->property[$key]);
+                    if(!empty($property)){
+                        //Allocate as first allottee on the property's table if it does not exist
+                        if(is_null($property->occupied_by) && ($request->allottee[$key] == 1)){
+                            $property->occupied_by = $request->customer[$key];
+                            $property->sold_to = $request->customer[$key];
+                            $property->status = $request->status ?? 2; //sold
+                            $property->save();
+                        }
+                        //handle second,third,... allottees on the property allocation table
+                        if($request->allottee[$key] != 1 ){
+                            //check if level of allocation already exist on same property
+                            $exist = $this->propertyallocation->checkExistingAllocation($estateId, $request->property[$key],
+                                $request->allottee[$key]);
+                            if(empty($exist)){
+                                $this->propertyallocation->addAllocation($estateId, $request->property[$key],
+                                    $request->customer[$key], $request->allottee[$key]);
+                                $property->status = $request->status ?? 2; //sold
+                                $property->save();
+                            }
+                        }
+                    }
+
+                }
+                session()->flash("success", "Success! Property allocation done.");
+                return back();
             case 'GET':
                 return view('property.allocation',[
                     'estates'=>$this->estate->getAllEstates()
                 ]);
+
+        }
+    }
+
+
+    public function managePropertyAllocation(Request $request){
+        $method = $request->getMethod();
+        switch ($method){
+            case 'GET':
+                return view('property.manage-allocations',[
+                    'allocations'=>$this->propertyallocation->getPropertyAllocationList()
+                ]);
+            case 'POST':
+                $this->validate($request,[
+                    'type'=>"required",
+                    'allocation'=>"required",
+
+                ],[
+                    "type.required"=>"",
+                    "allocation.required"=>"",
+                ]);
+                $allocation = $this->propertyallocation->getAllocationById($request->allocation);
+                if(empty($allocation)){
+                    session()->flash("error", "Whoops! Record not found.");
+                    return back();
+                }
+                $allocation->status = $request->type;
+                $allocation->date_actioned = now();
+                $allocation->actioned_by = Auth::user()->id;
+                $allocation->save();
+                //get property
+                $property = $this->property->getPropertyById($allocation->property_id);
+                if(!empty($property) && ($request->type != 2)){
+                    $property->status = 2; //sold
+                    $property->save();
+                }
+                session()->flash("success", "Success! Property allocated.");
+                return back();
 
         }
     }
@@ -389,7 +487,7 @@ class PropertyController extends Controller
         ],[
             "estate.required"=>"Choose estate"
         ]);
-        $properties = $this->property->getPropertiesByEstateId($request->estate);
+        $properties = $this->property->getAvailablePropertiesByEstateId($request->estate);
         $customers = $this->lead->getAllOrgLeads();
         return view('property.partial._property-allocation-list',[
             "properties"=>$properties,

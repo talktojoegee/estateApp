@@ -501,6 +501,7 @@ Route::group(['prefix'=>'property','middleware'=>'auth'],function(){
     Route::match(['POST'],'update-imported-properties', [App\Http\Controllers\Portal\PropertyController::class, 'updateImportedProperties'])->name('update-imported-properties');
     Route::match(['POST', 'GET'],'property-allocation', [App\Http\Controllers\Portal\PropertyController::class, 'showPropertyAllocation'])->name('property-allocation');
     Route::match(['POST'],'property-list', [App\Http\Controllers\Portal\PropertyController::class, 'showProperties'])->name('property-list');
+    Route::match(['GET','POST'],'manage-allocations', [App\Http\Controllers\Portal\PropertyController::class, 'managePropertyAllocation'])->name('manage-property-allocations');
 
 
     Route::get('/delete-property-entry/{recordId}', [App\Http\Controllers\Portal\PropertyController::class, 'deletePropertyRecord'])->name('delete-property-record');
@@ -508,25 +509,16 @@ Route::group(['prefix'=>'property','middleware'=>'auth'],function(){
     Route::get('/post-property-record/{batchCode}', [App\Http\Controllers\Portal\PropertyController::class, 'postPropertyRecord'])->name('post-property-record');
 });
 
-//Route::group(['prefix'=>'super-channel', 'middleware'=>'is_admin'],function(){
-    //Route::get('/', [App\Http\Controllers\AdminController::class, 'adminDashboard'])->name('admin-dashboard');
-//});
 
-/*
- * You'll need a team to run the race of life faithfully. We offer ourselves to be that family you can hold unto.
- */
+Route::group(['prefix'=>'payroll', 'middleware'=>'auth'],function(){
+    Route::match(['GET', 'POST', 'PUT'], '/payment-definition', [App\Http\Controllers\Portal\PayrollController::class, 'handlePaymentDefinition'])->name('payment-definition');
+    Route::match(['GET', 'POST', 'PUT'], '/salary-structure', [App\Http\Controllers\Portal\PayrollController::class, 'handleSalaryStructure'])->name('salary-structure');
+    Route::match(['GET'], '/new-salary-allowance', [App\Http\Controllers\Portal\PayrollController::class, 'showNewSalaryAllowanceForm'])->name('new-salary-allowance');
+    Route::match(['GET', 'POST', 'PUT'], '/salary-allowances', [App\Http\Controllers\Portal\PayrollController::class, 'handleSalaryAllowances'])->name('salary-allowances');
 
-
-/*DB::beginTransaction();
-try {
-    $this->pippo();
-} catch (\Exception $ex) {
-    DB::rollback();
-}
-DB::commit();
-
-public function pippo(){
-    $type=Cga_type::create(['name'=>'vvvv','description'=>'yyy']);
-    throw new Exception('error');
-
-}*/
+    Route::group(['prefix'=>'process'],function(){
+       Route::match(['GET'], '/salary-structures', [App\Http\Controllers\Portal\PayrollController::class, 'showSalaryStructures'])->name('salary-structures');
+       Route::get( '/salary-structures/{slug}', [App\Http\Controllers\Portal\PayrollController::class, 'showSalarySetupForm'])->name('salary-setup-form');
+       Route::post( '/setup-salary-structure', [App\Http\Controllers\Portal\PayrollController::class, 'setupSalaryStructure'])->name('setup-salary-structure');
+    });
+});

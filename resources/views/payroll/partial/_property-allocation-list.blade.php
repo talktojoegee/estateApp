@@ -18,8 +18,7 @@
             <tr class="">
                 <td>{{ $key+1 }}</td>
                 <td>
-                    <input type="hidden" name="counter" value="{{count($properties)}}">
-                    <input type="hidden" name="property[]" value="{{$item->id}}">
+                    <input type="hidden" name="records[]" value="{{$item->id}}">
                     <input type="text" style="width: 150px;" value="{{ $item->property_name ?? ''}}" placeholder="Property Name" name="property_name[]" class="form-control">
                 </td>
                 <td>
@@ -33,7 +32,7 @@
                     <input type="text"  name="street[]" style="width: 150px;" value="{{ $item->amount_paid ?? '' }}" placeholder="Street" class="form-control">
                 </td>
                 <td>
-                    <select class="form-control select2" style="width: 150px;" name="customer[]"><!-- Serves as customer -->
+                    <select class="form-control select2" style="width: 150px;" name="occupied_by[]"><!-- Serves as customer -->
                         <option selected>--Select customer--</option>
                         @foreach($customers as $key=> $customer)
                             <option value="{{$customer->id}}" {{ $customer->id == $item->occupied_by ? 'selected' : null  }}>{{ $customer->first_name ?? '' }} {{ $customer->last_name ?? '' }}</option>
@@ -42,7 +41,6 @@
                 </td>
                 <td>
                     <select class="form-control select2" style="width: 150px;" name="allottee[]" id="">
-                        <option selected disabled>--Select--</option>
                         @for($i = 1; $i <= 30; $i++)
                             <option value="{{ $i }}">{{$Utility->numToOrdinalWord($i)}} Allottee</option>
                         @endfor

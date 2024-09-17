@@ -94,9 +94,9 @@
                                 <th class="wd-15p">Date</th>
                                 <th class="wd-15p">Estate</th>
                                 <th class="wd-15p">House No.</th>
+                                <th class="wd-15p">Code</th>
                                 <th class="wd-15p">Property Name</th>
                                 <th class="wd-15p" style="text-align: right;">Price(₦)</th>
-                                <th class="wd-15p">Building Type</th>
                                 <th class="wd-15p">Status</th>
                                 <th class="wd-15p">Action</th>
                             </tr>
@@ -108,6 +108,7 @@
                                     <td>{{date('d M, Y', strtotime($property->created_at))}}</td>
                                     <td>{{$property->getEstate->e_name ?? '' }}</td>
                                     <td>{{ $property->house_no ?? '' }}</td>
+                                    <td>{{$property->property_code ?? '' }}</td>
                                     <td>
                                         <a href="{{route('show-property-details', ['slug'=>$property->slug])}}">
                                             <div class="d-flex">
@@ -115,13 +116,12 @@
                                                     <img src="/assets/drive/property/{{$property->getGalleryFeaturedImageByPropertyId($property->id)->attachment ?? 'placeholder.png' }}" alt="{{$property->property_name ?? '' }}" class="rounded-circle avatar-xs">
                                                 </div>
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <h6 class="text-truncate text-info font-size-14 mb-1">{{ substr($property->property_name,0,35).'...' ?? ''  }}</h6>
+                                                    <h6 class="text-truncate text-info font-size-14 mb-1">{{ substr($property->property_name,0,15).'...' ?? ''  }}</h6>
                                                 </div>
                                             </div>
                                         </a>
                                     </td>
                                     <td class="text-right" style="text-align: right;">{{ number_format($property->price,2)  }}</td>
-                                    <td>{{$property->getBuildingType->bt_name ?? '' }}</td>
                                     <td>
                                         @switch($property->status)
                                             @case(0)

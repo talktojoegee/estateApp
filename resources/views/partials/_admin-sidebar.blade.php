@@ -7,9 +7,16 @@
                     <span key="t-chat">Newsfeed</span>
                 </a>
             </li>--}}
+        <li>
+            <a href="{{route('marketing-dashboard')}}" class="waves-effect">
+                <i class="bx bxs-dashboard"></i>
+                <span key="t-chat">Dashboard</span>
+            </a>
+        </li>
+        <li class="menu-title" key="t-menu">Properties</li>
             <li>
                 <a href="javascript: void(0);" class="has-arrow waves-effect">
-                    <i class="bx bx-home-alt"></i>
+                    <i class="bx bx-buildings"></i>
                     <span key="t-properties"> Properties </span>
                 </a>
                 <ul class="sub-menu" aria-expanded="false">
@@ -18,12 +25,30 @@
                     <li><a href="{{route('manage-properties', 'rented')}}" key="t-properties">Rented</a></li>
                     <li><a href="{{route('manage-properties', 'available')}}" key="t-properties">Available</a></li>
                     <li><a href="{{route('manage-properties','all')}}" key="t-properties">All Properties</a></li>
-                    <li><a href="{{route('property-allocation')}}" key="t-properties">Allocation</a></li>
-                    <li><a href="{{route('show-bulk-property-import-form')}}" key="t-properties">Import Properties</a></li>
-                    <li><a href="{{route('show-imported-properties')}}" key="t-properties">Manage Imported List</a></li>
                 </ul>
             </li>
-        <li>
+            <li>
+                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <i class="bx bx-import"></i>
+                    <span key="t-import"> Import Properties </span>
+                </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{route('show-bulk-property-import-form')}}" key="t-properties">New Import</a></li>
+                    <li><a href="{{route('show-imported-properties')}}" key="t-properties">Manage Import</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <i class="bx bxs-collection"></i>
+                    <span key="t-allocation"> Allocation </span>
+                </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{route('property-allocation')}}" key="t-properties">New</a></li>
+                    <li><a href="{{route('manage-property-allocations')}}" key="t-properties">Manage Alloc.</a></li>
+                </ul>
+            </li>
+        <li class="menu-title" key="t-menu">Locations</li>
+            <li>
             <a href="{{route('estates')}}" class="waves-effect">
                 <i class="bx bxs-building-house"></i>
                 <span key="t-chat">Estates</span>
@@ -166,21 +191,33 @@
                 <li><a href="{{route('profit-or-loss')}}" key="t-account">Profit/Loss</a></li>
             </ul>
         </li>--}}
+        <li class="menu-title">Payroll</li>
+        <li>
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="bx bx-calculator"></i>
+                <span key="t-payroll-process"> Payroll Process </span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{route('salary-structures')}}" key="t-payroll-process">Salary Structures</a></li>
+                <li><a href="{{route('salary-structure')}}" key="t-payroll-process">Variational Payments</a></li>
+                <li><a href="{{route('salary-allowances')}}" key="t-payroll-process">Approve Payments</a></li>
+                <li><a href="{{route('salary-allowances')}}" key="t-payroll-process">Payroll Routine</a></li>
+                <li><a href="{{route('salary-allowances')}}" key="t-payroll-process">Approve Routine</a></li>
+                <li><a href="{{route('salary-allowances')}}" key="t-payroll-process">Payroll Reports</a></li>
+            </ul>
+        </li>
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
                 <i class="bx bx-wallet"></i>
-                <span key="t-payroll"> Payroll </span>
+                <span key="t-payroll"> Payroll Settings </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{route('chart-of-accounts')}}" key="t-payroll">Payment Definition</a></li>
-                <li><a href="{{route('journal-voucher')}}" key="t-payroll">Tax Rates</a></li>
-                <li><a href="{{route('trial-balance')}}" key="t-payroll">Salary Structure</a></li>
-                <li><a href="{{route('balance-sheet')}}" key="t-payroll">Payroll Setup</a></li>
-                <li><a href="{{route('profit-or-loss')}}" key="t-payroll">Salary Grades</a></li>
-                <li><a href="{{route('profit-or-loss')}}" key="t-payroll">Salary Increment</a></li>
+                <li><a href="{{route('payment-definition')}}" key="t-payroll">Payment Definition</a></li>
+                <li><a href="{{route('salary-structure')}}" key="t-payroll">Salary Structure</a></li>
+                <li><a href="{{route('salary-allowances')}}" key="t-payroll">Salary Allowances</a></li>
             </ul>
         </li>
-
+        <li class="menu-title">Reports</li>
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
                 <i class="bx bx-chart"></i>
@@ -189,14 +226,15 @@
             <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{route('top-up')}}" key="t-reports">Property</a></li>
                 <li><a href="{{route('top-up-transactions')}}" key="t-reports">Customer</a></li>
+                <li><a href="{{route('top-up-transactions')}}" key="t-reports">Sales</a></li>
             </ul>
         </li>
-        <li>
-            <a href="{{route('accounting-settings')}}" class="waves-effect">
+       <!--  <li>
+            <a href="{route('accounting-settings')}}" class="waves-effect">
                 <i class="bx bx-cog"></i>
                 <span key="t-chat">Settings</span>
             </a>
-        </li>
+        </li> -->
 
      {{--   <li class="menu-title">Extras</li>
         @can('access-documents')

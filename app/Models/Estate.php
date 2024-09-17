@@ -17,6 +17,10 @@ class Estate extends Model
         return $this->belongsTo(State::class, 'e_state_id');
     }
 
+    public function getCountry(){
+        return $this->belongsTo(Country::class, 'e_country_id');
+    }
+
     public function getProperties(){
         return $this->hasMany(Property::class, 'estate_id');
     }
@@ -28,6 +32,7 @@ class Estate extends Model
     public function addNewEstate(Request $request){
         $record = new Estate();
         $record->e_name = $request->name ?? '';
+        $record->e_country_id = $request->country ?? '';
         $record->e_state_id = $request->state ?? '';
         $record->e_city = $request->city ?? '';
         $record->e_mobile_no = $request->mobile_no ?? '';
@@ -43,13 +48,14 @@ class Estate extends Model
         $record =  Estate::find($request->estate);
         $record->e_name = $request->name ?? '';
         $record->e_state_id = $request->state ?? '';
+        $record->e_country_id = $request->country ?? '';
         $record->e_city = $request->city ?? '';
         $record->e_mobile_no = $request->mobile_no ?? '';
         $record->e_address = $request->address ?? '';
         $record->e_slug = substr(sha1(time()),29,40);
         $record->e_info = $request->info ?? '';
         $record->e_ref_code = strtoupper($request->referenceCode) ;
-        $record->e_added_by = Auth::user()->id;
+        //$record->e_added_by = Auth::user()->id;
         $record->save();
         return $record;
     }

@@ -53,7 +53,7 @@
                                 <div class="card-body">
                                     <div class="row mb-1">
                                         <div class="col">
-                                            <p class="mb-1">Estimated Valuation</p>
+                                            <p class="mb-1">Estimated Value</p>
                                             <h5 class="mb-0 text-info number-font">{{env('APP_CURRENCY')}}{{ number_format( $record->getProperties->sum('price'),2 ) }}</h5>
                                         </div>
                                         <div class="col-auto mb-0">
@@ -89,7 +89,7 @@
 
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-end">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-primary"> Add New <i class="bx bxs-add-to-queue"></i> </a>
+                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-warning"> Edit Details <i class="bx bxs-pencil"></i> </a>
                         <a href="{{route('estates')}}"   class=" ml-2 btn btn-secondary"> Go Back <i class="bx bx-arrow-back"></i> </a>
                     </div>
                 </div>
@@ -138,22 +138,25 @@
                                                             <table class="table mb-0 table-striped">
                                                                 <tbody>
                                                                 <tr>
-                                                                    <th scope="row">Estate Name: &nbsp; &nbsp; <span class="text-info">{{$record->e_name ?? '' }} </span></th>
+                                                                    <th scope="row">Estate Name:<span class="text-info"> {{$record->e_name ?? '' }} </span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">State: &nbsp; &nbsp; <span class="text-info">{{$record->getState->name ?? ''}}</span></th>
+                                                                    <th scope="row">Country:<span class="text-info"> {{$record->getCountry->name ?? ''}}</span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">City: &nbsp; &nbsp; <span class="text-info">{{$record->e_city ?? '' }} </span></th>
+                                                                    <th scope="row">State:<span class="text-info"> {{$record->getState->name ?? ''}}</span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">Mobile No.: &nbsp; &nbsp; <span class="text-info">{{$record->e_mobile_no ?? '' }}</span></th>
+                                                                    <th scope="row">City:<span class="text-info"> {{$record->e_city ?? '' }} </span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">Address: &nbsp; &nbsp; <span class="text-info">{{$record->e_address ?? '' }} </span></th>
+                                                                    <th scope="row">Ref. Code:<span class="text-info"> {{$record->e_ref_code ?? '' }}</span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">About: &nbsp; &nbsp; <br> <span class="text-muted">
+                                                                    <th scope="row">Address:<span class="text-info"> {{$record->e_address ?? '' }} </span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">About:<br> <span class="text-muted">
                                                                             {{$record->e_info ?? '' }}</span>
                                                                     </th>
                                                                 </tr>
@@ -172,19 +175,16 @@
                                                             <table class="table mb-0 table-striped">
                                                                 <tbody>
                                                                 <tr>
-                                                                    <th scope="row">No. of Properties:<span class="text-info">EFAB Verizon Estate, Karsana </span></th>
+                                                                    <th scope="row">No. of Properties:<span class="text-info">{{number_format($record->getProperties->count())}} </span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">No. of Customers:<span class="text-info">Detached Duplex</span></th>
+                                                                    <th scope="row">No. of Customers:<span class="text-info">{{number_format(count($customers))}}</span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">Email: &nbsp; &nbsp; <span class="text-info"> </span></th>
+                                                                    <th scope="row">Est. Value:<span class="text-info"> {{env('APP_CURRENCY')}}{{ number_format( $record->getProperties->sum('price'),2 ) }} </span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">Address: &nbsp; &nbsp; <span class="text-info">₦13,250,000.00</span></th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th scope="row">Gender: &nbsp; &nbsp; <span class="text-info">1348 </span></th>
+                                                                    <th scope="row">Total Inflow:<span class="text-info"> {{env('APP_CURRENCY')}} {{number_format($receipts->sum('total'),2)}}</span></th>
                                                                 </tr>
 
                                                                 </tbody>
@@ -198,17 +198,17 @@
                                     <div class="tab-pane" id="profile1" role="tabpanel">
                                         <div class="row">
                                             <div class="col-md-12 col-sm-12 col-xl-12">
+                                                <p>There are <code>{{number_format($record->getProperties->count())}}</code> properties in this <span class="text-info">{{$record->e_name ?? ''}}</span></p>
                                                 <div class="table-responsive">
                                                     <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                                                         <thead>
                                                         <tr>
                                                             <th class="">#</th>
                                                             <th class="wd-15p">Date</th>
-                                                            <th class="wd-15p">Estate</th>
                                                             <th class="wd-15p">House No.</th>
+                                                            <th class="wd-15p">Code</th>
                                                             <th class="wd-15p">Property Name</th>
                                                             <th class="wd-15p" style="text-align: right;">Price(₦)</th>
-                                                            <th class="wd-15p">Building Type</th>
                                                             <th class="wd-15p">Status</th>
                                                             <th class="wd-15p">Action</th>
                                                         </tr>
@@ -218,8 +218,8 @@
                                                             <tr>
                                                                 <td>{{ $key + 1 }}</td>
                                                                 <td>{{date('d M, Y', strtotime($property->created_at))}}</td>
-                                                                <td>{{$property->getEstate->e_name ?? '' }}</td>
                                                                 <td>{{ $property->house_no ?? '' }}</td>
+                                                                <td>{{$property->property_code ?? '' }}</td>
                                                                 <td>
                                                                     <a href="{{route('show-property-details', ['slug'=>$property->slug])}}">
                                                                         <div class="d-flex">
@@ -233,7 +233,6 @@
                                                                     </a>
                                                                 </td>
                                                                 <td class="text-right" style="text-align: right;">{{ number_format($property->price,2)  }}</td>
-                                                                <td>{{$property->getBuildingType->bt_name ?? '' }}</td>
                                                                 <td>
                                                                     @switch($property->status)
                                                                         @case(0)
@@ -263,17 +262,50 @@
                                         </div>
                                     </div>
                                     <div class="tab-pane" id="messages1" role="tabpanel" >
-                                        <p class="mb-0">
-                                            Etsy mixtape wayfarers, ethical wes anderson tofu before they
-                                            sold out mcsweeney's organic lomo retro fanny pack lo-fi
-                                            farm-to-table readymade. Messenger bag gentrify pitchfork
-                                            tattooed craft beer, iphone skateboard locavore carles etsy
-                                            salvia banksy hoodie helvetica. DIY synth PBR banksy irony.
-                                            Leggings gentrify squid 8-bit cred pitchfork. Williamsburg banh
-                                            mi whatever gluten-free carles.
-                                        </p>
+                                        <p>{{$record->e_name ?? '' }} has a total of <code>{{number_format(count($customers))}}</code> customers.</p>
+                                        <div class="table-responsive mt-3">
+                                            <table id="datatable2" class="table table-bordered dt-responsive  nowrap w-100">
+                                                <thead>
+                                                <tr>
+                                                    <th class="">#</th>
+                                                    <th class="wd-15p">Date</th>
+                                                    <th class="wd-15p">Name</th>
+                                                    <th class="wd-15p">Phone No.</th>
+                                                    <th class="wd-15p"># of Properties</th>
+                                                    <th class="wd-15p" style="text-align: right;">Valuation({{env('APP_CURRENCY')}})</th>
+                                                    <th class="wd-15p">Source</th>
+                                                    <th class="wd-15p">Action</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                @php $index = 1; @endphp
+                                                @foreach($customers as $lead)
+                                                    <tr>
+                                                        <td>{{$index++}}</td>
+                                                        <td>{{date('M d, Y', strtotime($lead->entry_date))}}</td>
+                                                        <td><a href="{{route('lead-profile', $lead->slug)}}">{{$lead->first_name ?? '' }} {{$lead->last_name ?? '' }}</a>
+                                                            <sup class="badge rounded-pill bg-success">{{$lead->getStatus->status ?? '' }}</sup>
+                                                        </td>
+                                                        <td>{{$lead->phone ?? '' }}</td>
+                                                        <td>{{ number_format($lead->getNumberOfProperties($lead->id) ?? 0) ?? '' }}</td>
+                                                        <td style="text-align: right;">{{ number_format($lead->getCustomerValuation($lead->id) ?? 0,2) }}</td>
+                                                        <td> <span class="badge rounded-pill bg-info"> {{$lead->getSource->source ?? '' }} </span> </td>
+                                                        <td>
+                                                            <div class="btn-group">
+                                                                <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" href="{{route('lead-profile', $lead->slug)}}"> <i class="bx bxs-user"></i> View Profile</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                     <div class="tab-pane" id="settings1" role="tabpanel" >
+                                        <p>A total of <code>{{number_format(count($receipts))}}</code> receipts issued. Turning into <span class="text-info">{{env('APP_CURRENCY')}}{{number_format($receipts->sum('total'),2)}}</span> in revenue.</p>
                                         <div class="table-responsive">
 
                                             <table id="datatable1" class="table table-striped table-bordered nowrap dataTable" role="grid" aria-describedby="focus-key_info" style="position: relative;">
@@ -340,6 +372,103 @@
         </div>
     </div>
 
+    <div class="modal right fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" style="width: 900px;">
+        <div class="modal-dialog modal-lg w-100" role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h6 class="modal-title text-uppercase" style="text-align: center;" id="myModalLabel2">Add New Estate</h6>
+                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form autocomplete="off" action="{{route('estates')}}" id="createIncomeForm" data-parsley-validate="" method="put" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row mb-3">
+                            <div class="form-group mt-3 col-md-12">
+                                <label for=""> Name <sup style="color: #ff0000 !important;">*</sup></label>
+                                <input type="text" value="{{ old('name', $record->e_name) }}" name="name" placeholder="Estate Name" class="form-control">
+                                @error('name') <i class="text-danger">{{$message}}</i>@enderror
+                                <input type="hidden" value="{{$record->e_id}}" name="estate">
+                            </div>
+                            <div class="form-group mt-3 col-md-6 ">
+                                <label for="">Country <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
+                                <select name="state" id="country"  class="form-control select2">
+                                    <option value="161" {{$record->e_country_id == 161 ? 'selected' : null }}>Nigeria</option>
+                                    @foreach($countries as $country)
+                                        @if($country->id != 161)
+                                            <option value="{{$country->id}}" {{$record->e_country_id == $country->id ? 'selected' : null }}>{{$country->name ?? '' }}</option>
+                                        @endif
+                                    @endforeach
+
+                                </select>
+                                @error('state') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                            <div class="form-group mt-3 col-md-6 " id="state">
+                                <label for="">State <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
+                                <select name="state"  class="form-control select2 ">
+                                    <option selected disabled>--Select state --</option>
+                                    @foreach($states as $state)
+                                        <option value="{{$state->id}}" {{$record->e_state_id == $state->id ? 'selected' : null }}>{{$state->name ?? '' }}</option>
+                                    @endforeach
+
+                                </select>
+                                @error('state') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                            <div class="form-group mt-3 col-md-6">
+                                <label for="">City <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
+                                <input type="text" name="city" value="{{ old('city', $record->e_city) }}" placeholder="City" class="form-control">
+                                @error('city') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                            <div class="form-group mt-3 col-md-6">
+                                <label for="">Reference Code <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
+                                <input type="text" value="{{ old('referenceCode', $record->e_ref_code) }}" name="referenceCode" placeholder="Enter a unique Reference Code. Example RAY for Raylight" class="form-control">
+                                @error('referenceCode') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="form-group mt-3 col-md-12">
+                                <label for="">Address <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
+                                <textarea name="address" id="address" placeholder="Type address here..."  style="resize: none;" class="form-control">{{ old('address', $record->e_address) }}</textarea>
+                                @error('address') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="form-group mt-3 col-md-12">
+                                <label for="">Brief Info <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
+                                <textarea name="info" id="info" placeholder="Enter a brief info about this estate"  style="resize: none;" class="form-control">{{ old('info', $record->e_info) }}</textarea>
+                                @error('info') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="modal-header">Estate Amenities  </div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row mt-2">
+                                            @foreach($amenities as $amenity)
+                                                <div class="col-md-6">
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" value="{{$amenity->ea_id}}"    name="amenities[]"  type="checkbox" checked>
+                                                        <label class="form-check-label" for="borehole">{{$amenity->ea_name ?? '' }}</label>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group d-flex justify-content-center mt-3">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary  waves-effect waves-light">Save changes <i class="bx bx-check-double"></i> </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 

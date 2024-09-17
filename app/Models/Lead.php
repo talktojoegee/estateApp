@@ -108,6 +108,10 @@ class Lead extends Model
     }
 
 
+    public static function getCustomerListByIds($customerIds){
+        return Lead::whereIn('id', $customerIds)->orderBy('first_name', 'ASC')->get();
+    }
+
     public static function getCustomerValuation($customerId){
         return Receipt::where('customer_id', $customerId)->sum('total');
     }

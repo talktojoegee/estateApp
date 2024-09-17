@@ -193,6 +193,10 @@ class Property extends Model
         return $this->belongsTo(BuildingType::class, 'building_type');
     }
 
+    public function getAllocations(){
+        return $this->hasMany(PropertyAllocation::class, 'property_id');
+    }
+
     public function getAddedBy(){
         return $this->belongsTo(User::class, 'added_by');
     }
@@ -310,7 +314,12 @@ class Property extends Model
     }
 
    public function getPropertiesByEstateId($estateId){
-        return Property::where('estate_id', $estateId)->where('status',0)->orderBy('id', 'DESC')->get();
+        return Property::where('estate_id', $estateId)
+            ->orderBy('id', 'DESC')->take(5)->get();
+    }
+   public function getAvailablePropertiesByEstateId($estateId){
+        return Property::where('estate_id', $estateId)->where('status',0)
+            ->orderBy('id', 'DESC')->take(5)->get();
     }
 
     public function getAllProperties($status){

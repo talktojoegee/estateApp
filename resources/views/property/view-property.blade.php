@@ -14,6 +14,7 @@
 @endsection
 
 @section('main-content')
+    @inject('Utility', 'App\Http\Controllers\Portal\PropertyController')
     @if(session()->has('success'))
         <div class="row" role="alert">
             <div class="col-md-12">
@@ -166,13 +167,10 @@
                             <tbody>
                             <tr>
                                 <th scope="row" > Added By: &nbsp; &nbsp; <span class="text-info"> {{$property->getAddedBy->title ?? '' }} {{$property->getAddedBy->first_name ?? '' }} {{$property->getAddedBy->last_name ?? '' }} {{$property->getAddedBy->other_names ?? '' }} </span></th>
-                                <th scope="row" >Occupied By: &nbsp; &nbsp;
-                                    <span class="text-info">-</span>
-                                </th>
 
                             </tr>
                             <tr>
-                                <th scope="row" > Sold To: &nbsp; &nbsp; <span class="text-info">  {{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getAddedBy->other_names ?? '' }} </span></th>
+                                <th scope="row" > Sold To: &nbsp; &nbsp; <span class="text-info">  {{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }} </span></th>
                                 <th scope="row" >Date Sold: &nbsp; &nbsp;
                                     <span class="text-info">-</span>
                                 </th>
@@ -320,6 +318,41 @@
             </div>
 
 
+            <div class="card">
+                <div class="card-body">
+                    <div class="modal-header text-uppercase ">Property Allocation</div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="table-responsive" bis_skin_checked="1">
+                                <table class="table table-striped mb-0">
+
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Customer</th>
+                                        <th>Allotment</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">1</th>
+                                        <td>{{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }}</td>
+                                        <td><small><span class="text-success">First Allottee</span></small></td>
+                                    </tr>
+                                    @foreach($property->getAllocations as $key =>  $allocation)
+                                        <tr>
+                                            <td>{{ $key + 2 }}</td>
+                                            <td>{{$allocation->getCustomer->first_name ?? '' }} {{$allocation->getCustomer->last_name ?? '' }} {{$allocation->getCustomer->other_names ?? '' }}</td>
+                                            <td><small><code>{{$Utility->numToOrdinalWord($allocation->level ?? 0)}} Allottee</code></small></td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row editPropertyWindow">

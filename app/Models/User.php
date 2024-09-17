@@ -48,9 +48,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function getDepartment(){
+        return $this->belongsTo(Department::class, 'department');
+    }
+
+
     public function getUsersWallpaper(){
         return $this->belongsTo(Wallpaper::class, 'wallpaper');
     }
+
+
     public function getUserCountry(){
         return $this->belongsTo(Country::class, 'country_id');
     }

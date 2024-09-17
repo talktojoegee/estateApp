@@ -107,7 +107,7 @@
                                             </tr>
                                             </thead>
                                             <tbody id="products">
-                                            <tr class="item">
+                                                <tr class="item">
                                                 <td>
                                                     <div class="form-group">
                                                                     <textarea name="service[]" style="resize: none;"
@@ -212,32 +212,6 @@
             $(document).on('change', '#invoice_type', function(e){
                 e.preventDefault();
                 //console.log($(this).val());
-               /* switch($(this).val()){
-                    case '1':
-                        $('#tenant-wrapper').show();
-                        //$('#applicant-wrapper').show();
-                        $('.property-wrapper').hide();
-                        $('.js-example-basic-single').select2();
-                        break;
-                    case '2':
-                        $('#tenant-wrapper').show();
-                        //$('#applicant-wrapper').hide();
-                        $('.property-wrapper').hide();
-                        $('.js-example-basic-single').select2();
-                        break;
-                    case '3':
-                        $('#tenant-wrapper').show();
-                        //$('#applicant-wrapper').hide();
-                        $('.property-wrapper').show();
-                        $('.js-example-basic-single').select2();
-                        break;
-                    case '4':
-                        $('#tenant-wrapper').show();
-                        //$('#applicant-wrapper').hide();
-                        $('.property-wrapper').hide();
-                        $('.js-example-basic-single').select2();
-                        break;
-                }*/
             });
             $(document).on('click', '.add-line', function(e){
                 e.preventDefault();

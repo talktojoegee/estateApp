@@ -66,29 +66,10 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-xl-6 col-sm-6" >
-                            <div class="card" >
-                                <div class="card-body" >
-                                    <div class="row mb-1" >
-                                        <div class="col" >
-                                            <p class="mb-1">Properties</p>
-                                            <h5 class="mb-0 text-info number-font">{{number_format(67)}}</h5>
-                                        </div>
-                                        <div class="col-auto mb-0" >
-                                            <div class="dash-icon text-orange" >
-                                                <i class="bx bx-building-house"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Properties</span></span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-primary"> Add New <i class="bx bxs-add-to-queue"></i> </a>
+                        <button type="button" id="addNewEstate" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-primary"> Add New <i class="bx bxs-add-to-queue"></i> </button>
                     </div>
                 </div>
 
@@ -158,13 +139,26 @@
                         @csrf
                         <div class="row mb-3">
                             <div class="form-group mt-3 col-md-12">
-                                <label for=""> Name</label>
+                                <label for=""> Name <sup style="color: #ff0000 !important;">*</sup></label>
                                 <input type="text" value="{{ old('name') }}" name="name" placeholder="Estate Name" class="form-control">
                                 @error('name') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                             <div class="form-group mt-3 col-md-6 ">
-                                <label for="">State <span class="text-danger">*</span></label>
-                                <select name="state"  class="form-control ">
+                                <label for="">Country <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
+                                <select name="state" id="country"  class="form-control select2">
+                                    <option value="161">Nigeria</option>
+                                    @foreach($countries as $country)
+                                        @if($country->id != 161)
+                                            <option value="{{$country->id}}">{{$country->name ?? '' }}</option>
+                                        @endif
+                                    @endforeach
+
+                                </select>
+                                @error('state') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                            <div class="form-group mt-3 col-md-6 " id="state">
+                                <label for="">State <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
+                                <select name="state"  class="form-control select2 ">
                                     <option selected disabled>--Select state --</option>
                                     @foreach($states as $state)
                                         <option value="{{$state->id}}">{{$state->name ?? '' }}</option>
@@ -174,26 +168,26 @@
                                 @error('state') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                             <div class="form-group mt-3 col-md-6">
-                                <label for="">City <span class="text-danger">*</span></label> <br>
+                                <label for="">City <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
                                 <input type="text" name="city" placeholder="City" class="form-control">
                                 @error('city') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                             <div class="form-group mt-3 col-md-6">
-                                <label for="">Reference Code <span class="text-danger">*</span></label> <br>
+                                <label for="">Reference Code <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
                                 <input type="text" name="referenceCode" placeholder="Enter a unique Reference Code. Example RAY for Raylight" class="form-control">
                                 @error('referenceCode') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="form-group mt-3 col-md-12">
-                                <label for="">Address <span class="text-danger">*</span></label>
+                                <label for="">Address <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
                                 <textarea name="address" id="address" placeholder="Type address here..."  style="resize: none;" class="form-control">{{ old('address') }}</textarea>
                                 @error('address') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="form-group mt-3 col-md-12">
-                                <label for="">Brief Info <span class="text-danger">*</span></label>
+                                <label for="">Brief Info <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
                                 <textarea name="info" id="info" placeholder="Enter a brief info about this estate"  style="resize: none;" class="form-control">{{ old('info') }}</textarea>
                                 @error('info') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
@@ -238,5 +232,17 @@
     <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
     <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
     <script src="/assets/js/pages/datatables.init.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#country').on('change',function(e){
+                e.preventDefault();
+                if( parseInt($(this).val()) !== 161 ){
+                    $('#state').hide();
+                }else{
+                    $('#state').show();
+                }
+            });
+        });
+    </script>
 
 @endsection

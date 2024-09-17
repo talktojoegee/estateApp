@@ -7,6 +7,11 @@
 @endsection
 @section('extra-styles')
     <link href="/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .text-danger{
+            color: #ff0000 !important;
+        }
+    </style>
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -16,16 +21,25 @@
     @if(session()->has('success'))
         <div class="row" role="alert">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="mdi mdi-check-all me-2"></i>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="mdi mdi-check-all me-2"></i>
 
-                            {!! session()->get('success') !!}
+                    {!! session()->get('success') !!}
 
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    @endif
+    @if(session()->has('error'))
+        <div class="row" role="alert">
+            <div class="col-md-12">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="mdi mdi-check-all me-2"></i>
+
+                    {!! session()->get('error') !!}
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -40,7 +54,7 @@
         <div class="col-md-12 col-xl-12 col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('add-new-property') }}" data-parsley-validate="" method="post" autocomplete="off" id="addPropertyForm" enctype="multipart/form-data">
+                    <form action="{{ route('property-allocation') }}" data-parsley-validate="" method="post" autocomplete="off" id="addPropertyForm" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
@@ -48,7 +62,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-6 col-md-6 lg-6">
+                                <div class="col-sm-4 col-md-4 col-lg-4">
                                     <div class="form-group">
                                         <label for="">Estate <sup class="text-danger">*</sup></label>
                                         <select id="estate" data-parsley-required-message="Select the estate to which this property belongs to" required  class="form-control p-3 select2" name="estate">
@@ -63,7 +77,18 @@
                                     <p class="mt-3" id="notice"><strong > <code>Guide:</code> </strong> Carefully go through the list of properties shown below to allocate customers to properties accordingly. Do not forget the level of allocation.
                                         Feel free to skip properties that shouldn't be allocated or were already allocated to someone.</p>
                                 </div>
-                                <div class="col-sm-6 col-md-6 lg-6 d-flex justify-content-end">
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <div class="form-group">
+                                        <label for="">Status <sup class="text-danger">*</sup> </label>
+                                        <select name="status" id="" class="form-control">
+                                            <option disabled selected>Select </option>
+                                            <option value="1">Rented</option>
+                                            <option value="2">Sold</option>
+                                        </select>
+                                        <br> @error('status')<i class="text-danger">{{$message}}</i>@enderror
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-4 d-flex justify-content-end">
                                     <div class="form-group">
                                         <button class="btn btn-primary " type="submit">Save changes <i class="bx bx-check-double"></i> </button>
                                     </div>
@@ -77,7 +102,7 @@
 
                             <div class="col-md-12">
                                 <div class="form-group d-flex justify-content-center mb-3 mt-2">
-                                    <button type="submit" class="btn btn-primary waves-effect waves-light"> Save changes <i class="bx bx-check-double ml-2"></i></button>
+                                    <button type="submit" class="btn btn-primary waves-effect waves-light"> Submit <i class="bx bx-check-double ml-2"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +126,6 @@
                 e.preventDefault();
                 axios.post("{{route('property-list')}}",{estate:$(this).val()})
                     .then(response=>{
-                        //console.log(response.data);
                         $('#appendList').html(response.data);
                         $(".select2").select2({
                             placeholder: "Select product or service"
@@ -113,7 +137,7 @@
                     })
                     .catch(error=>{
                         $('#notice').hide();
-                        console.log(error)
+                        //console.log(error)
                         $.notify("Whoops! Something went wrong. Try again", "error");
                     });
             });
