@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\UtilityTrait;
 use App\Models\ActivityLog;
 use App\Models\AppDefaultSetting;
 use App\Models\AssignFrequency;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RadioController extends Controller
 {
+    use UtilityTrait;
     //
     public function __construct(){
         $this->state = new State();
@@ -48,6 +50,7 @@ class RadioController extends Controller
         $this->property = new Property();
         $this->receipt = new Receipt();
         $this->invoicepaymenthistory = new InvoicePaymentHistory();
+
 
     }
 
@@ -392,32 +395,32 @@ class RadioController extends Controller
         switch ($type){
             case 'invoices':
                 return view('company.invoice.index',[
-                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([0,1,2,3,4]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[0,1,2,3]),
+                    'invoices'=> $this->invoicemaster->getAllInvoices([0,1,2,3,4]),
                     'title'=>'Invoices'
                 ]);
             case 'pending':
                 return view('company.invoice.index',[
-                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([0]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[0]),
+                    'invoices'=> $this->invoicemaster->getAllInvoices([0]),
                     'title'=>'Pending Invoices'
                 ]);
             case 'fully-paid':
                 return view('company.invoice.index',[
-                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([1]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[1]),
+                    'invoices'=> $this->invoicemaster->getAllInvoices([1]),
                     'title'=>'Fully-paid Invoices'
                 ]);
             case 'partly-paid':
                 return view('company.invoice.index',[
-                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([2]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[1]),
+                    'invoices'=> $this->invoicemaster->getAllInvoices([2]),
                     'title'=>'Partly-paid Invoices'
                 ]);
             case 'verified':
                 return view('company.invoice.index',[
-                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([4]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[2]),
+                    'invoices'=> $this->invoicemaster->getAllInvoices([4]),
                     'title'=>'Verified Invoices'
                 ]);
             case 'declined':
                 return view('company.invoice.index',[
-                    'invoices'=> $authUser->type == 1 ? $this->invoicemaster->getAllInvoices([3]) : $this->invoicemaster->getAllCompanyInoices($authUser->org_id,[3]),
+                    'invoices'=> $this->invoicemaster->getAllInvoices([3]),
                     'title'=>'Declined Invoices'
                 ]);
 
@@ -489,35 +492,59 @@ class RadioController extends Controller
         $this->validate($request,[
             'invoiceId'=>'required',
             'status'=>'required',
-            'comment'=>'required'
+            //'comment'=>'required'
         ],[
             "invoiceId.required"=>"",
             "status.required"=>"Whoops! Something went wrong.",
-            "comment.required"=>"Leave a brief comment"
+            //"comment.required"=>"Leave a brief comment"
         ]);
         $invoice = $this->invoicemaster->getInoviceById($request->invoiceId);
         if(empty($invoice)){
             session()->flash("error", "Whoops! Record not found.");
             return back();
         }
-        $invoice->actioned_by = Auth::user()->id;
-        $invoice->comment = $request->comment ?? null;
-        $invoice->date_actioned = now();
-        //$invoice->status = $request->status;
-        //$invoice->amount_paid = $request->status == 2 ? $invoice->total : 0;
-        $invoice->save();
-        //update post/license application too
-        $post = $this->post->getPostById($invoice->post_id);
-        //return dd($post);
-        if(!empty($post)){
-            $post->p_invoice_id = $invoice->id;
-            $post->p_amount = $invoice->total ?? 0;
-            $post->p_status = $request->status == 2 ? 5 : 4;//status == 2 ? payment verified // mark payment as paid
-            $post->save();
+        $authUserId = Auth::user()->id;
+        if($request->status == 1){ //post
+            //Get default accounts
+            $defaultAccounts = $this->appdefaultsetting->getAppDefaultSettings();
+            if(empty($defaultAccounts)){
+                session()->flash("error", "Whoops! Something went wrong.");
+                return back();
+            }
+            $customerAccount = $defaultAccounts->customer_account;
+            $propertyAccount = $defaultAccounts->property_account;
+            if(is_null($customerAccount) || is_null($propertyAccount) ){
+                session()->flash("error", "Whoops! One or two accounts are missing for this transaction. Contact admin.");
+                return back();
+            }
+            $ref = strtoupper(substr(sha1(time()), 29,40));
+            $property = $invoice->getProperty;
+            $customer = $invoice->getCustomer;
+            //debit customer
+            $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided to {$customer->first_name} on {$invoice->issue_date}, Invoice No. {$invoice->invoice_no}.";
+            $this->handleLedgerPosting($invoice->total ?? 0, 0, $customerAccount, $narration,
+                $ref, 0, $authUserId, $invoice->issue_date);
+            //credit property
+            /*$narration = "Being the invoice raised for [description of goods/services] provided for the property at
+            [property address or name] on [invoice date], Invoice No. [invoice number]";*/
+            $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided for the property with property code {$property->property_code}.";
+            $this->handleLedgerPosting(0, $invoice->total, $propertyAccount, $narration,
+                $ref, 0, $authUserId, $invoice->issue_date);
         }
-        //proceed with notification and activity log
-        session()->flash("success", "Action successful");
+
+        $invoice->posted = $request->status;
+        $invoice->posted_by = $authUserId;
+        $invoice->date_posted = now();
+        $invoice->save();
+        session()->flash("success", "Action successful.");
         return back();
+        /*
+        $invoice->posted = $request->status;
+        $invoice->posted_by = Auth::user()->id;
+        $invoice->date_posted = now();
+        $invoice->save();*/
+        //proceed with notification and activity log
+
     }
 
     public function showApplicationCategory($type){
@@ -1021,6 +1048,60 @@ class RadioController extends Controller
             session()->flash("error", " No record found.");
             return back();
         }
+    }
+
+    public function showInvoiceForPosting(Request $request){
+        $method = $request->getMethod();
+        switch ($method){
+            case 'GET':
+                return view('accounting.post-invoice',[
+                    'invoices'=>$this->invoicemaster->getUnpostedInvoiceList()
+                ]);
+            case 'POST':
+                $this->validate($request,[
+                    "invoice"=>"required"
+                ],[
+                    "invoice.required"=>""
+                ]);
+                $invoice = $this->invoicemaster->getInoviceById($request->invoice);
+                if(empty($invoice)){
+                    session()->flash("error", "Whoops! No record found.");
+                    return back();
+                }
+                //Get default accounts
+                $defaultAccounts = $this->appdefaultsetting->getAppDefaultSettings();
+                if(empty($defaultAccounts)){
+                    session()->flash("error", "Whoops! Something went wrong.");
+                    return back();
+                }
+                $customerAccount = $defaultAccounts->customer_account;
+                $propertyAccount = $defaultAccounts->property_account;
+                if(is_null($customerAccount) || is_null($propertyAccount) ){
+                    session()->flash("error", "Whoops! One or two accounts are missing for this transaction. Contact admin.");
+                    return back();
+                }
+                $ref = strtoupper(substr(sha1(time()), 29,40));
+                $property = $invoice->getProperty;
+                $customer = $invoice->getCustomer;
+                $authUserId = Auth::user()->id;
+                //debit customer
+                $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided to {$customer->first_name} on {$invoice->issue_date}, Invoice No. {$invoice->invoice_no}.";
+                $this->handleLedgerPosting($invoice->total ?? 0, 0, $customerAccount, $narration,
+                    $ref, 0, $authUserId, $invoice->issue_date);
+                //credit property
+            /*$narration = "Being the invoice raised for [description of goods/services] provided for the property at
+            [property address or name] on [invoice date], Invoice No. [invoice number]";*/
+                $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided for the property with property code {$property->property_code}.";
+                $this->handleLedgerPosting(0, $invoice->total, $propertyAccount, $narration,
+                    $ref, 0, $authUserId, $invoice->issue_date);
+                $invoice->posted = 1;
+                $invoice->posted_by = $authUserId;
+                $invoice->date_posted = now();
+                $invoice->save();
+                session()->flash("success", "Action successful.");
+                return back();
+        }
+
     }
 }
 

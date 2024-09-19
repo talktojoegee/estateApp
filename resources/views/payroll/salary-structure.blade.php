@@ -62,7 +62,7 @@
                                             <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="javascript:void(0);" data-bs-target="#editModal_{{$record->id}}" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> Edit</a>
-                                                <a class="dropdown-item" href="javascript:void(0);" data-bs-target="#editModal_{{$record->id}}" data-bs-toggle="modal"> <i class="bx bx-street-view text-info"></i> View Allowances</a>
+                                                <a class="dropdown-item" href="{{ route('view-salary-allowances', $record->slug) }}" > <i class="bx bx-street-view text-info"></i> View Allowances</a>
                                             </div>
                                         </div>
                                     </td>
@@ -81,7 +81,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header" >
-                        <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2">Edit Payment Definition</h6>
+                        <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2">Edit Salary Structure</h6>
                         <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 

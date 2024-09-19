@@ -118,7 +118,7 @@
             </div>
 
             <div class="col-xl-8">
-                <div class="card">
+                <div class="card" >
                     <div class="card-body">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
@@ -156,7 +156,7 @@
                         </ul>
 
                         <!-- Tab panes -->
-                        <div class="tab-content p-3 text-muted">
+                        <div class="tab-content p-3 text-muted" >
                             <div class="tab-pane" id="home1" role="tabpanel">
                                 <div class="mt-3" style="height: 500px; overflow-y: scroll;">
                                     <ul class="verti-timeline list-unstyled">
@@ -283,7 +283,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="documents" role="tabpanel">
-                                <div class="card">
+                                <div class="card" style="opacity: 1 !important;">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-xl-12 col-md-12 col-lg-12 d-flex justify-content-end">
@@ -561,6 +561,127 @@
             </div>
         </div>
     </div>
+
+    @foreach($client->getCustomerFiles as $file)
+        <div id="renameModal_{{$file->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="card-header bg-primary">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Rename File</h5>
+                    </div>
+                    <form action="{{route('rename-file')}}" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">File Name<sup class="text-danger">*</sup></label>
+                                        <input type="text" value="{{$file->name ?? '' }}" name="newName" placeholder="Rename File" class="form-control">
+                                        @error('newName') <i class="text-danger mt-3">{{$message}}</i> @enderror
+                                    </div>
+                                </div>
+                                <input type="hidden" name="key" value="{{$file->id}}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="btn-group">
+                                <button data-bs-dismiss="modal" type="button" class="btn btn-secondary btn-mini"><i class="bx bx-block mr-2"></i>Cancel</button>
+                                <button type="submit" class="btn btn-primary btn-mini"><i class="bx bx-check mr-2"></i>Save changes</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="infoModal_{{$file->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="card-header " style="background: #00214D !important;">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Info</h5>
+                    </div>
+                    <div>
+                        @switch(pathinfo($file->filename, PATHINFO_EXTENSION))
+                            @case('pdf')
+                                <embed style="height: 700px; width: 100%;" src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}"/>
+                            @break
+                            @case('doc')
+                                <iframe src="https://docs.google.com/gview?url=http://remote.url.tld/assets/drive/cloud/{{$file->filename ?? ''}}&embedded=true"></iframe>
+                            @break
+                            @case('docx')
+                            <iframe src="https://docs.google.com/gview?url=http://remote.url.tld/assets/drive/cloud/{{$file->filename ?? ''}}&embedded=true"></iframe>
+                            @break
+                            @case('jpg')
+                                <img style="max-height: 700px; width: 100%;" src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}">
+                            @break
+                            @case('jpeg')
+                            <img style="max-height: 700px; width: 100%;" src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}">
+                            @break
+                            @default
+                                <p class="text-center text-danger">Un-supported preview format</p>
+                        @endswitch
+                    </div>
+                    <div class="table-responsive" >
+                        <table class="table mb-0">
+                            <tbody>
+                            <tr>
+                                <th scope="row">File Name: </th>
+                                <td>{{$file->name ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Size: </th>
+                                <td>{{ $file->formatSizeUnits( $file->size ?? 0) }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Uploaded By: </th>
+                                <td>{{ $file->getUploadedBy->first_name ?? '' }} {{ $file->getUploadedBy->last_name ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Date: </th>
+                                <td>{{ date('d M, Y h:ia', strtotime($file->created_at)) }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group">
+                            <button data-bs-dismiss="modal" type="button" class="btn btn-secondary btn-mini"><i class="bx bx-block mr-2"></i>Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="fileModal_{{$file->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="card-header bg-warning">
+                        <h5 class="modal-title text-white" id="exampleModalLabel">Warning</h5>
+                    </div>
+                    <form action="{{route('delete-file')}}" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">This action cannot be undone. Are you sure you want to delete <strong>{{$file->name ?? '' }}</strong>?</label>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="directory" value="{{$file->folder_id}}">
+                                <input type="hidden" name="key" value="{{$file->id}}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="btn-group">
+                                <button data-bs-dismiss="modal" type="button" class="btn btn-secondary btn-mini"><i class="bx bx-block mr-2"></i>No, cancel</button>
+                                <button type="submit" class="btn btn-danger btn-mini"><i class="bx bx-check mr-2"></i>Yes, delete</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    @endforeach
 @endsection
 
 @section('extra-scripts')

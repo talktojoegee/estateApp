@@ -150,6 +150,9 @@ class InvoiceMaster extends Model
     public function getAllInvoices($status){
         return InvoiceMaster::whereIn('status', $status)->orderBy('id', 'DESC')->get();
     }
+    public function getUnpostedInvoiceList(){
+        return InvoiceMaster::where('posted', 0)->orderBy('id', 'DESC')->get();
+    }
 
     public function getAllCompanyInoices($orgId, $status){
         return InvoiceMaster::where('org_id', $orgId)->where('status', $status)->orderBy('id', 'DESC')->get();

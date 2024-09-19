@@ -1,9 +1,9 @@
 @extends('layouts.master-layout')
 @section('title')
-{{$title ?? ''}}
+ Invoice Posting
 @endsection
 @section('current-page')
-{{$title ?? ''}}
+    Invoice Posting
 @endsection
 @section('extra-styles')
     <link href="{{asset('assets/libs/select2/css/select2.min.css')}}" rel="stylesheet" type="text/css" />
@@ -25,79 +25,22 @@
 @section('main-content')
     <div class="container-fluid">
         <div class="row">
-            <div class="row">
-                <div class="col-xl-3 col-sm-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row mb-1">
-                                <div class="col">
-                                    <p class="mb-1">Total</p>
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-1">
+                            <div class="col">
+                                <p class="mb-1">Total</p>
 
-                                    <h5 class="mb-0 number-font text-secondary1">{{env('APP_CURRENCY')}}{{ number_format($invoices->sum('total')) }}</h5>
-                                </div>
-                                <div class="col-auto mb-0">
-                                    <div class="dash-icon text-secondary1">
-                                        <i class="bx bxs-wallet"></i>
-                                    </div>
+                                <h5 class="mb-0 number-font text-secondary1">{{env('APP_CURRENCY')}}{{ number_format($invoices->where('posted',0)->sum('total')) }}</h5>
+                            </div>
+                            <div class="col-auto mb-0">
+                                <div class="dash-icon text-secondary1">
+                                    <i class="bx bxs-wallet"></i>
                                 </div>
                             </div>
-                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Overall <code>({{ number_format($invoices->count()) }})</code></span></span>
                         </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-sm-6" >
-                    <div class="card" >
-                        <div class="card-body" >
-                            <div class="row mb-1" >
-                                <div class="col" >
-                                    <p class="mb-1">Partly-paid</p>
-                                    <h5 class="text-orange mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $invoices->where('status',2)->sum('total') )}}</h5>
-                                </div>
-                                <div class="col-auto mb-0" >
-                                    <div class="dash-icon text-orange" >
-                                        <i class="bx bxs-book-open"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Partly-paid<code>({{number_format($invoices->where('status',2)->count())}})</code></span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6" >
-                    <div class="card" >
-                        <div class="card-body" >
-                            <div class="row mb-1" >
-                                <div class="col" >
-                                    <p class="mb-1">Fully-paid</p>
-                                    <h5 class="text-secondary mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $invoices->where('status',1)->sum('amount_paid') )}}</h5>
-                                </div>
-                                <div class="col-auto mb-0" >
-                                    <div class="dash-icon text-secondary" >
-                                        <i class="bx bx-check-double"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Total Fully-paid<code>({{number_format( $invoices->where('status',1)->count() )}})</code></span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6" >
-                    <div class="card" >
-                        <div class="card-body" >
-                            <div class="row mb-1" >
-                                <div class="col" >
-                                    <p class="mb-1">Pending</p>
-                                    <h5 class="text-warning mb-0 number-font">{{env('APP_CURRENCY')}}{{number_format( $invoices->where('status',0)->sum('total') )}}</h5>
-                                </div>
-                                <div class="col-auto mb-0" >
-                                    <div class="dash-icon text-warning" >
-                                        <i class="bx bx-hourglass"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Total Pending<code>({{number_format( $invoices->where('status',0)->count() )}})</code> </span></span>
-                        </div>
+                        <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Overall <code>({{ number_format($invoices->where('posted',0)->count()) }})</code></span></span>
                     </div>
                 </div>
             </div>
@@ -134,7 +77,6 @@
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Date</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Invoice No.</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Customer</th>
-                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Due Date</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Total({{env('APP_CURRENCY')}})</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Paid({{env('APP_CURRENCY')}})</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Balance({{env('APP_CURRENCY')}})</th>
@@ -154,7 +96,6 @@
                                         <td class="">
                                             <a target="_blank" href="{{route('lead-profile', $flow->getCustomer->slug)}}">{{$flow->getCustomer->title ?? '' }} {{$flow->getCustomer->first_name ?? '' }} {{$flow->getCustomer->last_name ?? '' }}</a>
                                         </td>
-                                        <td class="" style="color: #ff0000 !important;">{{ date('d M, Y', strtotime($flow->due_date)) }}</td>
                                         <td class="" style="text-align: right">{{number_format($flow->total,2)}}</td>
                                         <td class="" style="text-align: right">{{number_format($flow->amount_paid ?? 0,2)}}</td>
                                         <td class="" style="text-align: right">{{number_format(($flow->total ?? 0) - ($flow->amount_paid ?? 0),2)}}</td>
@@ -182,9 +123,6 @@
                                                 <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="{{route('show-invoice-detail', $flow->ref_no)}}" > <i class="bx bxs-book-open"></i> View</a>
-                                                    @if((($flow->total ?? 0) - ($flow->amount_paid ?? 0)) > 0)
-                                                        <a class="dropdown-item" href="{{route('receive-payment', $flow->ref_no)}}" > <i class="bx bx-wallet-alt"></i> Receive Payment</a>
-                                                    @endif
                                                 </div>
                                             </div>
                                         </td>

@@ -17,7 +17,7 @@
         </div>
     </div>
 </div>
-$2y$10$U1GCi60tTYxhj80pUwuIj.W.ajk78K3lt6E9ox1tHJzKKr9FaNqn2
+
 
 <div class="modal " id="paymentDefinitionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" >
     <div class="modal-dialog" role="document">

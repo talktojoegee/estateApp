@@ -10,6 +10,19 @@ use Illuminate\Support\Facades\DB;
 class GeneralLedger extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'glcode',
+        'posted_by',
+        'narration',
+        'dr_amount',
+        'cr_amount',
+        'ref_no',
+        'bank',
+        'transaction_date',
+        'ob',
+        'created_at',
+        'updated_at',
+    ];
 
 
     public function getFirstGlTransaction(){

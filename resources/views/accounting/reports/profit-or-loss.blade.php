@@ -22,13 +22,11 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
-                            <h5 class="modal-header mb-3 text-uppercase">Accounting Period</h5>
+                            <h5 class="modal-header mb-3 text-info text-uppercase">Accounting Period</h5>
                             <p>Enter date to generate a profit/loss accounting report.</p>
                             @if (session()->has('success'))
                                 <div class="alert alert-success background-success">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <i class="bx bx-check-double text-white"></i>
-                                    </button>
+
                                     {!! session()->get('success') !!}
                                 </div>
                             @endif
@@ -69,49 +67,41 @@
 
     @if($status == 1)
         <div class="card">
-            <div class="row invoice-contact">
+            <div class="card-body">
+                <div class="row invoice-contact">
+                    <div class="col-md-12">
+                        <div class="invoice-box row">
 
-                <div class="col-md-8">
-                    <div class="invoice-box row">
-                        <div class="col-sm-12">
-                            <table class="table table-responsive invoice-table table-borderless">
-                                <tbody>
-                                <tr>
-                                    <td><img src="/assets/images/logo.png" class="m-b-10" width="82" height="52" alt=""></td>
-                                </tr>
-                                <tr>
-                                    <td>Estate App</td>
-                                </tr>
-                                <tr>
-                                    <td>Garki, Abuja</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="..\..\..\cdn-cgi\l\email-protection.htm#99fdfcf4f6d9fef4f8f0f5b7faf6f4" target="_top"><span class="__cf_email__" data-cfemail="690d0c0406290e04080005470a0604">[email&nbsp;protected]</span></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>+234...</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <div class="row">
+                                <div class="col-sm-12 d-flex justify-content-center "   >
+                                    <address class="mt-2 mt-sm-0">
+                                        <img src="/assets/drive/logo/logo-dark.png" alt="logo" height="60"> <br>
+                                        <strong>Name:</strong> {{env('ORG_NAME')}}<br>
+                                        <strong>Mobile No.:</strong> {{env('ORG_PHONE')}}<br>
+                                        <strong>Email:</strong> <a href="mailto:{{env('ORG_EMAIL')}}">{{env('ORG_EMAIL')}}</a><br>
+                                        <strong>Address: </strong>{!! env('ORG_ADDRESS') !!} <br>
+                                        <strong>Website: </strong><a target="_blank" href="http://www.{{env('ORG_WEBSITE')}}">{{env('ORG_WEBSITE')}}</a>
+                                    </address>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
+
                 </div>
             </div>
             <div class="card-body">
                 <div class="row invoive-info">
                     <div class="col-md-4 col-xs-12 invoice-client-info">
-                        <h6 class="modal-header mb-3">Account Period:</h6>
-                        <h6 class="m-0"><strong class="label label-info">From:</strong> {{date('d F, Y', strtotime($from))}} <strong class="label label-danger">To:</strong> {{date('d F, Y', strtotime($to))}}</h6>
+                        <h6 class="modal-header text-muted mb-3">Account Period:</h6>
+                        <h6 class="m-0 text-muted"><strong class="label label-info">From:</strong> {{date('d F, Y', strtotime($from))}} <strong class="label label-danger">To:</strong> {{date('d F, Y', strtotime($to))}}</h6>
                     </div>
                     <div class="col-md-4 col-sm-6">
-                        <h6>Balance Sheet</h6>
+                        <h6 class="text-muted">Profit/Loss</h6>
                     </div>
                     <div class="col-md-4 col-sm-6">
-                        <h6 class="m-b-20">Date & Time</h6>
-                        <h6 class="text-uppercase">{{date('d F, Y h:ia', strtotime(now()))}}
+                        <h6 class="m-b-20 text-muted">Date & Time</h6>
+                        <h6 class="text-uppercase text-muted">{{date('d F, Y h:ia', strtotime(now()))}}
                         </h6>
                     </div>
                 </div>

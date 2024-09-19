@@ -120,39 +120,51 @@
             @endif
             <div class="invoice-box" id="receiptWrapper" style="background: #fff;">
 
-                <h5 class="modal-header mb-3">Receipt</h5>
+                <h5 class="modal-header text-info mb-3">Receipt</h5>
                 <table cellpadding="0" cellspacing="0">
                     <tr class="top">
                         <td colspan="6">
                             <table>
                                 <tr>
-                                    <td class="title">
-                                        <img src="/assets/drive/logo/logo-dark.png" alt="logo" height="60">
+                                    <td class="">
+                                        <img src="/assets/drive/logo/logo-dark.png" alt="logo" height="60"> <br>
+                                        <strong>Email: </strong> {{env('ORG_EMAIL')}} <br>
+                                        <strong>Mobile No.: </strong>{{env('ORG_PHONE')}} <br>
+                                        <strong>Address: </strong>{!! env('ORG_ADDRESS') !!} <br>
+                                        <strong>Website: </strong>{{env('ORG_WEBSITE')}} <br>
                                     </td>
 
                                     <td>
-                                        Receipt #: {{$receipt->receipt_no ?? ''}}<br />
-                                        Payment Date: {{!is_null($receipt->payment_date) ? date('d M, Y', strtotime($receipt->payment_date)) : '-' }}<br />
-
+                                        <h5 class="text-muted text-uppercase">Customer</h5>
+                                        {{$receipt->getCustomer->first_name ?? '' }} {{$receipt->getCustomer->last_name ?? '' }}<br />
+                                        <strong>Email: </strong>{{$receipt->getCustomer->email ?? '' }} <br>
+                                        <strong>Mobile No.: </strong>{{$receipt->getCustomer->phone ?? ''}}<br />
+                                        <strong>Address: </strong>{{$receipt->getCustomer->street ?? ''}}<br />
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
-
-                    <tr class="information">
-                        <td colspan="6">
-                            <table>
-                                <tr>
-                                    <td>
-                                        {{$receipt->getCustomer->first_name ?? '' }} {{$receipt->getCustomer->last_name ?? '' }}<br />
-                                        {{$receipt->getCustomer->street ?? ''}}<br />
-                                        {{$receipt->getCustomer->phone ?? ''}}<br />
-                                        {{$receipt->getCustomer->email ?? '' }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
+                    <tr>
+                        <td><strong>Payment Date: </strong>{{!is_null($receipt->payment_date) ? date('d M, Y', strtotime($receipt->payment_date)) : '-' }}</td>
+                        <td><strong>Receipt No.: </strong>{{$receipt->receipt_no ?? '-'}}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td><strong>Property Name:</strong> {{ $receipt->getProperty->property_name ?? '' }} </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Property Code:</strong> {{ $receipt->getProperty->property_code ?? '' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Estate:</strong> {{ $receipt->getProperty->getEstate->e_name ?? '' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Street:</strong> {{ $receipt->getProperty->street ?? '' }} </td>
+                    </tr>
+                    <tr>
+                        <td><strong>House No.:</strong> {{ $receipt->getProperty->house_no ?? '' }}</td>
                     </tr>
                 </table>
 
@@ -186,7 +198,7 @@
                         <tr>
                             <td colspan="4" class="border-0 text-end">
                                 <strong>Total</strong></td>
-                            <td class="border-0 text-end"><h5 class="m-0"> <span></span><span id="totalAmount">{{env('APP_CURRENCY')}}{{number_format($receipt->getInvoice->total,2)}}</span></h5></td>
+                            <td class="border-0 text-end"><h5 class="m-0 text-muted"> <span></span><span id="totalAmount">{{env('APP_CURRENCY')}}{{number_format($receipt->getInvoice->total,2)}}</span></h5></td>
                         </tr>
                         <tr>
                             <td colspan="4" class="border-0 text-end">
@@ -197,7 +209,7 @@
                         <tr>
                             <td colspan="4" class="border-0 text-end">
                                 <strong>Balance</strong></td>
-                            <td class="border-0 text-end"><h5 class="m-0"> <span></span><span id="balance">{{env('APP_CURRENCY')}}{{number_format(($receipt->getInvoice->total ?? 0) - ($receipt->sub_total ?? 0) ,2)}}</span></h5></td>
+                            <td class="border-0 text-end"><h5 class="m-0 text-muted"> <span></span><span id="balance">{{env('APP_CURRENCY')}}{{number_format(($receipt->getInvoice->total ?? 0) - ($receipt->sub_total ?? 0) ,2)}}</span></h5></td>
                         </tr>
                         </tbody>
                     </table>

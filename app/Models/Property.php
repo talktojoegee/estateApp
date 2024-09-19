@@ -319,7 +319,7 @@ class Property extends Model
     }
    public function getAvailablePropertiesByEstateId($estateId){
         return Property::where('estate_id', $estateId)->where('status',0)
-            ->orderBy('id', 'DESC')->take(5)->get();
+            ->orderBy('id', 'DESC')->get();
     }
 
     public function getAllProperties($status){

@@ -220,4 +220,16 @@ class PayrollController extends Controller
             return back();
         }
     }
+
+    public function showSalaryAllowances($slug){
+        $structure = $this->salarystructure->getSalaryStructureBySlug($slug);
+        if(empty($structure)){
+            session()->flash("error", "Whoops! No record found.");
+            return back();
+        }
+        return view('payroll.view-salary-structure-allowances',[
+            'structure'=>$structure,
+            'definitions'=>$this->paymentdefinition->getPaymentDefinitionListByVariance(1)
+        ]);
+    }
 }

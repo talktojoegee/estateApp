@@ -11,6 +11,10 @@ class SalaryStructure extends Model
 {
     use HasFactory;
 
+    public function getAllowances(){
+        return $this->hasMany(SalaryAllowance::class, 'salary_structure_id');
+    }
+
 
     public function addSalaryStructure(Request $request){
         $record = new SalaryStructure();

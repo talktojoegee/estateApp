@@ -624,6 +624,8 @@ class SalesnMarketingController extends Controller
             foreach($items as $item){
                 $lead = new Lead();
                 $lead->entry_date = date('Y-m-d', strtotime($item->entry_date)) ??  now();
+                $lead->entry_month = date('m', strtotime($item->entry_date)) ??  now();
+                $lead->entry_year = date('Y', strtotime($item->entry_date)) ??  now();
                 $lead->added_by = $record->imported_by;
                 $lead->org_id = 1;
                 $lead->first_name = $item->first_name ?? null;

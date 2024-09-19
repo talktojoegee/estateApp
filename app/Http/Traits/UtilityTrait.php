@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Markdown;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 trait UtilityTrait {
@@ -140,6 +141,26 @@ trait UtilityTrait {
         $second_num = substr($num,-2,1);
 
         return $string = str_replace('y-eth','ieth',$second_word[$second_num].'-'.$first_word[$first_num]);
+    }
+
+    public function handleLedgerPosting($debit, $credit, $glcode, $narration = 'N/A',
+                                        $ref, $bank, $postedBy, $transDate ){
+
+            $data = [
+                'glcode'=>$glcode,
+                'posted_by'=>$postedBy,
+                'narration'=>$narration,
+                'dr_amount'=>$debit,
+                'cr_amount'=>$credit,
+                'ref_no'=>$ref,//strtoupper(substr(sha1(time()), 29,40)),
+                'bank'=>$bank,
+                'transaction_date'=>$transDate,
+                'ob'=>0,
+                'created_at'=>now(),
+                'updated_at'=>now(),
+            ];
+            #Register transaction
+            DB::table('general_ledgers')->insert($data);
     }
 }
 ?>

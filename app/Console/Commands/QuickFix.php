@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Http\Traits\UtilityTrait;
 use App\Models\Estate;
 use App\Models\InvoiceMaster;
+use App\Models\Lead;
 use App\Models\Property;
 use App\Models\Receipt;
 use App\Models\SalaryStructure;
@@ -147,10 +148,255 @@ class QuickFix extends Command
             'First',
         ]*/
 
-        $structures = SalaryStructure::all();
+        /*$structures = SalaryStructure::all();
         foreach($structures as $structure){
             $structure->slug = Str::slug($structure->ss_name).substr(sha1(time()),29,40);
             $structure->save();
-        }
+        }*/
+        /*$leads = Lead::all();
+        foreach ($leads as $lead){
+            $lead->entry_month = date('m', strtotime($lead->entry_date)) ??  now();
+            $lead->entry_year = date('Y', strtotime($lead->entry_date)) ??  now();
+            $lead->save();
+        }*/
+        //chart of account fix
+        $codes = [
+            '100000',
+            '120000',
+            '120010',
+            '120011',
+            '120012',
+            '120013',
+            '120100',
+            '120101',
+            '120102',
+            '120103',
+            '121000',
+            '130000',
+            '170000',
+            '170010',
+            '170011',
+            '170012',
+            '170013',
+            '170014',
+            '170015',
+            '170016',
+            '170017',
+            '170018',
+            '170019',
+            '170020',
+            '170021',
+            '170022',
+            '170023',
+            '170024',
+            '171000',
+            '171001',
+            '171002',
+            '171003',
+            '171004',
+            '172000',
+            '172001',
+            '172002',
+            '172003',
+            '172004',
+            '172006',
+            '172008',
+            '172005',
+            '300000',
+            '300100',
+            '300120',
+            '300140',
+            '300160',
+            '300180',
+            '300200',
+            '300220',
+            '300240',
+            '300260',
+            '300280',
+            '300300',
+            '210000',
+            '210010',
+            '210011',
+            '210012',
+            '410000',
+            '410100',
+            '410101',
+            '410102',
+            '410103',
+            '410104',
+            '410105',
+            '420000',
+            '510000',
+            '510010',
+            '510011',
+            '510012',
+            '510013',
+            '510014',
+            '510015',
+            '510016',
+            '510017',
+            '510018',
+            '510019',
+            '510020',
+            '510021',
+            '510022',
+            '510023',
+            '520000',
+            '520010',
+            '520011',
+            '520012',
+            '520013',
+            '520014',
+            '520015',
+            '520016',
+            '520017',
+            '520018',
+            '520019',
+            '520021',
+            '520022',
+            '520023',
+            '520024',
+            '520025',
+            '520026',
+            '520027',
+            '520028',
+            '520029',
+            '520030',
+            '520031',
+            '520032',
+            '520033',
+            '520034',
+            '520035',
+            '520036',
+            '520037',
+            '520038',
+            '520039',
+            '520040',
+            '520041',
+            '510024',
+            '520042',
+            '210013',
+            '520043',
+            '520044',
+        ];
+       /* $names = [
+            assets
+property, plant & equipment:
+building
+plant & machinery
+motor vehicle
+furniture & equipment
+accumulated depreciation building
+accummulated depreciation plant & machinery
+accummulated depreciation motor vehicle
+accummulated depreciation furniture & equipment
+investment properties
+current assets:
+bank accounts:
+fidelity bank plc
+zenith bank plc
+united bank for africa plc
+                polaris bank
+keystone bank
+ecobank plc
+wema bank plc
+first bank of nigeria
+first generation management account 1
+first generation mortgage bank 1
+first generation mortgage bank 3
+first generation mortgage bank - smart home
+first generation mortgage bank - rent-to-own
+first generation mortgage bank - gratuity a/c.
+    fixed deposit - with various banks
+inventory:
+stock of building material
+stock of roofing material
+stock of finishing accessories
+building for sale
+             trade receivables:
+        trade receivables - sales
+trade receivable - mortgage
+sundry receivables - others
+interest receivables - fixed deposit
+interest receivables - mortgages
+other receivables - wht unutilized
+staff receivables - loans & advances
+liabilities:
+bank loan
+deposit for houses - customers yet to complete payt
+trade payables - vendors for material supply
+                             trade payables - sub-contrators on project
+trade payables - sub-contrators services
+tax payables - company income tax
+tax payables - education tax
+witholding tax payables - deductions unremitted
+value added tax payables
+other payables
+intercompany balances - loan among  group coy
+capital and reserves:
+share capital - issued
+capital reserves
+retained earning - profit
+income:
+direct sales - customers
+mortgage sales - through fgmb
+mdas sales
+rent income - investment income
+interest income
+investment income
+other income
+direct costs - other income
+property acquisition and compensation - land related
+property acquisition and compensation - building related
+materials consumed on construction
+roads and drainages construction costs
+planning and approval expenses
+roofing expenses
+haulage of material expenses
+electricity installation expenses
+itenerant labour costs
+security expenses
+machinery running expenses
+refund expenses - customers
+depreciation - plant & machinery expense
+depreciation - motor vehicle- site veh.
+    administrative expenses:
+interest expenses - loans/overdraft
+directors fees
+bank charges - on current account
+staff costs - payroll expenses
+staff welfare - end of the year activities
+staff uniforms & safety apparels
+staff gratuity & pension expenses
+training and development
+motor vehicle running & maintenance
+medical expenses
+rates/business licences
+power & utility
+insurance expenses
+professional fees - legal
+professional fees - other consultant
+audit and accountancy fees
+stationery and printing expenses
+repairs and maintenance buildings
+communication expenses
+postages, coureir expenses
+internet and dstv subscription
+subsistence and travels
+medical expenses
+marketing and advertising
+sales commission expenses
+business promotion/ relationship costs
+meals & office & entertainments
+office maintenance & cleaning items
+office equipment repairs & maintenance
+depreciation - building
+depreciation - furniture & equipment
+Cost of Sales
+Income Tax
+Capital
+Petty Cash
+Sales Discount
+        ];*/
     }
 }

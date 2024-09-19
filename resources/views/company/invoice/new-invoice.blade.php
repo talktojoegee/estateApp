@@ -66,8 +66,8 @@
                                     <label for="">Property</label>
                                     <select name="property" id="property" class="form-control select2" value="{{old('property')}}">
                                         <option disabled selected>-- Select property --</option>
-                                        @foreach($properties as $property)
-                                            <option value="{{$property->id}}" {{ $property->status == 2 ? 'disabled' : null }} >{{$property->property_name ?? '' }}  </option>
+                                        @foreach($properties->where('status',0) as $property)
+                                            <option value="{{$property->id}}" {{ $property->status == 2 ? 'disabled' : null }} >{{$property->property_name ?? '' }} - {{$property->property_code ?? '' }}  </option>
                                         @endforeach
                                     </select>
                                     @error('property')

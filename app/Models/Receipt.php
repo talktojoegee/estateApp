@@ -16,6 +16,9 @@ class Receipt extends Model
         return Receipt::orderBy('id', 'DESC')->first();
     }
 
+    public function getProperty(){
+        return $this->belongsTo(Property::class, 'property_id');
+    }
     public function getIssuedBy(){
         return $this->belongsTo(User::class, 'issued_by');
     }

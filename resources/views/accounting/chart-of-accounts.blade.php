@@ -19,7 +19,7 @@
     <div class="row ">
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
-                <h5 class="modal-header text-uppercase">Chart of Accounts</h5></div>
+                <h5 class="modal-header text-info text-uppercase">Chart of Accounts</h5></div>
             <div class="card-header mb-4">
                 <a href="{{ url()->previous() }}" class="btn btn-secondary "> <i
                         class="bx bx bxs-left-arrow"></i> Go back</a>
@@ -29,7 +29,7 @@
                 <div class="card-body accordion-block">
                     <div class="col-xs-12 col-sm-12 mb-4 ">
                         @if(count($charts) > 0)
-                            <table id="complex-header" class="table table-striped table-bordered nowrap dataTable" id="chartOfAccountsTable" role="grid" aria-describedby="complex-header_info" style="width: 100%; margin:0px auto;">
+                            <table id="complex-header" class="table table-striped text-white table-bordered nowrap dataTable" id="chartOfAccountsTable" role="grid" aria-describedby="complex-header_info" style="width: 100%; margin:0px auto;">
                             <thead>
                             <tr role="row">
                                 <th class="sorting_asc text-left" tabindex="0" style="width: 50px;">S/No.</th>

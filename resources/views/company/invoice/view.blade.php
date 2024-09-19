@@ -94,21 +94,21 @@
                                     <div class="col-sm-6 "   >
                                         <address class="mt-2 mt-sm-0">
                                             <strong>From:</strong><br>
-                                            {{env('ORG_NAME')}}<br>
-                                            {{env('ORG_PHONE')}}<br>
-                                            <a href="mailto:{{env('ORG_EMAIL')}}">{{env('ORG_EMAIL')}}</a><br>
-                                            {!! env('ORG_ADDRESS') !!} <br>
-                                            <a target="_blank" href="http://www.{{env('ORG_WEBSITE')}}">{{env('ORG_WEBSITE')}}</a>
+                                            <strong>Name:</strong> {{env('ORG_NAME')}}<br>
+                                            <strong>Mobile No.:</strong> {{env('ORG_PHONE')}}<br>
+                                            <strong>Email:</strong> <a href="mailto:{{env('ORG_EMAIL')}}">{{env('ORG_EMAIL')}}</a><br>
+                                            <strong>Address: </strong>{!! env('ORG_ADDRESS') !!} <br>
+                                            <strong>Website: </strong><a target="_blank" href="http://www.{{env('ORG_WEBSITE')}}">{{env('ORG_WEBSITE')}}</a>
                                         </address>
                                     </div>
 
                                     <div class="col-sm-6 text-sm-end"   >
                                         <address>
                                             <strong>Billed To:</strong><br>
-                                            {{$invoice->getCustomer->first_name ?? ''  }} {{$invoice->getCustomer->last_name ?? ''  }}<br>
-                                            {{$invoice->getCustomer->phone ?? ''  }}<br>
-                                            {{$invoice->getCustomer->email ?? ''  }}<br>
-                                            {{$invoice->getCustomer->street ?? ''  }}
+                                            <strong>Name: </strong>{{$invoice->getCustomer->first_name ?? ''  }} {{$invoice->getCustomer->last_name ?? ''  }}<br>
+                                            <strong>Mobile No.: </strong>{{$invoice->getCustomer->phone ?? ''  }}<br>
+                                            <strong>Email: </strong>{{$invoice->getCustomer->email ?? ''  }}<br>
+                                            <strong>Address: </strong>{{$invoice->getCustomer->street ?? ''  }}
                                         </address>
                                     </div>
 
@@ -184,6 +184,10 @@
 
                             <div class="d-print-none mt-3"   >
                                 <div class="float-end"   >
+                                    @if($invoice->posted == 0)
+                                    <button type="button" data-bs-target="#declinePayment" data-bs-toggle="modal" class="btn btn-danger w-md waves-effect waves-light">Decline <i class="bx bx-x"></i> </button>
+                                    <button type="button" data-bs-target="#verifyPayment" data-bs-toggle="modal" class="btn btn-success w-md waves-effect waves-light">Post <i class="bx bx-check-double"></i> </button>
+                                    @endif
                                     <button type="button" onclick="generatePDF()" class="btn btn-warning w-md waves-effect waves-light">Print <i class="bx bx-printer"></i> </button>
                                 </div>
                             </div>
@@ -197,7 +201,7 @@
             <div class="col-md-12 col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="modal-header">Payment History</h5>
+                        <h5 class="modal-header text-muted">Payment History</h5>
                         <div class="accordion" id="accordionExample">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingOne">
@@ -249,48 +253,13 @@
         @endif
     </div>
 
-    <div class="modal right fade" id="submitPayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" style="width: 900px;">
-        <div class="modal-dialog w-100" role="document">
-            <div class="modal-content">
-                <div class="modal-header" >
-                    <h6 class="modal-title text-uppercase" style="text-align: center;" id="myModalLabel2">Submit Proof of Payment</h6>
-                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
 
-                <div class="modal-body">
-                    <p><strong class="text-danger">Note:</strong> Ensure you upload the right proof of payment for this invoice.</p>
-                    <form autocomplete="off" action="{{route('submit-proof-of-payment')}}" id="createIncomeForm" data-parsley-validate="" method="post" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group">
-                            <label for="">RRR <sup style="color: #ff0000;">*</sup></label>
-                            <input type="text" name="rrr" value="{{ old('rrr') }}" placeholder="RRR" class="form-control">
-                            @error('rrr') <i class="text-danger" style="color: #ff0000;">{{ $message }}</i> @enderror
-                        </div>
-                        <div class="row mb-3">
-                            <div class="form-group mt-1 col-md-12 mt-3 " id="nextAuthWrapper">
-                                <label for="">Upload Proof of Payment <sup style="color: #ff0000;">*</sup></label> <br>
-                                <input type="file" name="attachment" accept="application/pdf,image/*" class="form-control-file">
-                                @error('attachment') <i class="text-danger" style="color: #ff0000;">{{$message}}</i>@enderror
-                            </div>
-                        </div>
-                        <input type="hidden" name="invoiceId" value="{{$invoice->id}}">
-                        <div class="form-group d-flex justify-content-center mt-3">
-                            <div class="btn-group">
-                                <button type="submit" class="btn btn-primary  waves-effect waves-light">Submit  <i class="bx bxs-right-arrow"></i> </button>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="modal  fade" id="verifyPayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
         <div class="modal-dialog w-100" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h6 class="modal-title text-uppercase" style="text-align: center;" id="myModalLabel2">Verify Payment</h6>
+                    <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2">Post Invoice</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -299,15 +268,13 @@
                         @csrf
                         <div class="row mb-3">
                             <div class="form-group mt-1 col-md-12 mt-3 ">
-                                <p>This action cannot be undone. Are you sure you want to verify this payment?</p>
+                                <p>This action cannot be undone. Are you sure you want to post this invoice?</p>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="form-group mt-1 col-md-12">
-                                <label for="">Comment<sup style="color: #ff0000;">*</sup></label> <br>
                                 <input type="hidden" name="invoiceId" value="{{$invoice->id}}">
-                                <input type="hidden" name="status" value="4">
-                                <textarea name="comment" style="resize: none;" placeholder="Leave your comment here..." class="form-control">{{old('comment')}}</textarea>
+                                <input type="hidden" name="status" value="1">
                                 @error('comment') <i class="text-danger" style="color: #ff0000;">{{$message}}</i>@enderror
 
                             </div>
@@ -328,7 +295,7 @@
         <div class="modal-dialog w-100" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h6 class="modal-title text-uppercase" style="text-align: center;" id="myModalLabel2">Decline Payment</h6>
+                    <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2">Decline Invoice</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -337,15 +304,13 @@
                         @csrf
                         <div class="row mb-3">
                             <div class="form-group mt-1 col-md-12 mt-3 ">
-                                <p>This action cannot be undone. Are you sure you want to <code>decline</code> this payment?</p>
+                                <p>This action cannot be undone. Are you sure you want to <code>decline</code> this invoice?</p>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="form-group mt-1 col-md-12">
-                                <label for="">Comment<sup style="color: #ff0000;">*</sup></label> <br>
                                 <input type="hidden" name="invoiceId" value="{{$invoice->id}}">
-                                <input type="hidden" name="status" value="3">
-                                <textarea name="comment" style="resize: none;" placeholder="Leave your comment here..." class="form-control">{{old('comment')}}</textarea>
+                                <input type="hidden" name="status" value="2">
                                 @error('comment') <i class="text-danger" style="color: #ff0000;">{{$message}}</i>@enderror
 
                             </div>

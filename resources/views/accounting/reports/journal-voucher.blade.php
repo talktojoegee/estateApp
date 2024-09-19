@@ -25,12 +25,10 @@
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="modal-header mb-4">Journal Voucher</h5>
+                    <h5 class="modal-header text-info text-uppercase mb-4">Journal Voucher</h5>
                     @if(session()->has('success'))
                         <div class="alert alert-success border-success" style="padding:5px;">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <i class="icofont icofont-close-line-circled"></i>
-                            </button>
+
                             <strong>Success!</strong> {!! session('success') !!}
                         </div>
                     @endif

@@ -49,7 +49,7 @@
         <div class="row">
             <div class="col-md-12 col-sm-12 mt-4">
                 <div class="d-flex justify-content-between modal-header">
-                    <div class="h6 text-left pl-5 text-uppercase text-primary"> Supervisors</div>
+                    <div class="h6 text-left pl-5 text-uppercase text-info" style="color: #094512 !important;"> Supervisors</div>
                     <a href="{{url()->previous()}}" class="btn btn-secondary mr-3" > <i class="bx bx-arrow-back"></i>  Go back</a>
                 </div>
 

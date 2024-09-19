@@ -315,6 +315,7 @@ Route::group(['prefix'=>'/sales', 'middleware'=>'auth'], function(){
     Route::match(['GET', 'POST', 'PUT'],'/invoice-service', [App\Http\Controllers\Portal\RadioController::class,'handleInvoiceService'])->name('invoice-service');
     Route::get('/receive-payment/{slug}', [App\Http\Controllers\Portal\RadioController::class, 'receivePayment'])->name('receive-payment');
     Route::post('/process-payment', [App\Http\Controllers\Portal\RadioController::class, 'processPayment'])->name('process-payment');
+    Route::match(['GET', 'POST'],'/post-invoice', [App\Http\Controllers\Portal\RadioController::class, 'showInvoiceForPosting'])->name('post-invoice');
 
     #Receipts
     Route::get('/receipts/all', [App\Http\Controllers\Portal\RadioController::class, 'showManageReceipts'])->name('show-manage-receipts');
@@ -515,6 +516,7 @@ Route::group(['prefix'=>'payroll', 'middleware'=>'auth'],function(){
     Route::match(['GET', 'POST', 'PUT'], '/salary-structure', [App\Http\Controllers\Portal\PayrollController::class, 'handleSalaryStructure'])->name('salary-structure');
     Route::match(['GET'], '/new-salary-allowance', [App\Http\Controllers\Portal\PayrollController::class, 'showNewSalaryAllowanceForm'])->name('new-salary-allowance');
     Route::match(['GET', 'POST', 'PUT'], '/salary-allowances', [App\Http\Controllers\Portal\PayrollController::class, 'handleSalaryAllowances'])->name('salary-allowances');
+    Route::match(['GET'], '/salary-allowances/{slug}', [App\Http\Controllers\Portal\PayrollController::class, 'showSalaryAllowances'])->name('view-salary-allowances');
 
     Route::group(['prefix'=>'process'],function(){
        Route::match(['GET'], '/salary-structures', [App\Http\Controllers\Portal\PayrollController::class, 'showSalaryStructures'])->name('salary-structures');

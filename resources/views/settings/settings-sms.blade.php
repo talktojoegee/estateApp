@@ -60,7 +60,7 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <label for="">SMS for <strong>New Licence Application</strong></label>
+                                                    <label for="">SMS for <strong>payment receipt</strong></label>
                                                     <textarea name="new_licence_sms" id="new_licence_sms" maxlength="160" placeholder="Compose SMS message for new licence application (Acknowledgement)" style="resize: none;" rows="5"
                                                               class="form-control">{{old('new_licence_sms', $app_sms_setting->new_licence_sms ?? '')}}</textarea>
                                                     @error('new_licence_sms')
@@ -72,7 +72,7 @@
                                         <div class="row mt-3">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <label for="">SMS for Licence Renewal <strong>(Reminder)</strong></label>
+                                                    <label for="">SMS for payment <strong>(Reminder)</strong></label>
                                                     <textarea name="licence_renewal_sms" id="licence_renewal_sms" maxlength="160" placeholder="Compose SMS message for licence renewal (Reminder)" style="resize: none;" rows="5"
                                                               class="form-control">{{old('licence_renewal_sms', $app_sms_setting->licence_renewal_reminder_sms ?? '')}}</textarea>
                                                     @error('licence_renewal_sms')
@@ -84,7 +84,7 @@
                                         <div class="row mt-3">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <label for="">SMS for Licence Renewal <strong>(Acknowledgment)</strong></label>
+                                                    <label for="">SMS for payment <strong>(Acknowledgment)</strong></label>
                                                     <textarea name="licence_renewal_sms_ack" id="licence_renewal_sms_ack" maxlength="160" placeholder="Compose SMS message for licence renewal (Acknowledgement)" style="resize: none;" rows="5"
                                                               class="form-control">{{old('licence_renewal_sms_ack', $app_sms_setting->licence_renewal_sms ?? '')}}</textarea>
                                                     @error('licence_renewal_sms_ack')

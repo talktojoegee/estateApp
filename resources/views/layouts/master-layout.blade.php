@@ -25,7 +25,7 @@
     </div>
   <!--  #1916FC-->
     <div class="main-content" >
-        <div class="page-content">
+        <div class="page-content" style="min-height: 900px !important;">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">

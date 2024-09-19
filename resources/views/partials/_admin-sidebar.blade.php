@@ -95,8 +95,8 @@
                 <span key="t-invoice"> Invoice </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{route('manage-invoices', 'invoices')}}" key="t-invoice">All Invoices</a></li>
                 <li><a href="{{route('new-invoice')}}" key="t-invoice">New Invoice</a></li>
+                <li><a href="{{route('manage-invoices', 'invoices')}}" key="t-invoice">All Invoices</a></li>
                 <li><a href="{{route('manage-invoices', 'fully-paid')}}" key="t-invoice">Fully-Paid</a></li>
                 <li><a href="{{route('manage-invoices', 'partly-paid')}}" key="t-invoice">Partly-Paid</a></li>
                 <li><a href="{{route('manage-invoices', 'pending')}}" key="t-invoice">Pending</a></li>
@@ -177,7 +177,7 @@
                 <li><a href="{{route('schedule-sms')}}" key="t-hrsettings">Public Holidays</a></li>
             </ul>
         </li>--}}
-       {{-- <li class="menu-title">Accounting</li>
+        <li class="menu-title">Accounting</li>
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
                 <i class="bx bxs-business"></i>
@@ -190,7 +190,24 @@
                 <li><a href="{{route('balance-sheet')}}" key="t-account">Balance Sheet</a></li>
                 <li><a href="{{route('profit-or-loss')}}" key="t-account">Profit/Loss</a></li>
             </ul>
-        </li>--}}
+        </li>
+        <li>
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="bx bx-send"></i>
+                <span key="t-postings"> Postings  </span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{route('post-invoice')}}" key="t-postings">Invoice</a></li>
+                <li><a href="{{route('journal-voucher')}}" key="t-postings">Receipt</a></li>
+                <li><a href="{{route('trial-balance')}}" key="t-postings">Payroll</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="{{route('accounting-settings')}}" class="waves-effect">
+                <i class="bx bx-cog"></i>
+                <span key="t-chat">Settings</span>
+            </a>
+        </li>
         <li class="menu-title">Payroll</li>
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -199,16 +216,14 @@
             </a>
             <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{route('salary-structures')}}" key="t-payroll-process">Salary Structures</a></li>
-                <li><a href="{{route('salary-structure')}}" key="t-payroll-process">Variational Payments</a></li>
-                <li><a href="{{route('salary-allowances')}}" key="t-payroll-process">Approve Payments</a></li>
-                <li><a href="{{route('salary-allowances')}}" key="t-payroll-process">Payroll Routine</a></li>
-                <li><a href="{{route('salary-allowances')}}" key="t-payroll-process">Approve Routine</a></li>
-                <li><a href="{{route('salary-allowances')}}" key="t-payroll-process">Payroll Reports</a></li>
+                <li><a href="#" key="t-payroll-process">Payroll Routine</a></li>
+                <li><a href="#" key="t-payroll-process">Approve Routine</a></li>
+                <li><a href="#" key="t-payroll-process">Payroll Reports</a></li>
             </ul>
         </li>
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="bx bx-wallet"></i>
+                <i class="bx bxs-cog"></i>
                 <span key="t-payroll"> Payroll Settings </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
@@ -229,12 +244,7 @@
                 <li><a href="{{route('top-up-transactions')}}" key="t-reports">Sales</a></li>
             </ul>
         </li>
-       <!--  <li>
-            <a href="{route('accounting-settings')}}" class="waves-effect">
-                <i class="bx bx-cog"></i>
-                <span key="t-chat">Settings</span>
-            </a>
-        </li> -->
+
 
      {{--   <li class="menu-title">Extras</li>
         @can('access-documents')
