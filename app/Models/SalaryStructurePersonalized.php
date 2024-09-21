@@ -10,6 +10,10 @@ class SalaryStructurePersonalized extends Model
 {
     use HasFactory;
 
+    public function getPaymentDefinition(){
+        return $this->belongsTo(PaymentDefinition::class, 'payment_definition_id');
+    }
+
 
     public function addSalaryAllowance($employeeId, $definitionId, $amount){
         $allowance = new SalaryStructurePersonalized();
@@ -18,5 +22,9 @@ class SalaryStructurePersonalized extends Model
         $allowance->amount = $amount;
         $allowance->added_by = Auth::user()->id;
         $allowance->save();
+    }
+
+    public static function getEmployeePersonalizedStructure($employeeId){
+        return SalaryStructurePersonalized::where('employee_id',$employeeId)->get();
     }
 }

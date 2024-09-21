@@ -521,6 +521,7 @@ Route::group(['prefix'=>'payroll', 'middleware'=>'auth'],function(){
     Route::group(['prefix'=>'process'],function(){
        Route::match(['GET'], '/salary-structures', [App\Http\Controllers\Portal\PayrollController::class, 'showSalaryStructures'])->name('salary-structures');
        Route::get( '/salary-structures/{slug}', [App\Http\Controllers\Portal\PayrollController::class, 'showSalarySetupForm'])->name('salary-setup-form');
+       Route::get( '/employee/salary-structure/{slug}', [App\Http\Controllers\Portal\PayrollController::class, 'showEmployeeSalaryStructure'])->name('employee-salary-structure');
        Route::post( '/setup-salary-structure', [App\Http\Controllers\Portal\PayrollController::class, 'setupSalaryStructure'])->name('setup-salary-structure');
     });
 });

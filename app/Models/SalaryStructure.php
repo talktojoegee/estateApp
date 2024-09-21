@@ -35,6 +35,9 @@ class SalaryStructure extends Model
     public function getSalaryStructures(){
         return SalaryStructure::orderBy('ss_name', 'ASC')->get();
     }
+    public function getSalaryStructureById($id){
+        return SalaryStructure::find($id);
+    }
     public function getSalaryStructureBySlug($slug){
         return SalaryStructure::where('slug',$slug)->first();
     }

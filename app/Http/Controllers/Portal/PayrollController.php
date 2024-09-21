@@ -170,6 +170,33 @@ class PayrollController extends Controller
             'categories'=>$this->salarystructure->getSalaryStructures()
         ]);
     }
+    public function showEmployeeSalaryStructure($slug){
+        //$structure = $this->salarystructure->getSalaryStructureBySlug($slug);
+        $user = $this->user->getUserBySlug($slug);
+        if(empty($user)){
+            session()->flash("error", "Whoops! Something went wrong.");
+            return back();
+        }
+        $salarySetup = $user->salary_structure_setup;
+        $salaryStructure = null;
+        $personalized = null;
+        if($salarySetup == 1){ //setup done
+            if($user->salary_structure_category == 0){ //personalized
+                //get personalized structure
+                $personalized = SalaryStructurePersonalized::getEmployeePersonalizedStructure($user->id);
+            }else{
+                $salaryStructure = $this->salarystructure->getSalaryStructureById($user->salary_structure_category);
+            }
+        }
+        //return dd($personalized);
+        return view('payroll.process.employee-salary-structure',[
+            'user'=>$user,
+            'personalized'=>$personalized,
+            'salaryStructure'=>$salaryStructure,
+           // 'definitions'=>$this->paymentdefinition->getPaymentDefinitionListByVariance(1),
+            //'categories'=>$this->salarystructure->getSalaryStructures()
+        ]);
+    }
 
     public function setupSalaryStructure(Request $request){
         $this->validate($request,[
