@@ -13,11 +13,7 @@
     }
 </style>
 <div id="layout-wrapper" style="background: url('/assets/drive/wallpapers/{{Auth::user()->getUsersWallpaper->filename ?? ''}}'); background-size:cover; background-repeat: no-repeat;">
-    @if(\Illuminate\Support\Facades\Auth::user()->type == 1)
-        @include('partials._admin-top-bar')
-    @else
-        @include('partials._top-bar')
-    @endif
+    @include('partials._admin-top-bar')
     <div class="vertical-menu" style="background: none !important;">
         <div data-simplebar class="h-100">
             @include('partials._admin-sidebar')
