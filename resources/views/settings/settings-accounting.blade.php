@@ -52,190 +52,34 @@
                     <div class="col-xl-12 col-md-12 col-sm-12">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="modal-header">Accounting Settings</h5>
+                                <h5 class="modal-header text-info">Accounting Settings</h5>
 
                                 <p class="p-4">
-                                <form action="{{route('accounting-settings')}}" method="post">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <p><strong>Note: </strong> Here we'll set-up some default accounts that the system should use in the event that no account was selected or use for a particular transaction. In such situation, the default account selected here will be used instead.</p>
-                                            <div class="form-group">
-                                                <label for="">Which should be used for  <strong>Property</strong>?</label>
-                                                <select name="property_account" id="property_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->property_account) ? ($account->glcode == $defaults->property_account ? "selected" : '')  : 'selected'}}>{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('property_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->property_account)->account_name : '' }} - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->property_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be used for <strong>Customers</strong>?</label>
-                                                <select name="customer_account" id="customer_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->customer_account) ? ($account->glcode == $defaults->customer_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('customer_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->customer_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->customer_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be used for <strong>Vendors</strong>?</label>
-                                                <select name="vendor_account" id="vendor_account" class="form-control select2">
-                                                    <option disabled selected>-- Select section/unit --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->vendor_account) ? ($account->glcode == $defaults->vendor_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('vendor_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->vendor_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->vendor_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="table-responsive mt-3">
+                                    <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+                                        <thead>
+                                        <tr>
+                                            <th class="">#</th>
+                                            <th class="wd-15p">Estate</th>
+                                            <th class="wd-15p">Property</th>
+                                            <th class="wd-15p">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($records as $key => $record)
+                                            <tr>
+                                                <td>{{$key + 1}}</td>
+                                                <td>{{$record->e_name ?? '' }}</td>
+                                                <td>{{$record->getChartOfAccountById($record->property_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->property_account)->account_name ?? '' }}</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#learnMoreModal_{{$record->e_id}}">Learn more</button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
 
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be used for <strong>Tax</strong> collection?</label>
-                                                <select name="tax_account" id="tax_vat_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->tax_account) ? ($account->glcode == $defaults->tax_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('tax_vat_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->tax_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->tax_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be used to handle <strong>Refund</strong> ?</label>
-                                                <select name="refund_account" id="refund_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->refund_account) ? ($account->glcode == $defaults->refund_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('refund_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->refund_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->refund_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be used for <strong>Charges/fees</strong> ?</label>
-                                                <select name="charges_account" id="charge_fee_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->charges_account) ? ($account->glcode == $defaults->charges_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('charge_fee_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->charges_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->charges_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be used for <strong>salaries</strong> ?</label>
-                                                <select name="salary_account" id="salary_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->salary_account) ? ($account->glcode == $defaults->salary_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('salary_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->salary_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->salary_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be assigned to <strong>employees</strong> ?</label>
-                                                <select name="employee_account" id="employee_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->employee_account) ? ($account->glcode == $defaults->employee_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('employee_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->employee_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->employee_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be used for <strong>Workflow/Requisitions</strong> ?</label>
-                                                <select name="workflow_account" id="workflow_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->workflow_account) ? ($account->glcode == $defaults->workflow_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('workflow_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->workflow_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->workflow_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="">Which should be used for <strong>General purpose</strong> ?</label>
-                                                <select name="general_account" id="general_account" class="form-control select2">
-                                                    <option disabled selected>-- Select account --</option>
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->glcode}}" {{ !empty($defaults->general_account) ? ($account->glcode == $defaults->general_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('general_account')
-                                                <i class="text-danger mt-2">{{$message}}</i>
-                                                @enderror
-                                                <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($defaults) ?  $defaults->getAccountByGLCode($defaults->general_account)->account_name : '' }}  - {{ !empty($defaults) ? $defaults->getAccountByGLCode($defaults->general_account)->glcode : '' }}</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-12 d-flex justify-content-center">
-                                            <button type="submit" class="btn btn-primary ">Submit <i class="bx bx-check-double"></i> </button>
-                                        </div>
-                                    </div>
-                                </form>
+                                        </tbody>
+                                    </table>
+                                </div>
                                 </p>
 
 
@@ -247,6 +91,206 @@
         </div>
     </div>
 
+    @foreach($records as $rec)
+
+        <div class="modal" id="learnMoreModal_{{$rec->e_id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" >
+                        <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2">
+                            {{ $rec->e_name ?? '' }} Account Settings</h6>
+                        <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form action="{{route('estate-accounting-settings')}}" method="post">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p><strong>Note: </strong>  These settings will be used across board for the selected estate to automate some accounting transactions.</p>
+                                    <div class="form-group">
+                                        <label for="">Which should be used for  <strong>Property</strong>?</label>
+                                        <select name="property_account" id="property_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->property_account) ? ($account->id == $rec->property_account ? "selected" : '')  : 'selected'}}>{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('property_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->property_account) ? $rec->getChartOfAccountById($rec->property_account)->account_name : '' }} - {{ !empty($rec->property_account) ? $rec->getChartOfAccountById($rec->property_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which should be used for <strong>Customers</strong>?</label>
+                                        <select name="customer_account" id="customer_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->customer_account) ? ($account->id == $rec->customer_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('customer_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->customer_account) ? $rec->getChartOfAccountById($rec->customer_account)->account_name : '' }} - {{ !empty($rec->customer_account) ? $rec->getChartOfAccountById($rec->customer_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which should be used for <strong>Vendors</strong>?</label>
+                                        <select name="vendor_account" id="vendor_account" class="form-control select2">
+                                            <option disabled selected>-- Select section/unit --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->vendor_account) ? ($account->id == $rec->vendor_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('vendor_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->vendor_account) ? $rec->getChartOfAccountById($rec->vendor_account)->account_name : '' }} - {{ !empty($rec->vendor_account) ? $rec->getChartOfAccountById($rec->vendor_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which should be used for <strong>Tax</strong> collection?</label>
+                                        <select name="tax_account" id="tax_vat_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->tax_account) ? ($account->id == $rec->tax_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('tax_vat_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->tax_account) ? $rec->getChartOfAccountById($rec->tax_account)->account_name : '' }} - {{ !empty($rec->tax_account) ? $rec->getChartOfAccountById($rec->tax_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which should be used to handle <strong>Refund</strong> ?</label>
+                                        <select name="refund_account" id="refund_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->refund_account) ? ($account->id == $rec->refund_account ? "selected" : '')  : ''}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('refund_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->refund_account) ? $rec->getChartOfAccountById($rec->refund_account)->account_name : '' }} - {{ !empty($rec->refund_account) ? $rec->getChartOfAccountById($rec->refund_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which should be used for <strong>Charges/fees</strong> ?</label>
+                                        <select name="charges_account" id="charge_fee_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->charges_account) ? ($account->id == $rec->charges_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('charge_fee_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->charges_account) ? $rec->getChartOfAccountById($rec->charges_account)->account_name : '' }} - {{ !empty($rec->charges_account) ? $rec->getChartOfAccountById($rec->charges_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which should be used for <strong>salaries</strong> ?</label>
+                                        <select name="salary_account" id="salary_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->salary_account) ? ($account->id == $rec->salary_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('salary_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->salary_account) ? $rec->getChartOfAccountById($rec->salary_account)->account_name : '' }} - {{ !empty($rec->salary_account) ? $rec->getChartOfAccountById($rec->salary_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which should be assigned to <strong>employees</strong> ?</label>
+                                        <select name="employee_account" id="employee_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->employee_account) ? ($account->id == $rec->employee_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('employee_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->employee_account) ? $rec->getChartOfAccountById($rec->employee_account)->account_name : '' }} - {{ !empty($rec->employee_account) ? $rec->getChartOfAccountById($rec->employee_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which should be used for <strong>Workflow/Requisitions</strong> ?</label>
+                                        <select name="workflow_account" id="workflow_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->workflow_account) ? ($account->id == $rec->workflow_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('workflow_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->workflow_account) ? $rec->getChartOfAccountById($rec->workflow_account)->account_name : '' }} - {{ !empty($rec->workflow_account) ? $rec->getChartOfAccountById($rec->workflow_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <input type="hidden" name="estate" value="{{ $rec->e_id }}">
+                                    <div class="form-group">
+                                        <label for="">Which should be used for <strong>General purpose</strong> ?</label>
+                                        <select name="general_account" id="general_account" class="form-control select2">
+                                            <option disabled selected>-- Select account --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->general_account) ? ($account->id == $rec->general_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('general_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->general_account) ? $rec->getChartOfAccountById($rec->general_account)->account_name : '' }} - {{ !empty($rec->general_account) ? $rec->getChartOfAccountById($rec->general_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-12 d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary ">Save changes <i class="bx bx-check-double"></i> </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
 
 @section('extra-scripts')

@@ -1,13 +1,13 @@
 @extends('layouts.master-layout')
 @section('title')
-    Profit/Loss
+    Income Statement
 @endsection
 
 @section('current-page')
-    Profit/Loss
+    Income Statement
 @endsection
 @section('current-page-brief')
-    Profit/Loss
+    Income Statement
 @endsection
 
 @section('extra-styles')
@@ -23,7 +23,7 @@
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
                             <h5 class="modal-header mb-3 text-info text-uppercase">Accounting Period</h5>
-                            <p>Enter date to generate a profit/loss accounting report.</p>
+                            <p>Enter date to generate income statement accounting report.</p>
                             @if (session()->has('success'))
                                 <div class="alert alert-success background-success">
 
@@ -97,7 +97,7 @@
                         <h6 class="m-0 text-muted"><strong class="label label-info">From:</strong> {{date('d F, Y', strtotime($from))}} <strong class="label label-danger">To:</strong> {{date('d F, Y', strtotime($to))}}</h6>
                     </div>
                     <div class="col-md-4 col-sm-6">
-                        <h6 class="text-muted">Profit/Loss</h6>
+                        <h6 class="text-muted">Income Statement</h6>
                     </div>
                     <div class="col-md-4 col-sm-6">
                         <h6 class="m-b-20 text-muted">Date & Time</h6>

@@ -29,6 +29,25 @@ class Estate extends Model
         return $this->belongsTo(User::class, 'e_added_by');
     }
 
+    public function getEstateAccount(){
+        return $this->belongsTo(ChartOfAccount::class, 'id');
+    }
+
+    public function updateEstateAccountSettings(Request $request){
+        $app =  Estate::find($request->estate);
+        $app->property_account = $request->property_account;
+        $app->customer_account = $request->customer_account;
+        $app->vendor_account = $request->vendor_account;
+        $app->tax_account = $request->tax_account;
+        $app->refund_account = $request->refund_account;
+        $app->charges_account = $request->charges_account;
+        $app->salary_account = $request->salary_account;
+        $app->employee_account = $request->employee_account;
+        $app->workflow_account = $request->workflow_account;
+        $app->general_account = $request->general_account;
+        $app->save();
+    }
+
     public function addNewEstate(Request $request){
         $record = new Estate();
         $record->e_name = $request->name ?? '';
@@ -77,6 +96,10 @@ class Estate extends Model
     }
     public static function getEstateByRefCode($code){
         return Estate::where('e_ref_code', $code)->first();
+    }
+
+    public function getChartOfAccountById($id){
+        return ChartOfAccount::find($id);
     }
 
 }

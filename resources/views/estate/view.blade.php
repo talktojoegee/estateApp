@@ -166,6 +166,47 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="car p-3" >
+                                                    <div class="card-body" >
+                                                        <h6 class="mt-4 text-uppercase text-info modal-header p-4">Account Setup Details</h6>
+                                                        <div class="table-responsive" >
+                                                            <table class="table mb-0 table-striped">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <th scope="row">Property Account:<span class="text-info">{{$record->getChartOfAccountById($record->property_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->property_account)->account_name ?? '' }}  </span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Customer Account:<span class="text-info"> {{$record->getChartOfAccountById($record->customer_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->customer_account)->account_name ?? '' }}</span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Vendor Account:<span class="text-info"> {{$record->getChartOfAccountById($record->vendor_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->vendor_account)->account_name ?? '' }}</span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">TAX Account:<span class="text-info"> {{$record->getChartOfAccountById($record->tax_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->tax_account)->account_name ?? '' }} </span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Refund Account:<span class="text-info"> {{$record->getChartOfAccountById($record->refund_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->refund_account)->account_name ?? '' }}</span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Charges Account:<span class="text-info"> {{$record->getChartOfAccountById($record->charges_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->charges_account)->account_name ?? '' }} </span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Salary Account:<span class="text-info"> {{$record->getChartOfAccountById($record->salary_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->salary_account)->account_name ?? '' }} </span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Employee Account:<span class="text-info"> {{$record->getChartOfAccountById($record->employee_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->employee_account)->account_name ?? '' }} </span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Workflow Account:<span class="text-info"> {{$record->getChartOfAccountById($record->workflow_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->workflow_account)->account_name ?? '' }} </span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">General Account:<span class="text-info"> {{$record->getChartOfAccountById($record->general_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->general_account)->account_name ?? '' }} </span></th>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-md-4 col-sm-4" >
                                                 <div class="car p-3" >

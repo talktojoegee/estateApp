@@ -90,4 +90,8 @@ class ChartOfAccount extends Model
         return ChartOfAccount::where('type',1)->orderBy('glcode','ASC')->get();
     }
 
+    public static function getChartOfAccountById($id){
+        return ChartOfAccount::find($id);
+    }
+
 }

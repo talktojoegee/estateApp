@@ -67,6 +67,8 @@
                             </div>
                         @endif
 
+                            <p><strong>Note:</strong> Posting any of these transactions will affect your account records.</p>
+
 
 
                         <div class="table-responsive mt-3">

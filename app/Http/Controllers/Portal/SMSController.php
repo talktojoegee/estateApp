@@ -146,16 +146,16 @@ class SMSController extends Controller
         session()->flash("success", "Action successful");
         return back();
     }
-
+/*
     public function processTopUpRequest(Request $request){
         $this->validate($request,[
             'amount'=>'required',
-            'expenseCategory'=>'required',
-            'account'=>'required',
+            //'expenseCategory'=>'required',
+            //'account'=>'required',
         ],[
             'amount.required'=>"How much will you like to add?" ,
-            'expenseCategory.required'=>"Select an expense category" ,
-            'account.required'=>"Which account is funding this purchase?" ,
+            //'expenseCategory.required'=>"Select an expense category" ,
+            //'account.required'=>"Which account is funding this purchase?" ,
         ]);
         try{
             $paystack = new Paystack(env('PAYSTACK_SECRET_KEY'));
@@ -163,13 +163,7 @@ class SMSController extends Controller
             $builder = new Paystack\MetadataBuilder();
             $builder->withCost($cost);
             $builder->withUser(Auth::user()->id);
-            /*
-             * Transaction Type:
-             *  1 = New tenant subscription
-             *  2 = Subscription Renewal
-             *  3 = Invoice Payment
-             *  4 = SMS Top-up
-             */
+
             $builder->withTransaction(4);
             $builder->withAccount($request->account);
             $builder->withCategory($request->expenseCategory);
@@ -186,6 +180,28 @@ class SMSController extends Controller
             session()->flash("error", "Whoops! Something went wrong. Try again.");
             return back();
         }
+    }*/
+    public function processTopUpRequest(Request $request){
+        $this->validate($request,[
+            'amount'=>'required',
+            'charge'=>'required'
+        ],[
+            'amount.required'=>"How much will you like to add?" ,
+            'charge.required'=>"Specify charge" ,
+        ]);
+        $note = "Purchase of bulk SMS units. The amount includes convenience fee";
+        $reference = $request->trans ??  substr(sha1(time()),29,40);
+        $this->bulksmsaccount->creditAccount($reference,
+            $request->amount, //50900
+            ($request->amount + $request->charge), Auth::user()->id);
+
+        /*$this->cashbook->addCashBook($branchId, $category, $account,
+            $defaultCurrency, 2, 0, 2, now(),
+            $note, $note,
+            ($tranx->data->amount + $tranx->data->metadata->cost)/100,  0,
+            substr(sha1(time()),31,40),date('m', strtotime(now())),date('Y', strtotime(now())));*/
+
+        return response()->json(['message'=>"Thank you! Your payment was received!"],200);
     }
 
     public function showTopUpTransactions(){

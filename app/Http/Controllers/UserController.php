@@ -54,7 +54,7 @@ class UserController extends Controller
 
     public function showAdministrators(){
         return view('administration.administrators',[
-            'users'=>$this->user->getAllOrganizationUsers()
+            'users'=>$this->user->getAllUsers()
         ]);
     }
 

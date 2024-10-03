@@ -1,13 +1,13 @@
 @extends('layouts.master-layout')
 @section('title')
-    Balance Sheet
+    Statement of Financial Position
 @endsection
 
 @section('current-page')
-    Balance Sheet
+    Statement of Financial Position
 @endsection
 @section('current-page-brief')
-    Balance Sheet
+    Statement of Financial Position
 @endsection
 
 @section('extra-styles')
@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
                             <h5 class="modal-header text-info text-uppercase mb-4 text-uppercase">Accounting Period</h5>
-                            <p>Enter date to generate balance sheet up to that time.</p>
+                            <p>Enter date to generate Statement of Financial Position up to that time.</p>
                             @if (session()->has('success'))
                                 <div class="alert alert-success background-success">
 
@@ -96,7 +96,7 @@
                         <h6 class="m-0 text-muted"><strong class="label label-info">Date:</strong> {{date('d F, Y', strtotime($date))}} </h6>
                     </div>
                     <div class="col-md-4 col-sm-6">
-                        <h6 class="text-muted">Balance Sheet</h6>
+                        <h6 class="text-muted">Statement of Financial Position</h6>
                     </div>
                     <div class="col-md-4 col-sm-6">
                         <h6 class="m-b-20 text-muted">Date & Time</h6>

@@ -47,4 +47,8 @@ class SalaryAllowance extends Model
     public function getAllowances(){
         return SalaryAllowance::all();
     }
+
+    public function getAllowancesBySalaryStructureId($id){
+        return SalaryAllowance::where('salary_structure_id', $id)->get();
+    }
 }

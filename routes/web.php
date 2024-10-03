@@ -118,6 +118,8 @@ Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::post('/archive-unarchive-user', [App\Http\Controllers\Portal\ClientController::class, 'archiveUnarchiveClient'])->name('archive-unarchive-client');
     Route::post('/edit-user-profile', [App\Http\Controllers\Portal\ClientController::class, 'editClientProfile'])->name('edit-client-profile');
     Route::get('/view-profile/{slug}', [App\Http\Controllers\Portal\ClientController::class, 'viewClientProfile'])->name('view-client-profile');
+    Route::get('/show-payslip/', [App\Http\Controllers\Portal\ClientController::class, 'showPayslip'])->name('show-payslip');
+    Route::get('/payslip-report', [App\Http\Controllers\Portal\ClientController::class, 'payslipReport'])->name('payslip-report');
 });
 
 
@@ -312,10 +314,12 @@ Route::group(['prefix'=>'/sales', 'middleware'=>'auth'], function(){
     Route::get('/invoices/{slug}', [App\Http\Controllers\Portal\RadioController::class,'showInvoiceDetails'])->name('show-invoice-detail');
     Route::post('/submit-proof-of-payment', [App\Http\Controllers\Portal\RadioController::class,'submitProofOfPayment'])->name('submit-proof-of-payment');
     Route::post('/action-payment', [App\Http\Controllers\Portal\RadioController::class,'actionPayment'])->name('action-payment');
+    Route::post('/action-receipt-payment', [App\Http\Controllers\Portal\RadioController::class,'actionReceiptPayment'])->name('action-receipt-payment');
     Route::match(['GET', 'POST', 'PUT'],'/invoice-service', [App\Http\Controllers\Portal\RadioController::class,'handleInvoiceService'])->name('invoice-service');
     Route::get('/receive-payment/{slug}', [App\Http\Controllers\Portal\RadioController::class, 'receivePayment'])->name('receive-payment');
     Route::post('/process-payment', [App\Http\Controllers\Portal\RadioController::class, 'processPayment'])->name('process-payment');
     Route::match(['GET', 'POST'],'/post-invoice', [App\Http\Controllers\Portal\RadioController::class, 'showInvoiceForPosting'])->name('post-invoice');
+    Route::match(['GET', 'POST'],'/post-receipt', [App\Http\Controllers\Portal\RadioController::class, 'showReceiptForPosting'])->name('post-receipt');
 
     #Receipts
     Route::get('/receipts/all', [App\Http\Controllers\Portal\RadioController::class, 'showManageReceipts'])->name('show-manage-receipts');
@@ -372,8 +376,8 @@ Route::group(['prefix'=>'/newsfeed', 'middleware'=>'auth'], function(){
 
 Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::get('/practitioners', [App\Http\Controllers\UserController::class, 'showPractitioners'])->name('practitioners');
-    Route::get('/members', [App\Http\Controllers\UserController::class, 'showAdministrators'])->name('pastors');
-    Route::get('/members/add-new', [App\Http\Controllers\UserController::class, 'showAddNewPastorForm'])->name('add-new-pastor');
+    Route::get('/employees', [App\Http\Controllers\UserController::class, 'showAdministrators'])->name('pastors');
+    Route::get('/employees/add-new', [App\Http\Controllers\UserController::class, 'showAddNewPastorForm'])->name('add-new-pastor');
     Route::get('/{slug}', [App\Http\Controllers\UserController::class, 'showUserProfile'])->name('user-profile');
     Route::post('/assign-revoke-role', [App\Http\Controllers\UserController::class, 'assignRevokeRole'])->name('assign-revoke-role');
     Route::post('/add-new-user', [App\Http\Controllers\UserController::class, 'addNewUser'])->name('add-new-user');
@@ -417,8 +421,8 @@ Route::group(['prefix'=>'accounting', 'middleware'=>'auth'],function() {
     #Report routes
     Route::get('/trial-balance', [App\Http\Controllers\AccountingController::class, 'showTrialBalance'])->name('trial-balance');
     Route::post('/trial-balance', [App\Http\Controllers\AccountingController::class, 'trialBalance']);
-    Route::get('/balance-sheet', [App\Http\Controllers\AccountingController::class, 'showBalanceSheet'])->name('balance-sheet');
-    Route::post('/balance-sheet', [App\Http\Controllers\AccountingController::class, 'balanceSheet']);
+    Route::get('/statement-of-account', [App\Http\Controllers\AccountingController::class, 'showBalanceSheet'])->name('balance-sheet');
+    Route::post('/statement-of-account', [App\Http\Controllers\AccountingController::class, 'balanceSheet']);
     Route::get('/profit-or-loss', [App\Http\Controllers\AccountingController::class, 'showProfitOrLoss'])->name('profit-or-loss');
     Route::post('/profit-or-loss', [App\Http\Controllers\AccountingController::class, 'profitOrLoss']);
     Route::get('/journal-voucher', [App\Http\Controllers\AccountingController::class, 'showJournalVoucher'])->name('journal-voucher');
@@ -453,6 +457,7 @@ Route::group(['prefix'=>'app', 'middleware'=>'auth'],function(){
         Route::get('/sms-settings', [App\Http\Controllers\Portal\SettingsController::class, 'showSMSSettingsForm'])->name('sms-settings');
         Route::post('/sms-settings', [App\Http\Controllers\Portal\SettingsController::class, 'appDefaultSmsSettings']);
         Route::get('/accounting-settings', [App\Http\Controllers\Portal\SettingsController::class, 'showWorkflowSettingsForm'])->name('accounting-settings');
+        Route::post('/estate-accounting-settings', [App\Http\Controllers\Portal\SettingsController::class, 'updateEstateAccounts'])->name('estate-accounting-settings');
         Route::post('/accounting-settings', [App\Http\Controllers\Portal\SettingsController::class, 'appDefaultSettings']);
 
 
@@ -517,11 +522,17 @@ Route::group(['prefix'=>'payroll', 'middleware'=>'auth'],function(){
     Route::match(['GET'], '/new-salary-allowance', [App\Http\Controllers\Portal\PayrollController::class, 'showNewSalaryAllowanceForm'])->name('new-salary-allowance');
     Route::match(['GET', 'POST', 'PUT'], '/salary-allowances', [App\Http\Controllers\Portal\PayrollController::class, 'handleSalaryAllowances'])->name('salary-allowances');
     Route::match(['GET'], '/salary-allowances/{slug}', [App\Http\Controllers\Portal\PayrollController::class, 'showSalaryAllowances'])->name('view-salary-allowances');
+    Route::match(['GET', 'POST'], '/payroll-month-year', [App\Http\Controllers\Portal\PayrollController::class, 'showPayrollMonthYear'])->name('payroll-month-year');
 
     Route::group(['prefix'=>'process'],function(){
        Route::match(['GET'], '/salary-structures', [App\Http\Controllers\Portal\PayrollController::class, 'showSalaryStructures'])->name('salary-structures');
        Route::get( '/salary-structures/{slug}', [App\Http\Controllers\Portal\PayrollController::class, 'showSalarySetupForm'])->name('salary-setup-form');
        Route::get( '/employee/salary-structure/{slug}', [App\Http\Controllers\Portal\PayrollController::class, 'showEmployeeSalaryStructure'])->name('employee-salary-structure');
        Route::post( '/setup-salary-structure', [App\Http\Controllers\Portal\PayrollController::class, 'setupSalaryStructure'])->name('setup-salary-structure');
+        Route::match(['GET', 'POST'], '/approve-payroll-routine', [App\Http\Controllers\Portal\PayrollController::class, 'showApprovePayrollRoutineView'])->name('approve-payroll-routine');
+        Route::match(['GET', 'POST'], '/payroll-routine', [App\Http\Controllers\Portal\PayrollController::class, 'showPayrollRoutine'])->name('payroll-routine');
+        Route::get( '/run-payroll-routine', [App\Http\Controllers\Portal\PayrollController::class, 'runPayrollRoutine'])->name('run-payroll-routine');
+        Route::get( '/operation/{action}/{batch_code}', [App\Http\Controllers\Portal\PayrollController::class, 'approveOrUndoPayrollRoutine'])->name('action-routine');
     });
+
 });

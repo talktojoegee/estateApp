@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\portal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\UtilityTrait;
 use App\Models\ActivityLog;
 use App\Models\Client;
 use App\Models\ClientGroup;
 use App\Models\FileModel;
 use App\Models\Notification;
+use App\Models\Salary;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use mysql_xdevapi\Collection;
 
 class ClientController extends Controller
 {
+    use UtilityTrait;
+
     public function __construct(){
         $this->middleware('auth');
         $this->client = new Client();
@@ -128,6 +133,42 @@ class ClientController extends Controller
         }else{
             return back();
         }
+    }
+
+    public function showPayslip(Request $request){
+
+        return view('administration.payslip',[
+            'search'=>0
+        ]);
+    }
+    public function payslipReport(Request $request){
+        $this->validate($request,[
+           "payrollPeriod"=>"required"
+        ],[
+            "payrollPeriod.required"=>"Choose payroll period"
+        ]);
+        $authUser = Auth::user();
+        $month = date('m', strtotime($request->payrollPeriod));
+        $year = date('Y', strtotime($request->payrollPeriod));
+        $salary = Salary::getPayslip($month, $year, $authUser->id);
+        $deductions = [];
+        $earnings = [];
+        foreach($salary as $sal){
+            if($sal->getPaymentDefinition->payment_type == 1){ //earnings
+                $earnings[] = $sal;
+            }else{
+                $deductions[] = $sal;
+            }
+        }
+        return view('administration.payslip',[
+            'search'=>1,
+            'earnings'=>collect($earnings),
+            'deductions'=>collect($deductions),
+            'records'=>$salary,
+            'user'=>$authUser,
+            'month'=>$month,
+            'year'=>$year
+        ]);
     }
 
     public function assignClientTo(Request $request){

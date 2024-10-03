@@ -8,7 +8,9 @@ use App\Models\ActivityLog;
 use App\Models\AppDefaultSetting;
 use App\Models\AssignFrequency;
 use App\Models\AuthorizingPerson;
+use App\Models\ChartOfAccount;
 use App\Models\ChurchBranch;
+use App\Models\Estate;
 use App\Models\InvoiceDetail;
 use App\Models\InvoiceMaster;
 use App\Models\InvoicePaymentHistory;
@@ -50,6 +52,7 @@ class RadioController extends Controller
         $this->property = new Property();
         $this->receipt = new Receipt();
         $this->invoicepaymenthistory = new InvoicePaymentHistory();
+        $this->estate = new Estate();
 
 
     }
@@ -505,21 +508,31 @@ class RadioController extends Controller
         }
         $authUserId = Auth::user()->id;
         if($request->status == 1){ //post
-            //Get default accounts
-            $defaultAccounts = $this->appdefaultsetting->getAppDefaultSettings();
-            if(empty($defaultAccounts)){
+            $ref = strtoupper(substr(sha1(time()), 29,40));
+            $property = $invoice->getProperty;
+            $customer = $invoice->getCustomer;
+            if(empty($property) || empty($customer)){
                 session()->flash("error", "Whoops! Something went wrong.");
                 return back();
             }
-            $customerAccount = $defaultAccounts->customer_account;
-            $propertyAccount = $defaultAccounts->property_account;
+            $estate = Estate::getEstateById($property->estate_id);
+            if(empty($estate)){
+                session()->flash("error", "Whoops! Something went wrong.");
+                return back();
+            }
+            //Default accounts are now replaced with estate specific account.
+            //$defaultAccounts = $this->appdefaultsetting->getAppDefaultSettings();
+            if(empty($estate->property_account) || empty($estate->customer_account)){
+                session()->flash("error", "Whoops! Something went wrong.");
+                return back();
+            }
+            $propertyAccount = ChartOfAccount::getChartOfAccountById($estate->property_account)->glcode;
+            $customerAccount = ChartOfAccount::getChartOfAccountById($estate->customer_account)->glcode;
             if(is_null($customerAccount) || is_null($propertyAccount) ){
                 session()->flash("error", "Whoops! One or two accounts are missing for this transaction. Contact admin.");
                 return back();
             }
-            $ref = strtoupper(substr(sha1(time()), 29,40));
-            $property = $invoice->getProperty;
-            $customer = $invoice->getCustomer;
+
             //debit customer
             $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided to {$customer->first_name} on {$invoice->issue_date}, Invoice No. {$invoice->invoice_no}.";
             $this->handleLedgerPosting($invoice->total ?? 0, 0, $customerAccount, $narration,
@@ -544,6 +557,64 @@ class RadioController extends Controller
         $invoice->date_posted = now();
         $invoice->save();*/
         //proceed with notification and activity log
+
+    }
+
+
+    public function actionReceiptPayment(Request $request){
+        $this->validate($request,[
+            'receipt'=>'required',
+            'status'=>'required',
+        ],[
+            "receipt.required"=>"",
+            "status.required"=>"Whoops! Something went wrong.",
+        ]);
+        $receipt = $this->receipt->getReceiptById($request->receipt);
+        if(empty($receipt)){
+            session()->flash("error", "Whoops! Record not found.");
+            return back();
+        }
+        $authUserId = Auth::user()->id;
+        if($request->status == 1){ //post
+            $ref = strtoupper(substr(sha1(time()), 29,40));
+            $property = $receipt->getProperty;
+            $customer = $receipt->getCustomer;
+            if(empty($property) || empty($customer)){
+                session()->flash("error", "Whoops! Something went wrong.");
+                return back();
+            }
+            $estate = Estate::getEstateById($property->estate_id);
+            if(empty($estate)){
+                session()->flash("error", "Whoops! Something went wrong.");
+                return back();
+            }
+            if(empty($estate->property_account) || empty($estate->customer_account)){
+                session()->flash("error", "Whoops! Something went wrong.");
+                return back();
+            }
+            $propertyAccount = ChartOfAccount::getChartOfAccountById($estate->property_account)->glcode;
+            $customerAccount = ChartOfAccount::getChartOfAccountById($estate->customer_account)->glcode;
+            if(is_null($customerAccount) || is_null($propertyAccount) ){
+                session()->flash("error", "Whoops! One or two accounts are missing for this transaction. Contact admin.");
+                return back();
+            }
+
+            //credit customer
+            $narration = "Receipt raised for {$property->property_name} - ({$property->property_code}) provided to {$customer->first_name} on {$receipt->payment_date}, Receipt No. {$receipt->receipt_no}.";
+            $this->handleLedgerPosting(0,$receipt->total ?? 0, $customerAccount, $narration,
+                $ref, 0, $authUserId, $receipt->payment_date);
+            //debit property
+            $narration = "Receipt  raised for {$property->property_name} - ({$property->property_code}) provided for the property with property code {$property->property_code}.";
+            $this->handleLedgerPosting( $receipt->total,0, $propertyAccount, $narration,
+                $ref, 0, $authUserId, $receipt->payment_date);
+        }
+
+        $receipt->posted = $request->status;
+        $receipt->posted_by = $authUserId;
+        $receipt->date_posted = now();
+        $receipt->save();
+        session()->flash("success", "Action successful.");
+        return back();
 
     }
 
@@ -1056,6 +1127,60 @@ class RadioController extends Controller
             case 'GET':
                 return view('accounting.post-invoice',[
                     'invoices'=>$this->invoicemaster->getUnpostedInvoiceList()
+                ]);
+            case 'POST':
+                $this->validate($request,[
+                    "invoice"=>"required"
+                ],[
+                    "invoice.required"=>""
+                ]);
+                $invoice = $this->invoicemaster->getInoviceById($request->invoice);
+                if(empty($invoice)){
+                    session()->flash("error", "Whoops! No record found.");
+                    return back();
+                }
+                //Get default accounts
+                $defaultAccounts = $this->appdefaultsetting->getAppDefaultSettings();
+                if(empty($defaultAccounts)){
+                    session()->flash("error", "Whoops! Something went wrong.");
+                    return back();
+                }
+                $customerAccount = $defaultAccounts->customer_account;
+                $propertyAccount = $defaultAccounts->property_account;
+                if(is_null($customerAccount) || is_null($propertyAccount) ){
+                    session()->flash("error", "Whoops! One or two accounts are missing for this transaction. Contact admin.");
+                    return back();
+                }
+                $ref = strtoupper(substr(sha1(time()), 29,40));
+                $property = $invoice->getProperty;
+                $customer = $invoice->getCustomer;
+                $authUserId = Auth::user()->id;
+                //debit customer
+                $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided to {$customer->first_name} on {$invoice->issue_date}, Invoice No. {$invoice->invoice_no}.";
+                $this->handleLedgerPosting($invoice->total ?? 0, 0, $customerAccount, $narration,
+                    $ref, 0, $authUserId, $invoice->issue_date);
+                //credit property
+            /*$narration = "Being the invoice raised for [description of goods/services] provided for the property at
+            [property address or name] on [invoice date], Invoice No. [invoice number]";*/
+                $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided for the property with property code {$property->property_code}.";
+                $this->handleLedgerPosting(0, $invoice->total, $propertyAccount, $narration,
+                    $ref, 0, $authUserId, $invoice->issue_date);
+                $invoice->posted = 1;
+                $invoice->posted_by = $authUserId;
+                $invoice->date_posted = now();
+                $invoice->save();
+                session()->flash("success", "Action successful.");
+                return back();
+        }
+
+    }
+
+    public function showReceiptForPosting(Request $request){
+        $method = $request->getMethod();
+        switch ($method){
+            case 'GET':
+                return view('accounting.post-receipt',[
+                    'receipts'=>$this->receipt->getUnpostedReceipts(),
                 ]);
             case 'POST':
                 $this->validate($request,[

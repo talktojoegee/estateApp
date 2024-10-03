@@ -260,6 +260,11 @@ class User extends Authenticatable
         return User::where('is_admin', $type)->where('org_id', Auth::user()->org_id)->orderBy('first_name', 'ASC')->get();
     }
 
+    public function getActiveUsers(){
+        return User::where('status', 1)->orderBy('first_name', 'ASC')->get();
+    }
+
+
     public function getAllOrganizationUsers(){
         return User::where('org_id', Auth::user()->org_id)->/*where('status', '!=', 3)->*/orderBy('first_name', 'ASC')->get();
     }

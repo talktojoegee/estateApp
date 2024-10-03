@@ -16,7 +16,27 @@
 @endsection
 
 @section('main-content')
+    <div class="row">
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <div class="col">
+                            <p class="mb-1">Total</p>
 
+                            <h5 class="mb-0 number-font text-secondary1">{{env('APP_CURRENCY')}}{{ number_format($receipts->where('posted',0)->sum('total')) }}</h5>
+                        </div>
+                        <div class="col-auto mb-0">
+                            <div class="dash-icon text-secondary1">
+                                <i class="bx bxs-wallet"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Overall <code>({{ number_format($receipts->where('posted',0)->count()) }})</code></span></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-12 col-lg-12">
@@ -34,13 +54,13 @@
                     @endif
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
-                            <p>List of all receipts</p>
+                            <p><strong>Note:</strong> Posting any of these transactions will affect your account.</p>
                             <div class="table-responsive">
 
                                 <table id="datatable" class="table table-striped table-bordered nowrap dataTable" role="grid" aria-describedby="focus-key_info" style="position: relative;">
                                     <thead>
                                     <tr role="row">
-                                        <th class="sorting_asc">S/No.qw</th>
+                                        <th class="sorting_asc">S/No.</th>
                                         <th class="sorting_asc">Date</th>
                                         <th class="sorting_asc">Name</th>
                                         <th class="sorting">Invoice No.</th>
@@ -61,8 +81,8 @@
                                             <td>
                                                 {{$receipt->getCustomer->first_name ?? '' }} {{$receipt->getCustomer->last_name ?? '' }}
                                             </td>
-                                            <td><a href="{{ route('view-receipt', $receipt->trans_ref) }}" target="_blank">{{$receipt->getInvoice->invoice_no ?? ''}}</a></td>
-                                            <td>{{$receipt->receipt_no ?? ''}}</td>
+                                            <td>{{$receipt->getInvoice->invoice_no ?? ''}}</td>
+                                            <td><a href="{{ route('view-receipt', $receipt->trans_ref) }}">{{$receipt->receipt_no ?? ''}}</a> </td>
                                             <td class="text-right" style="text-align: right">{{number_format($receipt->total,2)}}</td>
                                             <td>{{$receipt->trans_ref ?? ''}}</td>
                                             <td>

@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
 use App\Models\PaymentDefinition;
+use App\Models\PayrollMonthYear;
+use App\Models\Salary;
 use App\Models\SalaryAllowance;
 use App\Models\SalaryStructure;
 use App\Models\SalaryStructurePersonalized;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PayrollController extends Controller
 {
@@ -258,5 +261,170 @@ class PayrollController extends Controller
             'structure'=>$structure,
             'definitions'=>$this->paymentdefinition->getPaymentDefinitionListByVariance(1)
         ]);
+    }
+    public function showPayrollMonthYear(Request $request){
+
+        $method = $request->getMethod();
+        switch ($method){
+            case 'GET':
+                return view('payroll.payroll-month-year',[
+                    'record'=> PayrollMonthYear::getActivePayrollMonthYear(),
+                ]);
+            case 'POST':
+                $this->validate($request,[
+                    "monthYear"=>"required",
+
+                ],[
+                    "monthYear.required"=>"Choose payroll month/year"
+                ]);
+                $month = date('m', strtotime($request->monthYear));
+                $year = date('Y', strtotime($request->monthYear));
+                $records = PayrollMonthYear::getPayrollMonthYear();
+                foreach($records as $record){
+                    $record->payroll_status = 0;
+                    $record->save();
+                }
+                PayrollMonthYear::addPayrollMonthYear($month, $year);
+                session()->flash("success", "Action successful");
+                return back();
+
+        }
+    }
+
+    public function showPayrollRoutine(Request $request){
+
+        $method = $request->getMethod();
+        switch ($method){
+            case 'GET':
+                return view('payroll.process.payroll-routine',[
+                    'record'=> PayrollMonthYear::getActivePayrollMonthYear(),
+                ]);
+            case 'POST':
+                $this->validate($request,[
+                    "monthYear"=>"required",
+
+                ],[
+                    "monthYear.required"=>"Choose payroll month/year"
+                ]);
+                $month = date('m', strtotime($request->monthYear));
+                $year = date('Y', strtotime($request->monthYear));
+                $records = PayrollMonthYear::getPayrollMonthYear();
+                foreach($records as $record){
+                    $record->payroll_status = 0;
+                    $record->save();
+                }
+                PayrollMonthYear::addPayrollMonthYear($month, $year);
+                session()->flash("success", "Action successful");
+                return back();
+
+        }
+    }
+
+
+    public function runPayrollRoutine(){
+        $activePeriod = PayrollMonthYear::getActivePayrollMonthYear();
+        if(empty($activePeriod)){
+            session()->flash("error", "Whoops! Kindly set payroll month & year to continue");
+            return back();
+        }
+        $pendingRoutine = Salary::getPendingSalary();
+
+        if(count($pendingRoutine) > 0){
+            session()->flash("error", "Whoops! There is a pending routine that needs to be run or undone. ");
+            return back();
+        }
+
+        $activeEmployees = $this->user->getActiveUsers();
+        $authUser = Auth::user();
+        $batchCode = substr(sha1(time()),29,40);
+
+        foreach($activeEmployees as $employee){
+            if($employee->salary_structure_setup == 1){
+                $salaryStructureCategory = $employee->salary_structure_category;
+                if($salaryStructureCategory == 0){ //personalized
+                    $personalizedStructure = SalaryStructurePersonalized::getEmployeePersonalizedStructure($employee->id);
+                    if(count($personalizedStructure) > 0){
+                        foreach($personalizedStructure as $def){
+                            $data = [
+                                'paid_by'=>$authUser->id,
+                                'employee_id'=>$employee->id,
+                                'payment_definition_id'=>$def->payment_definition_id,
+                                'payroll_month'=>$activePeriod->payroll_month,
+                                'payroll_year'=>$activePeriod->payroll_year,
+                                'amount'=>$def->amount,
+                                'status'=>0,
+                                'batch_code'=>$batchCode
+                            ];
+                            Salary::create($data);
+                        }
+                    }
+
+                }else{ //categorized structure
+                    $allowances = $this->salaryallowance->getAllowancesBySalaryStructureId($employee->salary_structure_category);
+                    if(count($allowances) > 0){
+                        foreach($allowances as $allowance){
+                            $data = [
+                                'paid_by'=>$authUser->id,
+                                'employee_id'=>$employee->id,
+                                'payment_definition_id'=>$allowance->payment_definition_id,
+                                'payroll_month'=>$activePeriod->payroll_month,
+                                'payroll_year'=>$activePeriod->payroll_year,
+                                'amount'=>$allowance->amount,
+                                'status'=>0,
+                                'batch_code'=>$batchCode
+                            ];
+                            Salary::create($data);
+                        }
+                    }
+                }
+            }
+
+        }
+        session()->flash("success", "Action successful");
+        return back();
+    }
+
+    public function showApprovePayrollRoutineView(){
+        return view('payroll.process.approve-payroll-routine',[
+            'records'=>Salary::getDistinctPendingSalary()
+        ]);
+    }
+
+
+    public function approveOrUndoPayrollRoutine(Request $request){
+        $action = $request->action ?? 'approve';
+        $batchCode = $request->batch_code ?? null;
+        if(is_null($batchCode)){
+            session()->flash("error", "Something is missing. Try again later or contact admin.");
+            return back();
+        }
+        $salaries = Salary::getSalaryByBatchCode($batchCode);
+        if(count($salaries) <= 0){
+            session()->flash("error", "No record found.");
+            return back();
+        }
+        switch ($action){
+            case "approve":
+            foreach($salaries as $salary){
+                $salary->status = 1;
+                $salary->date_actioned = now();
+                $salary->actioned_by = Auth::user()->id;
+                $salary->save();
+            }
+                $activePeriod = PayrollMonthYear::getActivePayrollMonthYear();
+            if(!empty($activePeriod)){
+                $activePeriod->payroll_status = 0;
+                $activePeriod->save();
+            }
+            break;
+            case "undo":
+            foreach ($salaries as $salary){
+                $salary->delete();
+            }
+            break;
+
+        }
+        session()->flash("success", "Action successful");
+        return back();
     }
 }

@@ -80,6 +80,9 @@ class Receipt extends Model
     public function getAllTenantReceipts(){
         return  Receipt::orderBy('id', 'DESC')->get();
     }
+    public function getUnpostedReceipts(){
+        return  Receipt::where('posted', 0)->orderBy('id', 'DESC')->get();
+    }
     public function getReceiptsByPropertyIds($propertyIds){
         return  Receipt::whereIn('property_id', $propertyIds)->orderBy('id', 'DESC')->get();
     }
@@ -90,8 +93,12 @@ class Receipt extends Model
 
 
     public function getReceipt($slug){
-        $receipt = Receipt::where('trans_ref', $slug)->first();
-        return $receipt;
+        return Receipt::where('trans_ref', $slug)->first();
+
+    }
+
+    public function getReceiptById($id){
+        return Receipt::find($id);
     }
 
 

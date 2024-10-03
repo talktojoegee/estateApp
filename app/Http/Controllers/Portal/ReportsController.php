@@ -376,7 +376,6 @@ class ReportsController extends Controller
 
     public function generateCashbookReport(Request $request){
         $branchId = Auth::user()->branch;
-        //return dd($request->all());
         if(empty($branchId)){
             abort(404);
         }

@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\AppDefaultSetting;
 use App\Models\AppSmsSetting;
 use App\Models\ChartOfAccount;
+use App\Models\Estate;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role as SRole;
@@ -50,6 +51,7 @@ class SettingsController extends Controller
         $this->appsmsdefaultsettings = new AppSmsSetting();
 
         $this->chartofaccount = new ChartOfAccount();
+        $this->estate = new Estate();
     }
 
     public function showSettingsView(){
@@ -369,7 +371,8 @@ class SettingsController extends Controller
     public function showWorkflowSettingsForm(){
         return view('settings.settings-accounting',[
             'defaults'=>$this->appdefaultsettings->getAppDefaultSettings(),
-            'accounts'=>$this->chartofaccount->getAllDetailChartOfAccounts()
+            'accounts'=>$this->chartofaccount->getAllDetailChartOfAccounts(),
+            'records'=>$this->estate->getAllEstates()
         ]);
     }
 
@@ -401,6 +404,46 @@ class SettingsController extends Controller
         $this->appdefaultsettings->addAppDefaultSetting($request);
         $log = "$authUser->first_name($authUser->email) updated accounting default settings";
         $title = "Account Default settings";
+        ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, $title, $log);
+        session()->flash("success",  "Action successful.");
+        return back();
+    }
+
+    public function updateEstateAccounts(Request $request){
+        $this->validate($request,[
+            'estate'=>'required',
+            'property_account'=>'required',
+            'customer_account'=>'required',
+            'vendor_account'=>'required',
+            'tax_account'=>'required',
+            'refund_account'=>'required',
+            'charges_account'=>'required',
+            'salary_account'=>'required',
+            'employee_account'=>'required',
+            'workflow_account'=>'required',
+            'general_account'=>'required',
+        ],[
+            'estate.required'=>'',
+            'property_account.required'=>'Choose a default account for properties. ',
+            'customer_account.required'=>'Choose a default account for customers',
+            'vendor_account.required'=>'Choose a default account for vendors',
+            'tax_account.required'=>'Choose a default account for tax',
+            'refund_account.required'=>'Choose a default account for refund',
+            'charges_account.required'=>'Choose a default account for charges',
+            'salary_account.required'=>'Choose a default account for salaries',
+            'workflow_account.required'=>'Choose a default account for workflow',
+            'employee_account.required'=>'Choose a default account for employees',
+            'general_account.required'=>'Choose a general account',
+        ]);
+        $authUser = Auth::user();
+        $estate = $this->estate->getEstateById($request->estate);
+        if(empty($estate)){
+            session()->flash("error",  "Whoops! No record found.");
+            return back();
+        }
+        $this->estate->updateEstateAccountSettings($request);
+        $log = "$authUser->first_name($authUser->email) estate account settings";
+        $title = "Estate Account settings";
         ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, $title, $log);
         session()->flash("success",  "Action successful.");
         return back();

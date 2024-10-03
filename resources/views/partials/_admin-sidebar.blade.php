@@ -198,8 +198,7 @@
             </a>
             <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{route('post-invoice')}}" key="t-postings">Invoice</a></li>
-                <li><a href="{{route('journal-voucher')}}" key="t-postings">Receipt</a></li>
-                <li><a href="{{route('trial-balance')}}" key="t-postings">Payroll</a></li>
+                <li><a href="{{route('post-receipt')}}" key="t-postings">Receipt</a></li>
             </ul>
         </li>
         <li>
@@ -216,8 +215,8 @@
             </a>
             <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{route('salary-structures')}}" key="t-payroll-process">Salary Structures</a></li>
-                <li><a href="#" key="t-payroll-process">Payroll Routine</a></li>
-                <li><a href="#" key="t-payroll-process">Approve Routine</a></li>
+                <li><a href="{{ route('payroll-routine') }}" key="t-payroll-process">Payroll Routine</a></li>
+                <li><a href="{{ route('approve-payroll-routine') }}" key="t-payroll-process">Approve Routine</a></li>
                 <li><a href="#" key="t-payroll-process">Payroll Reports</a></li>
             </ul>
         </li>
@@ -230,6 +229,7 @@
                 <li><a href="{{route('payment-definition')}}" key="t-payroll">Payment Definition</a></li>
                 <li><a href="{{route('salary-structure')}}" key="t-payroll">Salary Structure</a></li>
                 <li><a href="{{route('salary-allowances')}}" key="t-payroll">Salary Allowances</a></li>
+                <li><a href="{{route('payroll-month-year')}}" key="t-payroll">Payroll Month/Year</a></li>
             </ul>
         </li>
         <li class="menu-title">Reports</li>
@@ -239,9 +239,9 @@
                 <span key="t-reports"> Reports </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{route('top-up')}}" key="t-reports">Property</a></li>
-                <li><a href="{{route('top-up-transactions')}}" key="t-reports">Customer</a></li>
-                <li><a href="{{route('top-up-transactions')}}" key="t-reports">Sales</a></li>
+                <li><a href="#" key="t-reports">Property</a></li>
+                <li><a href="#" key="t-reports">Customer</a></li>
+                <li><a href="#" key="t-reports">Sales</a></li>
             </ul>
         </li>
 

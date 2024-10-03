@@ -221,6 +221,10 @@
                 <div class="card-block">
                     <div class="btn-group">
                         <a href="{{url()->previous()}}" class="btn btn-secondary"><i class="bx bx-left-arrow mr-2"></i>Go Back</a>
+                        @if($receipt->posted == 0)
+                            <button type="button" data-bs-target="#declinePayment" data-bs-toggle="modal" class="btn btn-danger w-md waves-effect waves-light">Decline <i class="bx bx-x"></i> </button>
+                            <button type="button" data-bs-target="#verifyPayment" data-bs-toggle="modal" class="btn btn-success w-md waves-effect waves-light">Post <i class="bx bx-check-double"></i> </button>
+                        @endif
                         <button class="btn btn-primary" onclick="generatePDF()"><i class="bx bx-printer mr-2"></i> Print Receipt</button>
                         <a href="{{route('send-receipt-as-email', ['ref'=>$receipt->trans_ref])}}" class="btn btn-custom"><i class="bx bx-envelope mr-2"></i> Email Receipt</a>
                     </div>
@@ -228,6 +232,80 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal  fade" id="verifyPayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+        <div class="modal-dialog w-100" role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2">Post Receipt</h6>
+                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form autocomplete="off" action="{{route('action-receipt-payment')}}" id="createIncomeForm" data-parsley-validate="" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row mb-3">
+                            <div class="form-group mt-1 col-md-12 mt-3 ">
+                                <p>This action cannot be undone. Are you sure you want to post this receipt?</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="form-group mt-1 col-md-12">
+                                <input type="hidden" name="receipt" value="{{$receipt->id}}">
+                                <input type="hidden" name="status" value="1">
+                                @error('comment') <i class="text-danger" style="color: #ff0000;">{{$message}}</i>@enderror
+
+                            </div>
+                        </div>
+                        <div class="form-group d-flex justify-content-center mt-3">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary  waves-effect waves-light">Yes, proceed  <i class="bx bxs-right-arrow"></i> </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal  fade" id="declinePayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+        <div class="modal-dialog w-100" role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2">Decline Receipt</h6>
+                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form autocomplete="off" action="{{route('action-receipt-payment')}}" id="createIncomeForm" data-parsley-validate="" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row mb-3">
+                            <div class="form-group mt-1 col-md-12 mt-3 ">
+                                <p>This action cannot be undone. Are you sure you want to <code>decline</code> this receipt?</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="form-group mt-1 col-md-12">
+                                <input type="hidden" name="receipt" value="{{$receipt->id}}">
+                                <input type="hidden" name="status" value="2">
+                                @error('comment') <i class="text-danger" style="color: #ff0000;">{{$message}}</i>@enderror
+
+                            </div>
+                        </div>
+                        <div class="form-group d-flex justify-content-center mt-3">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary  waves-effect waves-light">Yes, proceed  <i class="bx bxs-right-arrow"></i> </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('extra-scripts')
