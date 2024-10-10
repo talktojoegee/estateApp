@@ -157,6 +157,23 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Which account should be used for <strong>Discount</strong>?</label>
+                                        <select name="discount_account" id="discount_account" class="form-control select2">
+                                            <option disabled selected>-- Select section/unit --</option>
+                                            @foreach($accounts as $account)
+                                                <option value="{{$account->id}}" {{ !empty($rec->discount_account) ? ($account->id == $rec->discount_account ? "selected" : '')  : 'selected'}} >{{$account->account_name ?? '' }} - {{$account->glcode ?? '' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('discount_account')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                        <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->discount_account) ? $rec->getChartOfAccountById($rec->discount_account)->account_name : '' }} - {{ !empty($rec->discount_account) ? $rec->getChartOfAccountById($rec->discount_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="row mt-3">
                                 <div class="col-md-12">
@@ -178,6 +195,17 @@
                             <div class="row mt-3">
                                 <div class="col-md-12">
                                     <div class="form-group">
+                                        <label for=""><strong>TAX Rate</strong></label>
+                                        <input type="number" step="0.01" name="taxRate" value="{{ $rec->tax_rate ?? 0 }}" placeholder="TAX Rate" class="form-control">
+                                        @error('taxRate')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
                                         <label for="">Which should be used to handle <strong>Refund</strong> ?</label>
                                         <select name="refund_account" id="refund_account" class="form-control select2">
                                             <option disabled selected>-- Select account --</option>
@@ -189,6 +217,17 @@
                                         <i class="text-danger mt-2">{{$message}}</i>
                                         @enderror
                                         <p class="mt-1"> <span class="badge badge-soft-success">Current Selection: </span> <span>{{ !empty($rec->refund_account) ? $rec->getChartOfAccountById($rec->refund_account)->account_name : '' }} - {{ !empty($rec->refund_account) ? $rec->getChartOfAccountById($rec->refund_account)->glcode : '' }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for=""><strong>Refund Rate</strong></label>
+                                        <input type="number" step="0.01" value="{{ $rec->refund_rate ?? 0 }}" name="refundRate" placeholder="Refund Rate" class="form-control">
+                                        @error('refundRate')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>

@@ -422,7 +422,9 @@ class SettingsController extends Controller
             'employee_account'=>'required',
             'workflow_account'=>'required',
             'general_account'=>'required',
-        ],[
+            'discount_account'=>'required',
+        ],
+            [
             'estate.required'=>'',
             'property_account.required'=>'Choose a default account for properties. ',
             'customer_account.required'=>'Choose a default account for customers',
@@ -434,6 +436,7 @@ class SettingsController extends Controller
             'workflow_account.required'=>'Choose a default account for workflow',
             'employee_account.required'=>'Choose a default account for employees',
             'general_account.required'=>'Choose a general account',
+            'discount_account.required'=>'Choose a discount account',
         ]);
         $authUser = Auth::user();
         $estate = $this->estate->getEstateById($request->estate);
@@ -591,6 +594,10 @@ class SettingsController extends Controller
         $this->organization->uploadFavicon($request->favicon);
         session()->flash("success", "Your favicon was uploaded.");
         return back();
+    }
+
+    public function generalSettings(){
+        return view('settings.settings-general');
     }
 
 }

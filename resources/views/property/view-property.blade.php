@@ -36,7 +36,7 @@
     <div class="row viewPropertyWindow">
         <div class="col-md-8 col-sm-8">
             <div class="card p-3">
-                <h5 class="modal-header">
+                <h5 class="modal-header text-info">
                     {{$property->property_name ?? '' }}
                 </h5>
                 <div class="card-body">
@@ -66,9 +66,9 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <h6 class="mt-4 text-uppercase modal-header p-4  mb-3">Details</h6>
+                    <h6 class="mt-4 text-uppercase modal-header p-4  mb-3 text-info">Details</h6>
                     <div class="p-3">{!! $property->description ?? '' !!}</div>
-                    <h6 class="mt-4 text-uppercase modal-header p-4">Summary</h6>
+                    <h6 class="mt-4 text-uppercase modal-header p-4 text-info">Summary</h6>
                     <div class="table-responsive">
                         <table class="table mb-0 table-striped">
                             <tbody>
@@ -105,6 +105,10 @@
                                     </span></th>
                             </tr>
                             <tr>
+                                <th scope="row" >Property Code: &nbsp; &nbsp; <span class="text-info">{{$property->property_code ?? '-' }} </span></th>
+                                <th scope="row" >Street: &nbsp; &nbsp; <span class="text-info">{{ $property->street ?? '-' }}</span></th>
+                            </tr>
+                            <tr>
                                 <th scope="row" >Total No. of Bedrooms: &nbsp; &nbsp; <span class="text-info">{{$property->total_no_bedrooms ?? '-' }} </span></th>
                                 <th scope="row" >With BQ.: &nbsp; &nbsp; <span class="text-info">{{ $property->getWithBQOption->bqo_name ?? '-' }}</span></th>
                             </tr>
@@ -134,7 +138,7 @@
                                         @break
                                     @endswitch
                                     </th>
-                                <th scope="row" >Construction Stage: &nbsp; &nbsp; <span class="text-info">{{ $property->getConstructionStage->cs_name ?? '-' }}</span></th>
+                                <th scope="row" >Property Status: &nbsp; &nbsp; <span class="text-info">{{ $property->getConstructionStage->cs_name ?? '-' }}</span></th>
                             </tr>
                             <tr>
                                 <th scope="row" >Land Size: &nbsp; &nbsp; <span class="text-info">{{$property->land_size ?? '-' }} </span></th>
@@ -153,9 +157,15 @@
                                         @case(2)
                                         <span class="text-danger" style="color: #ff0000 !important;">Sold</span>
                                         @break
+                                        @case(3)
+                                        <span class="" style="color: orange !important;">Reserved</span>
+                                        @break
                                     @endswitch
                                 </th>
                                  <th scope="row" >Date Added: &nbsp; &nbsp; <span class="text-info"> {{ date('d M, Y h:ia', strtotime($property->created_at)) }}  </span></th>
+                            </tr>
+                            <tr>
+                                <th scope="row" colspan="2" >Payment Plan: &nbsp; &nbsp; <span class="text-info"> {{ $property->getPaymentPlan->pp_name ?? '' }} <br> <small>({{ $property->getPaymentPlan->pp_description ?? '-' }})</small>  </span></th>
                             </tr>
 
                             </tbody>
@@ -172,7 +182,7 @@
                             <tr>
                                 <th scope="row" > Sold To: &nbsp; &nbsp; <span class="text-info">  {{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }} </span></th>
                                 <th scope="row" >Date Sold: &nbsp; &nbsp;
-                                    <span class="text-info">-</span>
+                                    <span class="text-info">{{ !is_null($property->date_sold) ? date('d M, Y h:ia', strtotime($property->date_sold)) : '-' }}</span>
                                 </th>
 
                             </tr>
@@ -323,7 +333,7 @@
                     <div class="modal-header text-uppercase ">Property Allocation</div>
                     <div class="row mt-4">
                         <div class="col-md-12">
-                            <div class="table-responsive" bis_skin_checked="1">
+                            <div class="table-responsive" >
                                 <table class="table table-striped mb-0">
 
                                     <thead>
@@ -334,11 +344,13 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>{{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }}</td>
-                                        <td><small><span class="text-success">First Allottee</span></small></td>
-                                    </tr>
+                                    @if(!is_null($property->sold_to))
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>{{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }}</td>
+                                            <td><small><span class="text-success">First Allottee</span></small></td>
+                                        </tr>
+                                    @endif
                                     @foreach($property->getAllocations as $key =>  $allocation)
                                         <tr>
                                             <td>{{ $key + 2 }}</td>
@@ -349,6 +361,16 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="modal-header text-uppercase ">Map View</div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <iframe width="100%"  frameborder="0" src="https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q='{{str_replace(",", "", str_replace(" ", "+", $property->getEstate->e_name)) }}'&z=14&output=embed"  height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
                 </div>
@@ -506,7 +528,7 @@
                             </div>
                             <div class="col-sm-4 col-md-4 lg-6">
                                 <div class="form-group">
-                                    <label for="">Construction Stage<sup class="text-danger">*</sup></label>
+                                    <label for="">Property Status<sup class="text-danger">*</sup></label>
                                     <select data-parsley-required-message="At what stage of construction are you?" required  class="form-control select2" name="constructionStage">
                                         @foreach($constructionStages as $key => $stage)
                                             <option value="{{$stage->cs_id}}" {{ $stage->cs_id == $property->construction_stage ? 'selected' : null }}>{{ $stage->cs_name }}</option>

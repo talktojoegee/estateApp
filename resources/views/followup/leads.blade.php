@@ -116,7 +116,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h4 class="modal-title" id="myModalLabel2">Create Customer</h4>
+                    <h4 class="modal-title text-info" id="myModalLabel2">Create Customer</h4>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -147,6 +147,11 @@
                             <label for="">Email Address <span class="text-danger">*</span></label>
                             <input type="email" name="email" data-parsley-required-message="Email address is very much important. Enter email address" required value="{{old('email', 'placeholder@email.com')}}" placeholder="Email Address" class="form-control">
                             @error('email') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-1">
+                            <label for="">Occupation<span class="text-danger">*</span></label>
+                            <input type="text" name="occupation" data-parsley-required-message="This field is required" required value="{{old('occupation')}}" placeholder="Occupation" class="form-control">
+                            @error('occupation') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
                         <div class="form-group mt-1">
                             <label for="">Source</label>
@@ -182,6 +187,33 @@
                             <label for="">Address <small>(Optional)</small></label>
                             <textarea name="street" placeholder="Type address here..." style="resize: none;" class="form-control">{{old('street')}}</textarea>
                             @error('street') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <h4 class="card-title mb-1 mt-3 text-info">Next of Kin</h4>
+                        <div class="form-group mt-3">
+                            <label for="">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="fullName" placeholder="Full Name" value="{{ old('fullName')  }}" class="form-control">
+                            @error('fullName') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="">Primary Phone No. <span class="text-danger">*</span></label>
+                            <input type="text" name="primaryPhoneNo" placeholder="Primary Phone No." value="{{ old('primaryPhoneNo')  }}" class="form-control">
+                            @error('primaryPhoneNo') <i class="text-danger">{{$message}}</i>@enderror
+                            <input type="hidden" name="leadId" value="{{$lead->id}}">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="">Alternative Phone No. <span class="text-danger">*</span></label>
+                            <input type="text" name="altPhoneNo" placeholder="Alternative Phone No." value="{{ old('altPhoneNo')  }}" class="form-control">
+                            @error('altPhoneNo') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="">Email Address <span class="text-danger">*</span></label>
+                            <input type="text" name="nextEmail" placeholder="Email Address" value="{{ old('nextEmail')  }}" class="form-control">
+                            @error('nextEmail') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="">Relationship <span class="text-danger">*</span></label>
+                            <input type="text" name="relationship" placeholder="Relationship" value="{{ old('relationship') }}" class="form-control">
+                            @error('relationship') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
                         <div class="form-group d-flex justify-content-center mt-3">
                             <div class="btn-group">

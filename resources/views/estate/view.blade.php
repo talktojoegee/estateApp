@@ -1,4 +1,3 @@
-
 @extends('layouts.master-layout')
 @section('title')
     {{$record->e_name ?? '' }}
@@ -147,10 +146,10 @@
                                                                     <th scope="row">State:<span class="text-info"> {{$record->getState->name ?? ''}}</span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">City:<span class="text-info"> {{$record->e_city ?? '' }} </span></th>
+                                                                    <th scope="row">Town:<span class="text-info"> {{$record->e_city ?? '' }} </span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">Ref. Code:<span class="text-info"> {{$record->e_ref_code ?? '' }}</span></th>
+                                                                    <th scope="row">Estate Code:<span class="text-info"> {{$record->e_ref_code ?? '' }}</span></th>
                                                                 </tr>
                                                                 <tr>
                                                                     <th scope="row">Address:<span class="text-info"> {{$record->e_address ?? '' }} </span></th>
@@ -185,7 +184,13 @@
                                                                     <th scope="row">TAX Account:<span class="text-info"> {{$record->getChartOfAccountById($record->tax_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->tax_account)->account_name ?? '' }} </span></th>
                                                                 </tr>
                                                                 <tr>
+                                                                    <th scope="row">TAX Rate:<span class="text-info"> {{$record->tax_rate }}% </span></th>
+                                                                </tr>
+                                                                <tr>
                                                                     <th scope="row">Refund Account:<span class="text-info"> {{$record->getChartOfAccountById($record->refund_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->refund_account)->account_name ?? '' }}</span></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Refund Rate:<span class="text-info"> {{$record->refund_rate }}% </span></th>
                                                                 </tr>
                                                                 <tr>
                                                                     <th scope="row">Charges Account:<span class="text-info"> {{$record->getChartOfAccountById($record->charges_account)->glcode ?? '' }} - {{$record->getChartOfAccountById($record->charges_account)->account_name ?? '' }} </span></th>
@@ -461,7 +466,7 @@
                                 @error('city') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                             <div class="form-group mt-3 col-md-6">
-                                <label for="">Reference Code <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
+                                <label for="">Estate Code <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
                                 <input type="text" value="{{ old('referenceCode', $record->e_ref_code) }}" name="referenceCode" placeholder="Enter a unique Reference Code. Example RAY for Raylight" class="form-control">
                                 @error('referenceCode') <i class="text-danger">{{$message}}</i>@enderror
                             </div>

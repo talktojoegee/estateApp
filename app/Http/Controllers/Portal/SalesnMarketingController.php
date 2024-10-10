@@ -489,6 +489,31 @@ class SalesnMarketingController extends Controller
         }
     }
 
+    public function editLeadProfile(Request $request){
+        $this->validate($request,[
+            'firstName'=>'required',
+            'lastName'=>'required',
+            'email'=>'required|email',
+            'mobileNo'=>'required',
+            'leadId'=>'required'
+        ],[
+            "firstName.required"=>"Enter client first name",
+            "lastName.required"=>"Enter client last name",
+            "email.required"=>"Enter client email address",
+            "email.email"=>"Enter a valid email address",
+            "mobileNo.required"=>"Enter client mobile phone number",
+        ]);
+        $this->lead->editLead($request);
+       /* if(isset($request->profilePhoto)){
+            $this->client->uploadProfilePicture($request->profilePhoto, $request->clientId);
+        }*/
+        $title = "Customer profile edited!";
+        $log = Auth::user()->first_name." ".Auth::user()->last_name." edited client profile";
+        ActivityLog::registerActivity(Auth::user()->org_id, $request->clientId, null, null, $title, $log);
+        session()->flash("success", "Your changes were saved!");
+        return back();
+    }
+
     public function leaveLeadNote(Request $request){
         $this->validate($request,[
             'addNote'=>'required',

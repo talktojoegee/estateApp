@@ -160,7 +160,7 @@
                                                 {{env('ORG_NAME')}}<br>
                                                 {{env('ORG_PHONE')}}<br>
                                                 {{env('ORG_EMAIL')}}<br>
-                                                {{env('ORG_ADDRESS')}}
+                                                {!! env('ORG_ADDRESS') !!}
                                             </address>
                                         </div>
 
@@ -197,9 +197,26 @@
                                             </address>
                                         </div>
                                     </div>
-                                    <div class="py-2 mt-3"   >
-                                        <h3 class="font-size-15 fw-bold">Summary</h3>
+                                    <div class="row " >
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped mb-0">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td style=""><strong>Estate: </strong> {{ $invoice->getProperty->getEstate->e_name ?? '' }}</td>
+                                                        <td style=""><strong>House No.: </strong> {{ $invoice->getProperty->house_no ?? '' }}</td>
+                                                        <td style=""><strong> Street: </strong>{{ $invoice->getProperty->street ?? '' }}</td>
+                                                        <td style=""><strong>Property Code: </strong> {{ $invoice->getProperty->property_code ?? '' }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <div class="py-2 mt-3"   >
+                                        <h3 class="font-size-15 text-info fw-bold">Summary</h3>
+                                    </div>
+
                                     <div class="table-responsive">
                                         <table class="table table-striped mb-0">
 
@@ -225,8 +242,23 @@
                                             @endforeach
                                             <tr>
                                                 <td colspan="4" class="border-0 text-end">
+                                                    <strong>Sub-total</strong></td>
+                                                <td class="border-0 text-end text-muted"><h5 class="m-0"> <span></span><span id="subTotal" class="text-muted">{{number_format($invoice->sub_total ?? 0 ,2)}}</span></h5></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="border-0 text-end">
+                                                    <strong>TAX/VAT({{$invoice->vat_rate ?? 0}}%)</strong></td>
+                                                <td class="border-0 text-end text-muted"><h5 class="m-0"> <span></span><span id="totalAmount" class="text-muted">{{number_format($invoice->vat ?? 0 ,2)}}</span></h5></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="border-0 text-end">
+                                                    <strong>Discount{{$invoice->discount_type == 2 ? '('.$invoice->discount_rate.'%)' : ''}}</strong></td>
+                                                <td class="border-0 text-end"> <span id="discount">{{number_format($invoice->discount_amount ?? 0 ,2)}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="border-0 text-end">
                                                     <strong>Total</strong></td>
-                                                <td class="border-0 text-end"><h5 class="m-0"> <span></span><span id="totalAmount">{{number_format($invoice->total ?? 0 ,2)}}</span></h5></td>
+                                                <td class="border-0 text-end text-muted"><h5 class="m-0"> <span></span><span id="totalAmount" class="text-muted">{{number_format($invoice->total ?? 0 ,2)}}</span></h5></td>
                                             </tr>
                                             <tr>
                                                 <td colspan="4" class="border-0 text-end">
@@ -237,24 +269,28 @@
                                             <tr>
                                                 <td colspan="4" class="border-0 text-end">
                                                     <strong>Balance</strong></td>
-                                                <td class="border-0 text-end"><h5 class="m-0"> <span></span><span id="totalAmount">{{number_format(($invoice->total ?? 0) - ($invoice->amount_paid ?? 0) ,2)}}</span></h5></td>
+                                                <td class="border-0 text-end"><h5 class="m-0"> <span></span><span id="balance" class="text-muted">{{number_format(($invoice->total ?? 0) - ($invoice->amount_paid ?? 0) ,2)}}</span></h5></td>
                                             </tr>
+                                            @if(($invoice->total  - $invoice->amount_paid) > 0)
                                             <tr>
                                                 <td colspan="4"></td>
                                                 <td>
-                                                    @if(($invoice->total) - ($invoice->paid_amount) <= 0)
-                                                        <p class="text-center text-success">This invoice is fully paid.</p>
-                                                    @else
-                                                        <div class="form-group ">
-                                                            <div class="d-flex justify-content-start">
-                                                                <label for="">Enter Amount</label>
-                                                            </div>
-                                                            <input type="number" step="0.01" name="amount" placeholder="Enter Amount" class="form-control">
-                                                            @error('amount')<i class="text-danger">{{$message}}</i>@enderror
+                                                    <div class="form-group ">
+                                                        <div class="d-flex justify-content-start">
+                                                            <label for="">Enter Amount</label>
                                                         </div>
-                                                    @endif
+                                                        <input type="number" step="0.01" name="amount" placeholder="Enter Amount" class="form-control">
+                                                        @error('amount')<i class="text-danger">{{$message}}</i>@enderror
+                                                    </div>
                                                 </td>
                                             </tr>
+                                            @else
+                                            <tr>
+                                                <td colspan="5">
+                                                    <p class="text-info text-center">Whoops! This invoice is fully paid.</p>
+                                                </td>
+                                            </tr>
+                                            @endif
                                             </tbody>
                                         </table>
                                     </div>
@@ -267,9 +303,7 @@
                                             <div class="card-block">
                                                 <div class="btn-group">
                                                     <a href="#" class="btn btn-secondary"><i class="bx bx-left-arrow mr-2"></i> Go Back</a>
-                                                    @if(($invoice->total) - ($invoice->paid_amount) <= 0)
-
-                                                    @else
+                                                    @if(($invoice->total  - $invoice->amount_paid) > 0)
                                                         <button class="btn btn-mini btn-custom" type="submit"> Submit <i class="bx bx-right-arrow mr-2"></i></button>
                                                     @endif
                                                 </div>

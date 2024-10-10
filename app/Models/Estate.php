@@ -38,6 +38,7 @@ class Estate extends Model
         $app->property_account = $request->property_account;
         $app->customer_account = $request->customer_account;
         $app->vendor_account = $request->vendor_account;
+        $app->discount_account = $request->discount_account;
         $app->tax_account = $request->tax_account;
         $app->refund_account = $request->refund_account;
         $app->charges_account = $request->charges_account;
@@ -45,6 +46,8 @@ class Estate extends Model
         $app->employee_account = $request->employee_account;
         $app->workflow_account = $request->workflow_account;
         $app->general_account = $request->general_account;
+        $app->tax_rate = $request->taxRate ?? 0;
+        $app->refund_rate = $request->refundRate ?? 0;
         $app->save();
     }
 

@@ -59,6 +59,10 @@ class User extends Authenticatable
         return $this->belongsTo(SalaryStructurePersonalized::class, 'salary_structure_category');
     }
 
+     public function getEmployeePersonalizedSalaryStructures(){
+            return $this->hasMany(SalaryStructurePersonalized::class, 'employee_id');
+        }
+
 
     public function getUsersWallpaper(){
         return $this->belongsTo(Wallpaper::class, 'wallpaper');

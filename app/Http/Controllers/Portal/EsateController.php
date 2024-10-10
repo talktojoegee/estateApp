@@ -160,6 +160,22 @@ class EsateController extends Controller
     }
 
 
+    public function EstateById(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $this->validate($request,[
+            "id"=>"required"
+        ]);
+        $property = $this->property->getPropertyById($request->id);// Estate::getEstateById();
+        $estate = Estate::getEstateById($property->estate_id) ?? [];
+        return response()->json([
+            'estate'=>$estate,
+            //'price'=>$property->price,
+            'paymentPlanName'=>$property->getPaymentPlan->pp_name ?? '',
+            'paymentPlanDesc'=>$property->getPaymentPlan->pp_description ?? '',
+            ],200);
+    }
+
+
     public function showAddNewEstateForm(){
         return view('estate.create');
     }

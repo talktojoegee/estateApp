@@ -27,6 +27,17 @@
                     <li><a href="{{route('manage-properties','all')}}" key="t-properties">All Properties</a></li>
                 </ul>
             </li>
+        <li>
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="bx bx-key"></i>
+                <span key="t-reservations"> Reservations </span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{route('property-reservation')}}" key="t-reservations"> New</a></li>
+                <li><a href="{{route('manage-properties', 'reserved')}}" key="t-reservations">Reservations</a></li>
+                <li><a href="{{route('manage-properties', 'reserved')}}" key="t-reservations">Manage Requests</a></li>
+            </ul>
+        </li>
             <li>
                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                     <i class="bx bx-import"></i>
@@ -104,11 +115,27 @@
                 <li><a href="{{route('manage-invoices', 'declined')}}" key="t-invoice">Declined</a></li>
             </ul>
         </li>
+
         <li>
-            <a href="{{route('show-manage-receipts')}}" class="waves-effect">
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
                 <i class="bx bx-receipt"></i>
-                <span key="t-chat">Receipts</span>
+                <span key="t-receipt"> Receipts  </span>
             </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{route('show-new-receipt-form')}}" key="t-receipt">New</a></li>
+                <li><a href="{{route('show-manage-receipts')}}" key="t-receipt">Manage Receipts</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="bx bx-loader"></i>
+                <span key="t-refund"> Refund  </span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{route('show-new-refund-form')}}" key="t-refund">New</a></li>
+                <li><a href="{{route('show-all-refunds')}}" key="t-refund">All Refunds</a></li>
+                <li><a href="{{route('manage-refund-requests')}}" key="t-refund">Manage Requests</a></li>
+            </ul>
         </li>
       {{--  <li>
             <a href="{route('tickets')}}" class="waves-effect">
@@ -187,8 +214,8 @@
                 <li><a href="{{route('chart-of-accounts')}}" key="t-account">Chart of Accounts</a></li>
                 <li><a href="{{route('journal-voucher')}}" key="t-account">Journal Voucher</a></li>
                 <li><a href="{{route('trial-balance')}}" key="t-account">Trial Balance</a></li>
-                <li><a href="{{route('balance-sheet')}}" key="t-account">Balance Sheet</a></li>
-                <li><a href="{{route('profit-or-loss')}}" key="t-account">Profit/Loss</a></li>
+                <li><a href="{{route('balance-sheet')}}" key="t-account">Statement of Fin. Pos.</a></li>
+                <li><a href="{{route('profit-or-loss')}}" key="t-account">Income Statement</a></li>
             </ul>
         </li>
         <li>
@@ -217,7 +244,7 @@
                 <li><a href="{{route('salary-structures')}}" key="t-payroll-process">Salary Structures</a></li>
                 <li><a href="{{ route('payroll-routine') }}" key="t-payroll-process">Payroll Routine</a></li>
                 <li><a href="{{ route('approve-payroll-routine') }}" key="t-payroll-process">Approve Routine</a></li>
-                <li><a href="#" key="t-payroll-process">Payroll Reports</a></li>
+                <li><a href="{{ route('payroll-report') }}" key="t-payroll-process">Payroll Reports</a></li>
             </ul>
         </li>
         <li>
@@ -270,6 +297,10 @@
                 </a>
                 <ul class="sub-menu" aria-expanded="false">
                     <li><a href="{{route('sms-settings')}}" key="t-settings">SMS</a></li>
+                    <li><a href="{{route('branches-settings')}}" key="t-settings">Department</a></li>
+                    <li><a href="{{route('accounting-settings')}}" key="t-settings">Accounting</a></li>
+                    <li><a href="{{route('church-branches')}}" key="t-settings">Supervisor</a></li>
+                    {{--<li><a href="route('general-settings')}}" key="t-settings">General Settings</a></li>--}}
                 </ul>
             </li>
         @endcan

@@ -99,6 +99,8 @@ class Property extends Model
         $property->land_size = $request->landSize ?? null;
         $property->gl_id = $request->account ?? null;
         $property->description = $request->propertyDescription ?? null;
+        $property->payment_plan = $request->paymentPlan ?? null;
+        $property->street = $request->street ?? null;
 
         $property->kitchen = isset($request->kitchen) ? 1 : 0;
         $property->borehole = isset($request->borehole) ? 1 : 0;
@@ -187,6 +189,11 @@ class Property extends Model
         return $property;
     }
 
+
+
+    public function getPaymentPlan(){
+        return $this->belongsTo(PaymentPlan::class, 'payment_plan', 'pp_id');
+    }
 
 
     public function getPropertyType(){
@@ -357,5 +364,10 @@ class Property extends Model
             ->orderBy('amount', 'asc')  // Order by total sales amount (underperforming)
             ->take($counter)
             ->get();
+    }
+
+
+    public function getPropertyByPropertyCode($code){
+        return Property::where("property_code", $code)->first();
     }
 }

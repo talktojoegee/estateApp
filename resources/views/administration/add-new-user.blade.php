@@ -142,12 +142,12 @@
                                                          @error('maritalStatus') <i class="text-danger">{{$message}}</i>@enderror
                                                      </div>
                                                  </div>
-                                                 <div class="col-md-6 col-sm-12 col-lg-6">
+                                                <!-- <div class="col-md-6 col-sm-12 col-lg-6">
                                                      <div class="form-check form-switch mt-3">
                                                          <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="pastor" checked="">
                                                          <label class="form-check-label" for="flexSwitchCheckChecked">Is this person a pastor?</label>
                                                      </div>
-                                                 </div>
+                                                 </div> -->
                                                  <div class="col-md-6 col-sm-12 col-lg-6">
                                                      <div class="form-check form-switch mt-3">
                                                          <input class="form-check-input" type="checkbox" id="genderSwitchCheck" name="gender" checked="">

@@ -16,6 +16,7 @@ class Receipt extends Model
         return Receipt::orderBy('id', 'DESC')->first();
     }
 
+
     public function getProperty(){
         return $this->belongsTo(Property::class, 'property_id');
     }
@@ -54,15 +55,15 @@ class Receipt extends Model
 
     }
 
-    public function createNewReceipt($counter, $invoice, $amount, $charge){
+    public function createNewReceipt($counter, $invoice, $amount, $charge, $method, $paymentDate){
         $receipt = new Receipt;
         $receipt->receipt_no = $counter;
         $receipt->invoice_id = $invoice->id;
         $receipt->property_id = $invoice->property_id;
         $receipt->customer_id = $invoice->customer_id ?? null; //client | resident
         //$receipt->applicant_id = $invoice->invoice_type == 1 ? $invoice->applicant_id : '';
-        $receipt->payment_method = $invoice->payment_method ?? 1; //cash
-        $receipt->payment_date = now();
+        $receipt->payment_method = $method ?? 1; //cash
+        $receipt->payment_date = $paymentDate ?? now();
         $receipt->trans_ref = $this->generateTransactionRef();
         $receipt->total = ($amount) ?? 0;
         $receipt->sub_total = ($amount - $charge) ?? 0;
@@ -77,8 +78,8 @@ class Receipt extends Model
         return substr(sha1((time()+ rand(99,999))),32,40);
     }
 
-    public function getAllTenantReceipts(){
-        return  Receipt::orderBy('id', 'DESC')->get();
+    public function getAllTenantReceipts($status){
+        return  Receipt::where('status',$status)->orderBy('id', 'DESC')->get();
     }
     public function getUnpostedReceipts(){
         return  Receipt::where('posted', 0)->orderBy('id', 'DESC')->get();
@@ -87,13 +88,34 @@ class Receipt extends Model
         return  Receipt::whereIn('property_id', $propertyIds)->orderBy('id', 'DESC')->get();
     }
 
-    public function getAllTenantReceiptsThisYear(){
-        return  Receipt::whereYear('created_at', date('Y'))->orderBy('id', 'DESC')->get();
+    public function getAllTenantReceiptsThisYear($status){
+        return  Receipt::where('status', $status)->whereYear('payment_date', date('Y'))->orderBy('id', 'DESC')->get();
     }
 
+    public function getLastYearInflow($status){
+        return  Receipt::where('status', $status)->whereYear('payment_date', date('Y') - 1)->orderBy('id', 'DESC')->get();
+    }
+
+    public function getCurrentMonthInflow($status){
+        return Receipt::where('status', $status)->whereMonth('payment_date', date('m'))
+            ->whereYear('payment_date', date('Y'))->orderBy('id', 'DESC')->get();
+    }
+    public function getLastMonthInflow($status){
+        $currentMonth = date('m');
+        $lastMonth = $currentMonth - 1;
+        if($lastMonth == 0){
+            $lastMonth = 12;
+        }
+        return Receipt::where('status', $status)->whereMonth('payment_date', $lastMonth)
+            ->whereYear('payment_date', date('Y'))->orderBy('id', 'DESC')->get();
+    }
 
     public function getReceipt($slug){
         return Receipt::where('trans_ref', $slug)->first();
+
+    }
+    public function getReceiptByReceiptNo($receiptNo){
+        return Receipt::where('receipt_no', $receiptNo)->first();
 
     }
 
@@ -133,5 +155,9 @@ class Receipt extends Model
             //->orderBy('month', 'ASC')
             ->groupby('property_id')
             ->get();
+    }
+
+    public function getRefund(/*$refundId, */$receiptId){
+        return Refund::/*where('id', $refundId)->*/where('receipt_id',$receiptId)->first();
     }
 }

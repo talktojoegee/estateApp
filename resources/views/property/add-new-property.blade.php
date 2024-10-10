@@ -194,8 +194,8 @@
                             </div>
                             <div class="col-sm-4 col-md-4 lg-6">
                                 <div class="form-group">
-                                    <label for="">Construction Stage<sup class="text-danger">*</sup></label>
-                                    <select data-parsley-required-message="At what stage of construction are you?" required  class="form-control select2" name="constructionStage">
+                                    <label for="">Property Status<sup class="text-danger">*</sup></label>
+                                    <select data-parsley-required-message="Indicate property status" required  class="form-control select2" name="constructionStage">
                                         @foreach($constructionStages as $key => $stage)
                                             <option value="{{$stage->cs_id}}" {{ $key == 0 ? 'selected' : null }}>{{ $stage->cs_name }}</option>
                                         @endforeach
@@ -237,8 +237,27 @@
                             </div>
                             <div class="col-sm-4 col-md-4 lg-6">
                                 <div class="form-group">
+                                    <label for="">Payment Plan <sup class="text-danger">*</sup></label>
+                                    <select data-parsley-required-message="Choose payment plan" required  class="form-control select2" name="paymentPlan">
+                                        @foreach($paymentPlans as $key => $plan)
+                                            <option value="{{$plan->pp_id}}" >{{ $plan->pp_name ?? '' }} - {{ $plan->pp_description ?? '' }} </option>
+                                        @endforeach
+                                    </select>
+                                    <br> @error('paymentPlan')<i class="text-danger">{{$message}}</i>@enderror
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4 col-md-4 lg-6 mt-3">
+                                <div class="form-group">
+                                    <label for="">Street <sup class="text-danger">*</sup></label>
+                                    <input data-parsley-required-message="Enter street" required type="text" name="street" value="{{ old('street') }}" placeholder="Street" class="form-control">
+                                    <br> @error('street')<i class="text-danger">{{$message}}</i>@enderror
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-md-4 lg-6 mt-3">
+                                <div class="form-group">
                                     <label for="">Gallery <sup class="text-danger">*</sup></label> <br>
-                                    <input data-parsley-required-message="Upload at least one image" required  type="file" multiple name="gallery[]" id="gallery"  class="form-control-file">
+                                    <input data-parsley-required-message="Upload at least one image" required accept=".jpg, .jpeg, .png"  type="file" multiple name="gallery[]" id="gallery"  class="form-control-file">
                                     <br> @error('gallery')<i class="text-danger">{{$message}}</i>@enderror
                                 </div>
                             </div>

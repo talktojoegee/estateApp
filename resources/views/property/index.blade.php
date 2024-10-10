@@ -125,14 +125,17 @@
                                     <td>
                                         @switch($property->status)
                                             @case(0)
-                                                <label class='text-primary'>Available</label>
-                                                @break
+                                            <span class="text-success">Available</span>
+                                            @break
                                             @case(1)
-                                                <label class='text-info'>Rented</label>
-                                                @break
+                                            <span class="text-warning">Rented</span>
+                                            @break
                                             @case(2)
-                                                <label class='text-warning'>Sold</label>
-                                                @break
+                                            <span class="text-danger" style="color: #ff0000 !important;">Sold</span>
+                                            @break
+                                            @case(3)
+                                            <span class="" style="color: orange !important;">Reserved</span>
+                                            @break
                                         @endswitch
                                     <td>
                                         <div class="btn-group">

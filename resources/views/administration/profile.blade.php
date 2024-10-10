@@ -548,6 +548,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="deletePractitionerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

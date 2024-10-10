@@ -1,6 +1,6 @@
 <div class="main-settings__sidebar-container">
     <div class="modal-header">
-        <h6 class="modal-title text-uppercase">Settings</h6>
+        <h6 class="modal-title text-uppercase text-info">Settings</h6>
     </div>
     <div class="sidebar-section mt-5">
         <div class="settings-section-header">
@@ -28,5 +28,10 @@
                 <span class="">Supervisor Settings</span>
             </div>
         </a>
+        {{--<a href="route('general-settings')}}" class="{{  Request::routeIs('general-settings') ? 'is-active-setting' : ''}}">
+            <div class="sidebar-item">
+                <span class="">General Settings</span>
+            </div>
+        </a>--}}
     </div>
 </div>

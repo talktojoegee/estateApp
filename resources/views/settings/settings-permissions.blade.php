@@ -74,44 +74,6 @@
                                                             <td>{{$permit->getPermissionModule->module_name ?? '' }}</td>
                                                             <td>
                                                                 <a class="dropdown-item" href="javascript:void(0);" data-bs-target="#showMoreModal_{{$permit->id}}" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> </a>
-                                                                <div class="modal right fade" id="showMoreModal_{{$permit->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
-                                                                    <div class="modal-dialog" role="document">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header bg-danger text-white" style="border-radius: 0px;">
-                                                                                <h6 class="modal-title text-uppercase" id="myModalLabel2_{{$permit->id}}">Edit Permission </h6>
-                                                                                <button type="button"  class="btn-close text-white" style="margin: 0px; padding: 0px;" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                            </div>
-
-                                                                            <div class="modal-body">
-                                                                                <form autocomplete="off" autcomplete="off" action="{{route('edit-permission')}}" method="post" data-parsley-validate="">
-                                                                                    @csrf
-                                                                                    <div class="form-group mt-3">
-                                                                                        <label for=""> Name <span class="text-danger">*</span></label>
-                                                                                        <input type="text" value="{{$permit->name ?? '' }}" name="permissionName" required placeholder=" Name" data-parsley-required-message="What will you call this permission?" class="form-control">
-                                                                                        @error('permissionName') <i class="text-danger">{{$message}}</i>@enderror
-                                                                                    </div>
-                                                                                    <div class="form-group mt-3">
-                                                                                        <label for="">Module<span class="text-danger">*</span></label> <br>
-                                                                                        <select name="module"  class="form-control ">
-                                                                                            <option selected disabled>--Select module--</option>
-                                                                                            @foreach($modules as $modu)
-                                                                                                <option value="{{$modu->id}}" {{$modu->id == $permit->id ? 'selected' : null }}>{{$modu->module_name ?? '' }} </option>
-                                                                                            @endforeach
-                                                                                        </select>
-                                                                                        @error('module') <i class="text-danger">{{$message}}</i>@enderror
-                                                                                    </div>
-                                                                                    <div class="form-group d-flex justify-content-center mt-3">
-                                                                                        <div class="btn-group">
-                                                                                            <input type="hidden" name="permissionId" value="{{$permit->id}}">
-                                                                                            <button type="submit" class="btn btn-primary  waves-effect waves-light">Save changes <i class="bx bx-save"></i> </button>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </form>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -170,6 +132,46 @@
         </div>
     </div>
 
+    @foreach($permissions as $permit)
+        <div class="modal right fade" id="showMoreModal_{{$permit->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white" style="border-radius: 0px;">
+                        <h6 class="modal-title text-uppercase" id="myModalLabel2_{{$permit->id}}">Edit Permission </h6>
+                        <button type="button"  class="btn-close text-white" style="margin: 0px; padding: 0px;" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form autocomplete="off" autcomplete="off" action="{{route('edit-permission')}}" method="post" data-parsley-validate="">
+                            @csrf
+                            <div class="form-group mt-3">
+                                <label for=""> Name <span class="text-danger">*</span></label>
+                                <input type="text" value="{{$permit->name ?? '' }}" name="permissionName" required placeholder=" Name" data-parsley-required-message="What will you call this permission?" class="form-control">
+                                @error('permissionName') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="">Module<span class="text-danger">*</span></label> <br>
+                                <select name="module"  class="form-control ">
+                                    <option selected disabled>--Select module--</option>
+                                    @foreach($modules as $modu)
+                                        <option value="{{$modu->id}}" {{$modu->id == $permit->id ? 'selected' : null }}>{{$modu->module_name ?? '' }} </option>
+                                    @endforeach
+                                </select>
+                                @error('module') <i class="text-danger">{{$message}}</i>@enderror
+                            </div>
+                            <div class="form-group d-flex justify-content-center mt-3">
+                                <div class="btn-group">
+                                    <input type="hidden" name="permissionId" value="{{$permit->id}}">
+                                    <button type="submit" class="btn btn-primary  waves-effect waves-light">Save changes <i class="bx bx-save"></i> </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
 
 @section('extra-scripts')

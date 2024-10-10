@@ -30,15 +30,20 @@
                             </a>
                         @endif
                     </div>
-
+                    @if(session()->has('error'))
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="mdi mdi-check-all me-2"></i>
+                            {!! session()->get('error') !!}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                    @endif
                     @if(session()->has('success'))
-                        <div class="card-body">
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="mdi mdi-check-all me-2"></i>
-                                {!! session()->get('success') !!}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                            </div>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="mdi mdi-check-all me-2"></i>
+                            {!! session()->get('success') !!}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                         </div>
                     @endif
                     @if($errors->any())
@@ -98,7 +103,7 @@
                                             <strong>Mobile No.:</strong> {{env('ORG_PHONE')}}<br>
                                             <strong>Email:</strong> <a href="mailto:{{env('ORG_EMAIL')}}">{{env('ORG_EMAIL')}}</a><br>
                                             <strong>Address: </strong>{!! env('ORG_ADDRESS') !!} <br>
-                                            <strong>Website: </strong><a target="_blank" href="http://www.{{env('ORG_WEBSITE')}}">{{env('ORG_WEBSITE')}}</a>
+                                            <strong>Website: </strong><a target="_blank" href="#">{{env('ORG_WEBSITE')}}</a>
                                         </address>
                                     </div>
 
@@ -136,8 +141,24 @@
                                         </address>
                                     </div>
                                 </div>
+                                <div class="row " >
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style=""><strong>Estate: </strong> {{ $invoice->getProperty->getEstate->e_name ?? '' }}</td>
+                                                        <td style=""><strong>House No.: </strong> {{ $invoice->getProperty->house_no ?? '' }}</td>
+                                                        <td style=""><strong> Street: </strong>{{ $invoice->getProperty->street ?? '' }}</td>
+                                                        <td style=""><strong>Property Code: </strong> {{ $invoice->getProperty->property_code ?? '' }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="py-2 mt-3"   >
-                                    <h3 class="font-size-15 fw-bold">Order summary</h3>
+                                    <h3 class="font-size-15 fw-bold text-info">Order summary</h3>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-striped mb-0">
@@ -161,6 +182,21 @@
                                                 <td style="text-align: right;">{{ number_format(($detail->quantity ?? 0) * ($detail->unit_cost ?? 0),2)  }}</td>
                                             </tr>
                                         @endforeach
+                                        <tr>
+                                            <td colspan="4" class="border-0 text-end">
+                                                <strong>Sub-total</strong></td>
+                                            <td class="border-0 text-end"> <span>{{env('APP_CURRENCY')}}</span><span id="totalAmount">{{number_format($invoice->sub_total ?? 0 ,2)}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="border-0 text-end">
+                                                <strong>TAX({{$invoice->vat_rate ?? 0}}%)</strong></td>
+                                            <td class="border-0 text-end"> <span>{{env('APP_CURRENCY')}}</span><span id="tax">{{number_format($invoice->vat ?? 0 ,2)}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="border-0 text-end">
+                                                <strong>Discount{{$invoice->discount_type == 2 ? '('.$invoice->discount_rate.'%)' : ''}}</strong></td>
+                                            <td class="border-0 text-end"> <span>{{env('APP_CURRENCY')}}</span><span id="discount">{{number_format($invoice->discount_amount ?? 0 ,2)}}</span></td>
+                                        </tr>
                                         <tr>
                                             <td colspan="4" class="border-0 text-end">
                                                 <strong>Total</strong></td>
@@ -335,7 +371,7 @@
             let element = document.getElementById('printArea');
             html2pdf(element,{
                 margin:       10,
-                filename:     "Invoice"+".pdf",
+                filename:     "Invoice_{{$invoice->invoice_no}}"+".pdf",
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, logging: true, dpi: 192, letterRendering: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }

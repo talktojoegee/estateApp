@@ -86,7 +86,7 @@
                                                 <th class="wd-15p">Date</th>
                                                 <th class="wd-15p">Name</th>
                                                 <th class="wd-15p">State</th>
-                                                <th class="wd-15p">City</th>
+                                                <th class="wd-15p">Town</th>
                                                 <th class="wd-15p">Properties</th>
                                                 <th class="wd-15p">Action</th>
                                             </tr>
@@ -168,12 +168,12 @@
                                 @error('state') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                             <div class="form-group mt-3 col-md-6">
-                                <label for="">City <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
-                                <input type="text" name="city" placeholder="City" class="form-control">
+                                <label for="">Town <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
+                                <input type="text" name="city" placeholder="Town" class="form-control">
                                 @error('city') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                             <div class="form-group mt-3 col-md-6">
-                                <label for="">Reference Code <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
+                                <label for="">Estate Code <span class="text-danger" style="color: #ff0000 !important;">*</span></label> <br>
                                 <input type="text" name="referenceCode" placeholder="Enter a unique Reference Code. Example RAY for Raylight" class="form-control">
                                 @error('referenceCode') <i class="text-danger">{{$message}}</i>@enderror
                             </div>

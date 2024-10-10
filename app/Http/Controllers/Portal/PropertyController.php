@@ -12,11 +12,13 @@ use App\Models\ConstructionStage;
 use App\Models\Estate;
 use App\Models\InvoiceMaster;
 use App\Models\Lead;
+use App\Models\PaymentPlan;
 use App\Models\Property;
 use App\Models\PropertyAllocation;
 use App\Models\PropertyBulkImportDetail;
 use App\Models\PropertyBulkImportMaster;
 use App\Models\PropertyGallery;
+use App\Models\PropertyReservation;
 use App\Models\PropertyTitle;
 use App\Models\Receipt;
 use App\Models\State;
@@ -41,6 +43,7 @@ class PropertyController extends Controller
         $this->lead = new Lead();
         $this->receipt = new Receipt();
         $this->propertyallocation = new PropertyAllocation();
+        $this->propertyreservation = new PropertyReservation();
 
     }
 
@@ -54,17 +57,65 @@ class PropertyController extends Controller
                     'buildingTypes'=>BuildingType::getBuildingTypes(),
                     'bqOptions'=>BqOption::getBQOptions(),
                     'constructionStages'=>ConstructionStage::getConstructionStages(),
-                    'titles'=>PropertyTitle::getPropertyTitles()
+                    'titles'=>PropertyTitle::getPropertyTitles(),
+                    'paymentPlans'=>PaymentPlan::getPaymentPlans()
                 ]);
             case 'POST':
                 $this->validatePropertySubmission($request);
                 $property = $this->property->addProperty($request);
+                $estate = Estate::getEstateById($request->estate);
+                if(!empty($estate)){
+                    $code = $estate->e_ref_code.$this->padNumber($property->id,6);
+                    $property->property_code = $code;
+                    $property->save();
+                }
+
                 $this->propertygallery->uploadPropertyGalleryImages($request, $property->id);
                 session()->flash("success", "Action successful.");
                 return back();
             default:
                 abort(404);
         }
+    }
+    public function propertyReservation(Request $request){
+        switch ($request->method()){
+            case 'GET':
+                return view('property.new-reservation',[
+                    'estates'=>$this->estate->getAllEstates(),
+                    'customers'=>$this->lead->getAllOrgLeads()
+                ]);
+            case 'POST':
+                $this->validate($request,[
+                   "propertyCode"=>"required",
+                    "customer"=>"required"
+                ],[
+                    "propertyCode.required"=>"Enter property code",
+                    "customer.required"=>"Select customer from the list provided",
+                ]);
+                $property = $this->property->getPropertyByPropertyCode($request->propertyCode);
+                if(empty($property)){
+                    session()->flash("error", "Whoops! No record found.");
+                    return back();
+                }
+                if($property->status != 0){
+                    session()->flash("error", "Whoops! This property is not available for reservation.");
+                    return back();
+                }
+                $this->propertyreservation->addReservation($request, $property->id);
+                session()->flash("success", "Action successful.");
+                return back();
+            default:
+                abort(404);
+        }
+    }
+
+    public function getProperty(Request $request){
+        $this->validate($request,[
+            'propertyCode'=>"required"
+        ]);
+        $property = $this->property->getPropertyByPropertyCode($request->propertyCode);
+        return view("property.partial._property-preview",
+            ["property"=>$property]);
     }
 
     public function showManagePropertiesView($type){
@@ -83,6 +134,10 @@ class PropertyController extends Controller
                 $properties = $this->property->getAllProperties([0]);
                 $title = 'Available';
             break;
+            case 'reserved':
+                $properties = $this->property->getAllProperties([3]);
+                $title = 'Reserved';
+                break;
             case 'rented':
                 $properties = $this->property->getAllProperties([1]);
                 $title = 'Rented';
@@ -99,6 +154,8 @@ class PropertyController extends Controller
     private function validatePropertySubmission(Request $request){
         $this->validate($request,[
             'estate'=>'required',
+            'street'=>'required',
+            'paymentPlan'=>'required',
             'propertyTitle'=>'required',
             'propertyName'=>'required',
             'buildingType'=>'required',
@@ -113,11 +170,13 @@ class PropertyController extends Controller
         ],
             [
             "estate.required"=>"Select the estate to which this property belongs to",
+            "paymentPlan.required"=>"Select payment plan",
+            "street.required"=>"Enter street",
             "propertyTitle.required"=>"Select property title",
             "buildingType.required"=>"What kind of building is this?",
             "withBQ.required"=>"Does this property has BQ? Choose the option that best describes it.",
             "propertyCondition.required"=>"What's the condition of this property?",
-            "constructionStage.required"=>"At what stage of construction are you?",
+            "constructionStage.required"=>"Indicate property status",
             "account.required"=>"Choose the ledger account that should be used for this property.",
             "propertyDescription.required"=>"Give us brief information about this property.",
             "price.required"=>"Certainly this is not intended to be sold for FREE. Enter the price.",

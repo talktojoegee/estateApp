@@ -16,6 +16,87 @@
 @endsection
 
 @section('main-content')
+    <div class="row">
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <div class="col">
+                            <p class="mb-1">Total</p>
+                            <h5 class="mb-0 number-font text-secondary1">{{env('APP_CURRENCY')}} {{number_format($lastYear->sum('total'),2)}}</h5>
+                        </div>
+                        <div class="col-auto mb-0">
+                            <div class="dash-icon text-secondary1">
+                                <i class="bx bxs-wallet"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Inflow <code>(Last Year)</code></span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <div class="col">
+                            <p class="mb-1">Total</p>
+                            <h5 class="text-orange mb-0 number-font">{{env('APP_CURRENCY')}} {{number_format($currentYear->sum('total'),2)}}</h5>
+                        </div>
+                        <div class="col-auto mb-0">
+                            <div class="dash-icon text-orange">
+                                <i class="bx bxs-book-open"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Inflow<code>(This Year)</code></span></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <div class="col">
+                            <p class="mb-1">Total</p>
+                            <h5 class="text-secondary mb-0 number-font">{{env('APP_CURRENCY')}} {{number_format($lastMonth->sum('total'),2)}}</h5>
+                        </div>
+                        <div class="col-auto mb-0">
+                            <div class="dash-icon text-secondary">
+                                <i class="bx bx-check-double"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Inflow<code>(Last Month)</code></span></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <div class="col">
+                            <p class="mb-1">Total</p>
+                            <h5 class="text-warning mb-0 number-font">{{env('APP_CURRENCY')}} {{number_format($currentMonth->sum('total'),2)}}</h5>
+                        </div>
+                        <div class="col-auto mb-0">
+                            <div class="dash-icon text-warning">
+                                <i class="bx bx-hourglass"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Inflow<code>(This Month)</code> </span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12 d-flex justify-content-end ">
+            <a href="{{ route('show-new-refund-form') }}" class="btn btn-primary ">Process Refund  <i class="bx bx-loader"></i> </a>
+        </div>
+    </div>
 
 
     <div class="row">
@@ -40,7 +121,7 @@
                                 <table id="datatable" class="table table-striped table-bordered nowrap dataTable" role="grid" aria-describedby="focus-key_info" style="position: relative;">
                                     <thead>
                                     <tr role="row">
-                                        <th class="sorting_asc">S/No.qw</th>
+                                        <th class="sorting_asc">S/No.</th>
                                         <th class="sorting_asc">Date</th>
                                         <th class="sorting_asc">Name</th>
                                         <th class="sorting">Invoice No.</th>

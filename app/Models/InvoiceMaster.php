@@ -93,7 +93,18 @@ class InvoiceMaster extends Model
     }
 
 
-    public function newCustomerInvoice(Request $request, $invoice_no){
+    public function newCustomerInvoice(Request $request, $invoice_no, $taxRate){
+        //discount_type
+        //discount_rate
+        //discount_amount
+        $amount = $this->invoiceServiceTotal($request);
+        $tax = ($taxRate/100) * $amount;
+        $discount = 0;
+        if($request->discountType != 0){
+           $discount =  $request->discountType == 1 ? $request->discountAmount :
+                ($amount + $tax) - $request->discountRate/100 * ($amount + $tax);
+        }
+
         $invoice = new InvoiceMaster();
         $invoice->property_id = $request->property;
         $invoice->customer_id = $request->customer;
@@ -102,8 +113,13 @@ class InvoiceMaster extends Model
         $invoice->invoice_type = $request->invoice_type;
         $invoice->issue_date = $request->issue_date;
         $invoice->due_date = $request->due_date;
-        $invoice->sub_total = $this->invoiceServiceTotal($request);
-        $invoice->total = $this->invoiceServiceTotal($request);
+        $invoice->sub_total = $amount;
+        $invoice->total = ($amount + $tax) - $discount;
+        $invoice->vat_rate = $taxRate ?? 0;
+        $invoice->vat = $tax ?? 0;
+        $invoice->discount_type = $request->discountType ?? 0;
+        $invoice->discount_amount = $discount ?? 0;
+        $invoice->discount_rate = $request->discountType != 1 ? $request->discountRate : 0;
         $invoice->generated_by = Auth::user()->id;
         $invoice->slug = substr(sha1(time()), 21,40);
         $invoice->save();
@@ -145,6 +161,9 @@ class InvoiceMaster extends Model
 
     public function getInvoiceByRefNo($refNo){
         return InvoiceMaster::where('ref_no',$refNo)->first();
+    }
+    public function getInvoiceByInvoiceNo($invoiceNo){
+        return InvoiceMaster::where('invoice_no',$invoiceNo)->first();
     }
 
     public function getAllInvoices($status){

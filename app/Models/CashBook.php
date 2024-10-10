@@ -138,6 +138,7 @@ class CashBook extends Model
             ->where('cashbook_currency_id', $defaultCurrency->id)
             ->whereDate('cashbook_transaction_date', now())->orderBy('cashbook_id', 'DESC')->get();
     }
+
     public function getBranchMonths($branchId){
         $defaultCurrency = $this->getDefaultCurrency();
         return CashBook::where('cashbook_branch_id', $branchId)

@@ -12,7 +12,17 @@
                     <a class="dropdown-item" href="{{ route('show-imported-properties') }}">Manage List</a>
                 </div>
             </div>
-            <a href="{{route('add-new-property', ['account'=>$account])}}" class="btn btn-primary ">Add New Property <i class="bx bx-plus"></i> </a>
+            <div class="dropdown mt-sm-0">
+                <a href="#" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    More Actions <i class="bx bx-align-justify"></i>
+                </a>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="{{route('add-new-property')}}">Add New Property</a>
+                    <a class="dropdown-item" href="{{route('manage-properties','all')}}">All Properties</a>
+                    <a class="dropdown-item" href="{{route('property-reservation')}}">New Reservation</a>
+                    <a class="dropdown-item" href="{{route('manage-properties', 'reserved')}}">All Reservations</a>
+                </div>
+            </div>
             <a href="{{url()->previous()}}" class="btn btn-secondary">Go Back <i class="bx bx-right-arrow"></i> </a>
         </div>
     </div>

@@ -147,6 +147,26 @@
                     </tr>
                     <tr>
                         <td><strong>Payment Date: </strong>{{!is_null($receipt->payment_date) ? date('d M, Y', strtotime($receipt->payment_date)) : '-' }}</td>
+                        <td><strong>Payment Method: </strong>
+                            @switch($receipt->payment_method)
+                                @case(1)
+                                    Case
+                                @break
+                                @case(2)
+                                Cheque
+                                @break
+                                @case(3)
+                                Bank Transfer
+                                @break
+                                @case(4)
+                                Internet Transfer
+                                @break
+
+                            @endswitch
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payment Date: </strong>{{!is_null($receipt->payment_date) ? date('d M, Y', strtotime($receipt->payment_date)) : '-' }}</td>
                         <td><strong>Receipt No.: </strong>{{$receipt->receipt_no ?? '-'}}</td>
                     </tr>
                 </table>

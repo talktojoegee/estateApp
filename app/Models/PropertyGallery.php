@@ -28,7 +28,7 @@ class PropertyGallery extends Model
                 $extension = $file->getClientOriginalExtension();
                 $dir = 'assets/drive/property/';
                 $gallery_name = '_' . uniqid() . '_' . time() . '_' . date('Ymd') . '.' . $extension;
-                $image->insert($watermark->resize(321,162)->opacity(30), 'center');
+                $image->insert($watermark->resize(321,162)->opacity(50), 'center');
                 $image->save(public_path($dir.$gallery_name));
                 $gallery = new PropertyGallery();
                 $gallery->attachment = $gallery_name;

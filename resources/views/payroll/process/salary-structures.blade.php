@@ -77,7 +77,7 @@
                                             <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                             <div class="dropdown-menu">
                                                 @if($user->salary_structure_setup == 1)
-                                                <a class="dropdown-item" href="javascript:void(0);" data-bs-target="#editModal_{{$user->id}}" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> Edit Structure</a>
+                                                <a class="dropdown-item" href="{{route('edit-salary-structure', $user->slug)}}" > <i class="bx bx-pencil text-warning"></i> Edit Structure</a>
                                                 <a class="dropdown-item" href="{{route('employee-salary-structure', $user->slug)}}" > <i class="bx bx-show text-info"></i> View Structure</a>
                                                 @endif
                                                 @if($user->salary_structure_setup == 0)

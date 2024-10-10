@@ -37,6 +37,15 @@
             </div>
         </div>
     @endif
+    @if($errors->any())
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="mdi mdi-close me-2"></i>
+            @foreach($errors->all() as $error)
+                <li>{{$error}}</li>
+            @endforeach
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     <div class="card">
 
@@ -77,7 +86,7 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Personal Information</h4>
+                        <h4 class="card-title mb-4 text-info">Personal Information</h4>
                         <div class="table-responsive">
                             <table class="table table-nowrap mb-0">
                                 <tbody>
@@ -94,6 +103,10 @@
                                     <td>{{$client->email ?? '' }}</td>
                                 </tr>
                                 <tr>
+                                    <th scope="row">Occupation :</th>
+                                    <td>{{$client->occupation ?? '' }}</td>
+                                </tr>
+                                <tr>
                                     <th scope="row">Address :</th>
                                     <td>{{$client->street ?? '' }}, {{$client->city ?? '' }} {{$client->state ?? '' }} {{$client->code ?? '' }}</td>
                                 </tr>
@@ -108,6 +121,33 @@
                                 <tr>
                                     <th scope="row">Added By :</th>
                                     <td>{{$client->getAddedBy->first_name  ?? '' }} {{$client->getAddedBy->last_name  ?? '' }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <h4 class="card-title mb-1 mt-3 text-info">Next of Kin</h4>
+                        <div class="table-responsive">
+                            <table class="table table-nowrap mb-0">
+                                <tbody>
+                                <tr>
+                                    <th scope="row">Full Name :</th>
+                                    <td>{{$client->next_full_name ?? '' }}  </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Primary Phone No. :</th>
+                                    <td>{{$client->next_primary_phone ?? '' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Alternative Phone No. :</th>
+                                    <td>{{$client->next_alt_phone ?? '' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Email :</th>
+                                    <td>{{$client->next_email ?? '' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Relationship :</th>
+                                    <td>{{ $client->next_relationship ?? '' }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -407,19 +447,19 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h4 class="modal-title" id="myModalLabel2">Edit Lead Profile</h4>
+                    <h4 class="modal-title text-info" id="myModalLabel2">Edit Customer Profile</h4>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
-                    <form autocomplete="off" action="{{route('edit-client-profile')}}" method="post" enctype="multipart/form-data">
+                    <form autocomplete="off" action="{{route('edit-lead-profile')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group mt-1">
                             <label for="">Profile Photo</label> <br>
                             <input type="file" name="profilePhoto" class="form-control-file">
                             @error('profilePhoto') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
-                        <input type="hidden" name="clientId" value="{{$client->id}}">
+                        <input type="hidden" name="leadId" value="{{$client->id}}">
                         <div class="form-group mt-3">
                             <label for="">First Name <span class="text-danger">*</span></label>
                             <input type="text" name="firstName" placeholder="First Name" value="{{$client->first_name ?? '' }}" class="form-control">
@@ -446,9 +486,41 @@
                             @error('email') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
                         <div class="form-group mt-1">
+                            <label for="">Occupation<span class="text-danger">*</span></label>
+                            <input type="text" name="occupation" data-parsley-required-message="This field is required" required value="{{ $client->occupation ?? '' }}" placeholder="Occupation" class="form-control">
+                            @error('occupation') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-1">
                             <label for=""> Address</label>
                             <textarea name="address" style="resize: none;" placeholder="Type address here..." class="form-control">{{$client->street ?? '' }}</textarea>
                             @error('address') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <h4 class="card-title mb-1 mt-3 text-info">Next of Kin</h4>
+                        <div class="form-group mt-3">
+                            <label for="">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="fullName" placeholder="Full Name" value="{{$client->next_full_name ?? '' }}" class="form-control">
+                            @error('fullName') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="">Primary Phone No. <span class="text-danger">*</span></label>
+                            <input type="text" name="primaryPhoneNo" placeholder="Primary Phone No." value="{{$client->next_primary_phone ?? '' }}" class="form-control">
+                            @error('primaryPhoneNo') <i class="text-danger">{{$message}}</i>@enderror
+                            <input type="hidden" name="leadId" value="{{$client->id}}">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="">Alternative Phone No. <span class="text-danger">*</span></label>
+                            <input type="text" name="altPhoneNo" placeholder="Alternative Phone No." value="{{$client->next_alt_phone ?? '' }}" class="form-control">
+                            @error('altPhoneNo') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="">Email Address <span class="text-danger">*</span></label>
+                            <input type="text" name="nextEmail" placeholder="Email Address" value="{{$client->next_email ?? '' }}" class="form-control">
+                            @error('nextEmail') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="">Relationship <span class="text-danger">*</span></label>
+                            <input type="text" name="relationship" placeholder="Relationship" value="{{$client->next_relationship ?? '' }}" class="form-control">
+                            @error('relationship') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
                         <div class="form-group d-flex justify-content-center mt-3">
                             <div class="btn-group">

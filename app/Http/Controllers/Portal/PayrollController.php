@@ -174,7 +174,6 @@ class PayrollController extends Controller
         ]);
     }
     public function showEmployeeSalaryStructure($slug){
-        //$structure = $this->salarystructure->getSalaryStructureBySlug($slug);
         $user = $this->user->getUserBySlug($slug);
         if(empty($user)){
             session()->flash("error", "Whoops! Something went wrong.");
@@ -191,13 +190,36 @@ class PayrollController extends Controller
                 $salaryStructure = $this->salarystructure->getSalaryStructureById($user->salary_structure_category);
             }
         }
-        //return dd($personalized);
         return view('payroll.process.employee-salary-structure',[
             'user'=>$user,
             'personalized'=>$personalized,
             'salaryStructure'=>$salaryStructure,
-           // 'definitions'=>$this->paymentdefinition->getPaymentDefinitionListByVariance(1),
-            //'categories'=>$this->salarystructure->getSalaryStructures()
+        ]);
+    }
+
+    public function editEmployeeSalaryStructure($slug){
+        $user = $this->user->getUserBySlug($slug);
+        if(empty($user)){
+            session()->flash("error", "Whoops! Something went wrong.");
+            return back();
+        }
+        $salarySetup = $user->salary_structure_setup;
+        $salaryStructure = null;
+        $personalized = null;
+        if($salarySetup == 1){ //setup done
+            if($user->salary_structure_category == 0){ //personalized
+                //get personalized structure
+                $personalized = SalaryStructurePersonalized::getEmployeePersonalizedStructure($user->id);
+            }else{
+                $salaryStructure = $this->salarystructure->getSalaryStructureById($user->salary_structure_category);
+            }
+        }
+        return view('payroll.process.edit-salary-structure-setup',[
+            'user'=>$user,
+            'personalized'=>$personalized,
+            'salaryStructure'=>$salaryStructure,
+            'categories'=>$this->salarystructure->getSalaryStructures(),
+            'definitions'=>$this->paymentdefinition->getPaymentDefinitionListByVariance(1),
         ]);
     }
 
@@ -251,6 +273,64 @@ class PayrollController extends Controller
         }
     }
 
+
+    public function updateSalaryStructure(Request $request){
+        $this->validate($request,[
+            "employee"=>"required",
+            "salaryStructureType"=>"required",
+        ],[
+            "employee.required"=>"",
+            "salaryStructureType.required"=>"Choose salary structure type",
+        ]);
+
+        $type = $request->salaryStructureType;
+        $employee = $this->user->getUserById($request->employee);
+        if(empty($employee)){
+            session()->flash("error", "Whoops! No record found for this user");
+            return back();
+        }
+        if($type == 0){ //personalized
+            $this->validate($request,[
+                "paymentDefinition"=>"required|array",
+                "paymentDefinition.*"=>"required",
+                "amount"=>"required|array",
+                "amount.*"=>"required",
+            ],[
+                "paymentDefinition.required"=>"Choose payment definition",
+                "paymentDefinition.array"=>"Choose payment definition from the list",
+                "amount.required"=>"Enter an amount",
+                "amount.*"=>"Enter an amount",
+            ]);
+            //clear previous record
+            $previousStructure = SalaryStructurePersonalized::getEmployeePersonalizedStructure($request->employee);
+            if(count($previousStructure) > 0){
+                foreach ($previousStructure as $prev){
+                    $prev->delete();
+                }
+            }
+            foreach($request->paymentDefinition as $key => $def){
+                $this->salarystructurepersonalized->addSalaryAllowance($request->employee, $def, $request->amount[$key]);
+            }
+            $employee->salary_structure_setup = 1; //done
+            $employee->salary_structure_category = 0; //personalized
+            $employee->save();
+            session()->flash("success", "Your changes were saved!");
+            return back();
+        }else{
+
+            $this->validate($request,[
+                "category"=>"required",
+            ],[
+                "category.required"=>"Choose salary structure category",
+            ]);
+            $employee->salary_structure_setup = 1; //done
+            $employee->salary_structure_category = $request->category; //personalized
+            $employee->save();
+            session()->flash("success", "Your changes were saved!");
+            return back();
+        }
+    }
+
     public function showSalaryAllowances($slug){
         $structure = $this->salarystructure->getSalaryStructureBySlug($slug);
         if(empty($structure)){
@@ -262,6 +342,7 @@ class PayrollController extends Controller
             'definitions'=>$this->paymentdefinition->getPaymentDefinitionListByVariance(1)
         ]);
     }
+
     public function showPayrollMonthYear(Request $request){
 
         $method = $request->getMethod();
@@ -426,5 +507,11 @@ class PayrollController extends Controller
         }
         session()->flash("success", "Action successful");
         return back();
+    }
+
+    public function showPayrollReportForm(){
+        return view('payroll.process.payroll-report',[
+            'search'=>0
+        ]);
     }
 }

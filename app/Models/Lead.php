@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Http\Traits\SMSServiceTrait;
+use App\Http\Traits\UtilityTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -11,7 +13,7 @@ use Illuminate\Support\Str;
 
 class Lead extends Model
 {
-    use HasFactory;
+    use HasFactory, SMSServiceTrait;
 
     public function getLogs(){
         return $this->hasMany(ActivityLog::class, 'lead_id')->orderBy('id', 'DESC');
@@ -40,7 +42,7 @@ class Lead extends Model
         $lead->first_name = $request->firstName;
         $lead->last_name = $request->lastName;
         $lead->email = $request->email;
-        $lead->phone = $request->mobileNo;
+        $lead->phone = $this->appendCountryCode($request->mobileNo);
         $lead->dob = $request->birthDate;
         $lead->source_id = $request->source;
         $lead->status = $request->status;
@@ -52,6 +54,14 @@ class Lead extends Model
         $lead->entry_month = date('m',strtotime($request->date));
         $lead->entry_year = date('Y',strtotime($request->date));
         $lead->slug = Str::slug($request->firstName).'-'.Str::random(8);
+
+        //Next of kin
+        $lead->next_full_name = $request->fullName ?? null;
+        $lead->next_primary_phone = $this->appendCountryCode($request->primaryPhoneNo) ?? null;
+        $lead->next_alt_phone = $this->appendCountryCode($request->altPhoneNo) ?? null;
+        $lead->next_email = $request->nextEmail ?? null;
+        $lead->next_relationship = $request->relationship ?? null;
+
         $lead->save();
         return $lead;
     }
@@ -60,7 +70,7 @@ class Lead extends Model
         $lead->first_name = $request->firstName;
         $lead->last_name = $request->lastName;
         $lead->email = $request->email;
-        $lead->phone = $request->mobileNo;
+        $lead->phone = $this->appendCountryCode($request->mobileNo);
         $lead->dob = $request->birthDate;
         $lead->source_id = $request->source;
         $lead->status = $request->status;
@@ -69,7 +79,15 @@ class Lead extends Model
         $lead->city = $request->city ?? null;
         $lead->state = $request->state ?? null;
         $lead->code = $request->code ?? null;
-        $lead->slug = Str::slug($request->firstName).'-'.Str::random(8);
+        //$lead->slug = Str::slug($request->firstName).'-'.Str::random(8);
+
+        //Next of kin
+        $lead->next_full_name = $request->fullName ?? null;
+        $lead->next_primary_phone = $this->appendCountryCode($request->primaryPhoneNo) ?? null;
+        $lead->next_alt_phone = $this->appendCountryCode($request->altPhoneNo) ?? null;
+        $lead->next_email = $request->nextEmail ?? null;
+        $lead->next_relationship = $request->relationship ?? null;
+
         $lead->save();
         return $lead;
     }

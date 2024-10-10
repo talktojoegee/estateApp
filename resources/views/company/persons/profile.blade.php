@@ -36,6 +36,10 @@
                                         <i class="bx bx-check-circle"></i>  Activate Account
                                     </a>
                                 @endif
+                                <a href="javascript:void(0);" data-bs-target="#permissionModal" data-bs-toggle="modal" class="btn btn-secondary btn-sm btn-icon-text">
+                                    <i class="bx bx-lock-alt"></i>  Access Level
+                                </a>
+
                             </div>
                         </div>
                     </div>
@@ -372,6 +376,51 @@
                             </div>
                         </div>
                     </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="permissionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h6 class="modal-title text-uppercase text-info" id="myModalLabel2">Access Level</h6>
+                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form autocomplete="off" autcomplete="off" action="{{route('add-permission')}}" method="post" id="addBranch" data-parsley-validate="">
+                        @csrf
+                        <div class="accordion-item mb-2">
+                            <h2 class="accordion-header" id="flush-heading_">
+                                <button class="accordion-button fw-medium " type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse_" aria-expanded="false" aria-controls="flush-collapse_">
+                                    {{$user->roles->first()->name ?? '' }}
+                                </button>
+                            </h2>
+                            <div id="flush-collapse_" class="accordion-collapse collapse show" aria-labelledby="flush-heading_" data-bs-parent="#accordionFlushExample_" style="">
+                                <div class="accordion-body text-muted">
+                                    <form action="">
+                                        <div class="row">
+                                            @if(count($user->roles) > 0)
+                                                @foreach($user->roles->first()->permissions as $p)
+                                                    <div class="col-md-3 col-lg-3">
+                                                        <div class="form-check form-checkbox-outline form-check-primary mb-3">
+                                                            <input class="form-check-input" type="checkbox"  checked="">
+                                                            <label class="form-check-label" >
+                                                                {{$p->name ?? ''}}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    </form>
 
                 </div>
             </div>

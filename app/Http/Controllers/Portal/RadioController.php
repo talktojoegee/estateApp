@@ -24,6 +24,7 @@ use App\Models\PostComment;
 use App\Models\PostRadioDetail;
 use App\Models\Property;
 use App\Models\Receipt;
+use App\Models\Refund;
 use App\Models\State;
 use App\Models\User;
 use App\Models\Workstation;
@@ -53,6 +54,7 @@ class RadioController extends Controller
         $this->receipt = new Receipt();
         $this->invoicepaymenthistory = new InvoicePaymentHistory();
         $this->estate = new Estate();
+        $this->refund = new Refund();
 
 
     }
@@ -356,11 +358,24 @@ class RadioController extends Controller
                     $customer = $this->lead->getLeadById($request->customer);
 
                     if(!empty($customer)){
+                        $property = $this->property->getPropertyById($request->property);
+                        if(empty($property)){
+                            session()->flash("error", "Something went wrong. Try again later or contact admin.");
+                            return back();
+                        }
+                        $estate = Estate::getEstateById($property->estate_id);
+                        if(empty($estate)){
+                            session()->flash("error", "Something went wrong. Try again later or contact admin.");
+                            return back();
+                        }
+                        $taxRate = $estate->tax_rate;
                         $invoice_no = $this->invoicemaster->getLatestInvoiceNo();
-                        $invoice = $this->invoicemaster->newCustomerInvoice($request, $invoice_no);
+                        $invoice = $this->invoicemaster->newCustomerInvoice($request, $invoice_no, $taxRate);
 
-                        //$activity = Auth::user()->first_name.' issued an invoice with the invoice No.'.$invoice->invoice_no;
-                        //ActivityLog::logActivity(Auth::user()->tenant_id, Auth::user()->id, 0, 'New invoice', $activity);
+
+                        $authUser = Auth::user();
+                        $log = $authUser->first_name." ".$authUser->last_name." issued a new invoice with invoice number: ".$invoice->invoice_no;
+                        ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'New Invoice', $log);
                         session()->flash("success", "Action successful");
                         return back();
                     }else{
@@ -434,6 +449,32 @@ class RadioController extends Controller
 
     }
 
+    public function getInvoice(Request $request){
+        $this->validate($request,[
+            'invoiceNo'=>'required'
+        ]);
+        $invoice = $this->invoicemaster->getInvoiceByInvoiceNo($request->invoiceNo);
+        if(!empty($invoice)){
+            return view('company.receipt._items',[
+                'invoice'=>$invoice
+            ]);
+        }
+    }
+    public function getReceipt(Request $request){
+        $this->validate($request,[
+            'receiptNo'=>'required'
+        ]);
+        $receipt = $this->receipt->getReceiptByReceiptNo($request->receiptNo);
+        if(!empty($receipt)){
+            $property = $this->property->getPropertyById($receipt->property_id);
+            $estate = Estate::getEstateById($property->estate_id);
+            return view('company.receipt._receipt-items',[
+                'receipt'=>$receipt,
+                'refundRate'=>$estate->refund_rate,
+            ]);
+        }
+    }
+
     public function showInvoiceDetails($slug){
         $invoice = $this->invoicemaster->getInvoiceByRefNo($slug);
         $post = $this->post->getPostById($invoice->post_id);
@@ -492,6 +533,7 @@ class RadioController extends Controller
 
 
     public function actionPayment(Request $request){
+
         $this->validate($request,[
             'invoiceId'=>'required',
             'status'=>'required',
@@ -506,6 +548,7 @@ class RadioController extends Controller
             session()->flash("error", "Whoops! Record not found.");
             return back();
         }
+
         $authUserId = Auth::user()->id;
         if($request->status == 1){ //post
             $ref = strtoupper(substr(sha1(time()), 29,40));
@@ -515,33 +558,41 @@ class RadioController extends Controller
                 session()->flash("error", "Whoops! Something went wrong.");
                 return back();
             }
+
             $estate = Estate::getEstateById($property->estate_id);
             if(empty($estate)){
                 session()->flash("error", "Whoops! Something went wrong.");
                 return back();
             }
+
             //Default accounts are now replaced with estate specific account.
             //$defaultAccounts = $this->appdefaultsetting->getAppDefaultSettings();
             if(empty($estate->property_account) || empty($estate->customer_account)){
                 session()->flash("error", "Whoops! Something went wrong.");
                 return back();
             }
+
             $propertyAccount = ChartOfAccount::getChartOfAccountById($estate->property_account)->glcode;
             $customerAccount = ChartOfAccount::getChartOfAccountById($estate->customer_account)->glcode;
-            if(is_null($customerAccount) || is_null($propertyAccount) ){
+            $taxAccount = ChartOfAccount::getChartOfAccountById($estate->tax_account)->glcode;
+            if(is_null($customerAccount) || is_null($propertyAccount) || is_null($taxAccount) ){
                 session()->flash("error", "Whoops! One or two accounts are missing for this transaction. Contact admin.");
                 return back();
             }
-
-            //debit customer
-            $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided to {$customer->first_name} on {$invoice->issue_date}, Invoice No. {$invoice->invoice_no}.";
+            $issueDate = date('d M, Y', strtotime($invoice->issue_date));
+            //debit company
+            $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided to {$customer->first_name} on {$issueDate}, Invoice No. {$invoice->invoice_no}.";
             $this->handleLedgerPosting($invoice->total ?? 0, 0, $customerAccount, $narration,
                 $ref, 0, $authUserId, $invoice->issue_date);
-            //credit property
-            /*$narration = "Being the invoice raised for [description of goods/services] provided for the property at
-            [property address or name] on [invoice date], Invoice No. [invoice number]";*/
+
+            //credit customer
             $narration = "Being the invoice raised for {$property->property_name} - ({$property->property_code}) provided for the property with property code {$property->property_code}.";
-            $this->handleLedgerPosting(0, $invoice->total, $propertyAccount, $narration,
+            $this->handleLedgerPosting(0, $invoice->sub_total, $propertyAccount, $narration,
+                $ref, 0, $authUserId, $invoice->issue_date);
+
+            //credit VAT/TAX
+            $narration = "Being VAT/TAX collected on  {$issueDate}, Invoice No. {$invoice->invoice_no}.";
+            $this->handleLedgerPosting(0, $invoice->vat, $taxAccount, $narration,
                 $ref, 0, $authUserId, $invoice->issue_date);
         }
 
@@ -571,7 +622,12 @@ class RadioController extends Controller
         ]);
         $receipt = $this->receipt->getReceiptById($request->receipt);
         if(empty($receipt)){
-            session()->flash("error", "Whoops! Record not found.");
+            session()->flash("error", "Whoops! Something went wrong. Contact admin.");
+            return back();
+        }
+        $invoice = $this->invoicemaster->getInoviceById($receipt->invoice_id);
+        if(empty($invoice)){
+            session()->flash("error", "Whoops! Something went wrong. Contact admin.");
             return back();
         }
         $authUserId = Auth::user()->id;
@@ -594,25 +650,32 @@ class RadioController extends Controller
             }
             $propertyAccount = ChartOfAccount::getChartOfAccountById($estate->property_account)->glcode;
             $customerAccount = ChartOfAccount::getChartOfAccountById($estate->customer_account)->glcode;
+            //$taxAccount = ChartOfAccount::getChartOfAccountById($estate->tax_account)->glcode;
             if(is_null($customerAccount) || is_null($propertyAccount) ){
                 session()->flash("error", "Whoops! One or two accounts are missing for this transaction. Contact admin.");
                 return back();
             }
 
             //credit customer
-            $narration = "Receipt raised for {$property->property_name} - ({$property->property_code}) provided to {$customer->first_name} on {$receipt->payment_date}, Receipt No. {$receipt->receipt_no}.";
+            $narration = "Being receipt of payment for invoice {$invoice->invoice_no} from {$customer->first_name} including VAT/TAX for the period.";
             $this->handleLedgerPosting(0,$receipt->total ?? 0, $customerAccount, $narration,
                 $ref, 0, $authUserId, $receipt->payment_date);
-            //debit property
-            $narration = "Receipt  raised for {$property->property_name} - ({$property->property_code}) provided for the property with property code {$property->property_code}.";
+
+            //debit property/company
+            //$narration = "Receipt  raised for {$property->property_name} - ({$property->property_code}) provided for the property with property code {$property->property_code}.";
             $this->handleLedgerPosting( $receipt->total,0, $propertyAccount, $narration,
                 $ref, 0, $authUserId, $receipt->payment_date);
+
         }
 
         $receipt->posted = $request->status;
         $receipt->posted_by = $authUserId;
         $receipt->date_posted = now();
         $receipt->save();
+
+        $authUser = Auth::user();
+        $log = $authUser->first_name." ".$authUser->last_name." posted receipt to general ledger";
+        ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'Receipt posting', $log);
         session()->flash("success", "Action successful.");
         return back();
 
@@ -997,12 +1060,33 @@ class RadioController extends Controller
                 session()->flash("error", "Whoops! The amount you entered is more than what's left as balance. ");
                 return back();
             }
+            $property = $this->property->getPropertyById($invoice->property_id);
+            if(empty($property)){
+                session()->flash("error", "Whoops! Something went wrong. Contact admin/webmaster ");
+                return back();
+            }
 
             $this->invoicemaster->updateInvoicePayment($invoice, $request->amount);
-            $this->receipt->createNewReceipt(rand(9,9999), $invoice, $request->amount, 0); //($counter, $invoice, $amount, $charge)
+            $this->receipt->createNewReceipt(rand(9,9999), $invoice, $request->amount, 0,
+                $request->paymentMethod ?? $invoice->payment_method, $request->paymentDate ?? now()); //($counter, $invoice, $amount, $charge)
+            $amountPaid = $invoice->amount_paid;
+            //$invoiceTotal = $invoice->total;
+            $paymentPlan = $property->getPaymentPlan;
+            $minimumPlanAmount = ($paymentPlan->pp_rate/100) * $invoice->total;
+            if($amountPaid >= $minimumPlanAmount){
+                $property->sold_to = $invoice->customer_id;
+                $property->date_sold = now();
+                $property->status = 2; //sold
+                $property->save();
+            }else{
+                $property->status = 3; //Reserved
+                $property->save();
+            }
+
             $this->invoicepaymenthistory->logPayment($invoice->id, 33, $request->amount, 0);
-            //$activity = Auth::user()->first_name." received payment with an amount of (".env('APP_CURRENCY').$request->amount."). Invoice No.".$invoice->invoice_no;
-            //ActivityLog::logActivity(Auth::user()->tenant_id, Auth::user()->id, 0, 'Received Payment', $activity);
+            $authUser = Auth::user();
+            $log = $authUser->first_name." ".$authUser->last_name." received payment of ".$request->amount." with invoice number: ".$invoice->invoice_no;
+            ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'Invoice posting', $log);
             session()->flash("success", "Action successful");
             return back();
         }else{
@@ -1012,12 +1096,132 @@ class RadioController extends Controller
     }
 
 
+    public function storeReceipt(Request $request){
+        $this->validate($request,[
+            'amount'=>'required',
+            'invoiceNo'=>'required'
+        ],[
+            'amount.required'=>'Enter amount',
+            'invoiceNo.required'=>'Enter invoice number'
+        ]);
+        $invoice = $this->invoicemaster->getInvoiceByInvoiceNo($request->invoiceNo);
+        if(empty($invoice)){
+            session()->flash("error", "Whoops! No record found.");
+            return back();
+        }
+        $this->receipt->createNewReceipt(rand(9,9999), $invoice, $request->amount, 0,
+            $request->paymentMethod, $request->paymentDate);
+        session()->flash("success", "Action successful");
+        return back();
+
+    }
+
+
 
 
     public function showManageReceipts(){
         return view('company.receipt.manage-receipts',[
-            'receipts'=>$this->receipt->getAllTenantReceipts()
+            'receipts'=>$this->receipt->getAllTenantReceipts(1),
+            'currentYear'=>$this->receipt->getAllTenantReceiptsThisYear(1),
+            'lastYear'=>$this->receipt->getLastYearInflow(1),
+            'currentMonth'=>$this->receipt->getCurrentMonthInflow(1),
+            'lastMonth'=>$this->receipt->getLastMonthInflow(1),
         ]);
+    }
+
+    public function showAllRefunds(){
+        return view('company.receipt.all-refunds',[
+            'refunds'=>$this->refund->getAllRefundsByStatus(1),
+            'currentYear'=>$this->refund->getAllRefundsThisYear(1),
+            'lastYear'=>$this->refund->getLastYearRefunds(1),
+            'currentMonth'=>$this->refund->getCurrentMonthRefunds(1),
+            'lastMonth'=>$this->refund->getLastMonthRefunds(1),
+        ]);
+    }
+
+    public function showNewReceiptForm(){
+        return view('company.receipt.new-receipt',[
+            //'receipts'=>$this->receipt->getAllTenantReceipts()
+        ]);
+    }
+    public function showNewRefundForm(){
+        return view('company.receipt.new-refund',[
+            //'receipts'=>$this->receipt->getAllTenantReceipts()
+        ]);
+    }
+
+    public function manageRefundRequests(){
+        return view('company.receipt.manage-refund-requests',[
+            'refunds'=>$this->refund->getAllRefundRequests()
+        ]);
+    }
+
+    public function storeRefund(Request $request){
+        $this->validate($request,[
+           "amount"=>"required",
+           "receipt"=>"required",
+           "rate"=>"required",
+           "dateRequested"=>"required|date",
+        ],[
+            "amount.required"=>"Enter amount",
+            "receipt.required"=>"",
+            "rate.required"=>"Rate is missing",
+            "dateRequested.required"=>"When was this request made?",
+            "dateRequested.date"=>"Enter a valid date",
+        ]);
+        $receipt = $this->receipt->getReceiptById($request->receipt);
+        if(empty($receipt)){
+            session()->flash("error", "Whoops! No record found.");
+            return back();
+        }
+        $actualAmount = $receipt->sub_total - (($request->rate/100) * $receipt->sub_total);
+        $this->refund->addRefund($request, $receipt->sub_total, $actualAmount, $request->amount);
+        $authUser = Auth::user();
+        $log = $authUser->first_name." ".$authUser->last_name." submitted a refund request";
+        ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'New refund request', $log);
+        session()->flash("success", "Your request was submitted");
+        return back();
+    }
+
+    public function actionRefund($type, $id){
+        $refund = Refund::getRefundById($id);
+        if(empty($refund)){
+            session()->flash("error", "No record found.");
+            return back();
+        }
+        $action = $type ?? null;
+        if(is_null($action)){
+            session()->flash("error", "Something went wrong.");
+            return back();
+        }
+        $receipt = $this->receipt->getReceiptById($refund->receipt_id);
+
+        if(empty($receipt)){
+            session()->flash("error", "No record found.");
+            return back();
+        }
+        //update refund
+        $refund->status = $action == 'approve' ? 1 : 2;
+        $refund->date_actioned = now();
+        $refund->actioned_by = Auth::user()->id;
+        $refund->save();
+        //update receipt
+        $receipt->status = 2;
+        $receipt->save();
+        //release property(make it available again
+        if($action == 'approve'){
+            $property = $this->property->getPropertyById($receipt->property_id);
+            if(!empty($property)){
+                $property->status = 0; //make it available
+                $property->save();
+            }
+        }
+        $authUser = Auth::user();
+        $act = $action == 'approve' ? 'approved' : 'declined';
+        $log = $authUser->first_name." ".$authUser->last_name." {$act} refund request";
+        ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'Refund request', $log);
+        session()->flash("success", "Action successful.");
+        return back();
     }
 
     public function showManageReceiptDetails(Request $request){
@@ -1169,6 +1373,9 @@ class RadioController extends Controller
                 $invoice->posted_by = $authUserId;
                 $invoice->date_posted = now();
                 $invoice->save();
+                $authUser = Auth::user();
+                $log = $authUser->first_name." ".$authUser->last_name." posted invoice to general ledger";
+                ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'Invoice posting', $log);
                 session()->flash("success", "Action successful.");
                 return back();
         }
@@ -1223,6 +1430,9 @@ class RadioController extends Controller
                 $invoice->posted_by = $authUserId;
                 $invoice->date_posted = now();
                 $invoice->save();
+                $authUser = Auth::user();
+                $log = $authUser->first_name." ".$authUser->last_name." posted receipt to general ledger";
+                ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'Receipt posting', $log);
                 session()->flash("success", "Action successful.");
                 return back();
         }

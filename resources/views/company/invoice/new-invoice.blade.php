@@ -18,7 +18,7 @@
         <div class="col-md-12 col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="modal-header mb-3">New Invoice</h5>
+                    <h5 class="modal-header mb-3 text-info">New Invoice</h5>
                     @if(session()->has('success'))
                         <div class="alert alert-success alert" role="alert">
                             {!! session()->get('success') !!}
@@ -63,11 +63,11 @@
                             </div>
                             <div class="col-md-4 col-sm-4 col-lg-4 property-wrapper">
                                 <div class="form-group">
-                                    <label for="">Property</label>
+                                    <label for="">Property</label> <span id="propertyPrice"></span>
                                     <select name="property" id="property" class="form-control select2" value="{{old('property')}}">
                                         <option disabled selected>-- Select property --</option>
                                         @foreach($properties->where('status',0) as $property)
-                                            <option value="{{$property->id}}" {{ $property->status == 2 ? 'disabled' : null }} >{{$property->property_name ?? '' }} - {{$property->property_code ?? '' }}  </option>
+                                            <option data-price="{{$property->price ?? 'Not set'}}" value="{{$property->id}}" {{ $property->status == 2 ? 'disabled' : null }} >{{$property->property_code ?? '' }} - {{$property->property_name ?? '' }}  </option>
                                         @endforeach
                                     </select>
                                     @error('property')
@@ -145,40 +145,51 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-12">
-                                <table class="table table-responsive invoice-table invoice-total">
-                                    <tbody>
-                                    <tr class="text-info">
-                                        <td>
-                                            <hr>
-                                            <h5 class="text-primary">Total :</h5>
-                                        </td>
-                                        <td>
-                                            <hr>
-                                            <h5 class="text-primary"> <span>{{env('APP_CURRENCY')}}</span> <span class="total">0.00</span></h5>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                    <tbody class="float-left pl-3">
-                                    <tr>
-                                        <th class="text-left"> <strong>Account Name:</strong> </th>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-left"><strong>Sort Code:</strong> </th>
-                                        <td>-</td>
-                                    </tr>
+                            <div class="col-md-6">
+                                <div class="table-responsive">
+                                    <table class="table mb-0 table-striped">
+                                        <tbody>
+                                        <tr>
+                                            <th scope="row">Estate: &nbsp; &nbsp; <span class="text-info" id="propertyEstate"></span></th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Property Price: &nbsp; &nbsp; <span class="text-info" id="propertyAmount"></span></th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Payment Plan: &nbsp; &nbsp; <span class="text-info"  id="propertyPaymentPlan"></span></th>
+                                        </tr>
 
-                                    <tr>
-                                        <th class="text-left"><strong>Account Number:</strong> </th>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-left"><strong>Bank:</strong> </th>
-                                        <td>-</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <div class="form-group col-12">
+                                            <label for="">Discount Type</label>
+                                            <select name="discountType" id="discountType" class="form-control col-3">
+                                                <option selected>None</option>
+                                                <option value="1">Flat</option>
+                                                <option value="2">Rate</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group col-12" id="flatWrapper">
+                                            <label for="">Discount Amount</label>
+                                            <input type="number" step="0.01" id="discountAmount" name="discountAmount" placeholder="Discount Amount" class="form-control">
+                                        </div>
+                                        <div class="form-group col-12" id="rateWrapper">
+                                            <label for="">Discount Rate</label>
+                                            <input type="number" step="0.01" id="discountRate" name="discountRate" placeholder="Discount Rate" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <p><strong>Sub-total:</strong> <span>{{env('APP_CURRENCY')}}</span> <span class="subTotal">0.00</span></p>
+                                <p><strong>TAX/VAT (<span id="taxRate"></span>%) :</strong> <span>{{env('APP_CURRENCY')}}</span> <span class="tax">0.00</span></p>
+                                <p><strong>Discount :</strong> <span>{{env('APP_CURRENCY')}}</span> <span class="discount">0.00</span></p>
+                                <p><strong>Total:</strong> <span>{{env('APP_CURRENCY')}}</span> <span class="total">0.00</span></p>
                             </div>
                         </div>
                         <hr>
@@ -203,19 +214,70 @@
     <script src="/assets/js/pages/form-advanced.init.js"></script>
     <script src="/assets/js/axios.min.js"></script>
     <script>
+        let taxRate = 0;
+        let total = 0;
+        let subTotal = 0;
+        let discount = 0;
         $(document).ready(function() {
-            //$('#tenant-wrapper').hide();
-            //$('#applicant-wrapper').hide();
-            //$('.property-wrapper').hide();
+            $('#rateWrapper').hide();
+            $('#flatWrapper').hide();
             $('.js-example-basic-single').select2();
             $('.invoice-detail-table').on('mouseup keyup', 'input[type=number]', ()=> calculateTotals());
+
             $(document).on('change', '#invoice_type', function(e){
                 e.preventDefault();
-                //console.log($(this).val());
             });
+            $(document).on('change', '#discountType', function(e){
+                e.preventDefault();
+                let select = $(this).val();
+                if(parseInt(select) === 1){
+                    $('#rateWrapper').hide();
+                    $('#flatWrapper').show();
+                }else if(parseInt(select) === 2){
+                    $('#rateWrapper').show();
+                    $('#flatWrapper').hide();
+                }else{
+                    $('#rateWrapper').hide();
+                    $('#flatWrapper').hide();
+                }
+            });
+            $('#discountAmount').on('blur', function(e){
+                e.preventDefault();
+                discount = $(this).val();
+                calculateTotals();
+
+            });
+            $('#discountRate').on('blur', function(e){
+                e.preventDefault();
+                const subTotals = $('.item').map((idx, val)=> calculateSubTotal(val)).get();
+                const total = subTotals.reduce((a, v)=> a + Number(v), 0);
+                let tax = (taxRate/100).toFixed(2) * total;
+                let discountRate  = $(this).val() || 0;
+                let gross = tax + total;
+                let discountAmount = (discountRate/100).toFixed(2) * gross;
+                discount = discountAmount;
+                calculateTotals();
+
+            });
+            //estate-info
+            $('#property').on('change', function(e){
+                e.preventDefault();
+               let price =  $(this).find(':selected').data('price')
+                $('#propertyPrice').html(`<strong style='color:#ff0000;'><small>(Price: ${price.toLocaleString()})</small></strong>`)
+                axios.post("{{route('estate-info')}}",{id:$(this).val()})
+                .then(res=>{
+                  taxRate = res.data.estate.tax_rate;
+                  $('#propertyEstate').text(res.data.estate.e_name);
+                  $('#propertyAmount').html(price.toLocaleString());
+                  $('#propertyPaymentPlan').text(`${res.data.paymentPlanName} - ${res.data.paymentPlanDesc}`);
+                  $('#taxRate').text(taxRate);
+                });
+                calculateTotals();
+            });
+
             $(document).on('click', '.add-line', function(e){
                 e.preventDefault();
-                var new_selection = $('.item').first().clone();
+                let new_selection = $('.item').first().clone();
                 $('#products').append(new_selection);
 
                 $(".select-product").select2({
@@ -233,21 +295,33 @@
         });
 
         function setTotal(){
-            var sum = 0;
+            let sum = 0;
             $(".payment").each(function(){
                 sum += +$(this).val().replace(/,/g, '');
                 $(".total").text(sum.toLocaleString());
             });
         }
+        function setTax(){
+            let sum = 0;
+            $(".payment").each(function(){
+                sum += +$(this).val().replace(/,/g, '');
+                //$(".tax").text(123);
+            });
+        }
         //calculate totals
-        function calculateTotals(){
+      function calculateTotals(){
             const subTotals = $('.item').map((idx, val)=> calculateSubTotal(val)).get();
             const total = subTotals.reduce((a, v)=> a + Number(v), 0);
             grand_total = total;
+            let tax = (taxRate/100).toFixed(2) * total;
+
             $('.sub-total').text(grand_total.toLocaleString());
             $('#subTotal').val(total);
             $('#totalAmount').val(grand_total);
-            $('.total').text(total.toLocaleString());
+            $('.subTotal').text((total).toLocaleString());
+            $('.total').text(( (total+tax) - discount).toLocaleString());
+            $('.tax').text(tax.toLocaleString());
+            $('.discount').text(parseFloat(discount).toLocaleString());
             $('.balance').text(total.toLocaleString());
         }
 
@@ -262,7 +336,8 @@
 
         $('.aggregate').on('change', function(e){
             e.preventDefault();
-            setTotal();
+            //setTotal();
+            //setTax();
         });
     </script>
 
