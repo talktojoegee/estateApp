@@ -51,6 +51,7 @@ class Lead extends Model
         $lead->city = $request->city ?? null;
         $lead->state = $request->state ?? null;
         $lead->code = $request->code ?? null;
+        $lead->occupation = $request->occupation ?? null;
         $lead->entry_month = date('m',strtotime($request->date));
         $lead->entry_year = date('Y',strtotime($request->date));
         $lead->slug = Str::slug($request->firstName).'-'.Str::random(8);
@@ -79,6 +80,7 @@ class Lead extends Model
         $lead->city = $request->city ?? null;
         $lead->state = $request->state ?? null;
         $lead->code = $request->code ?? null;
+        $lead->occupation = $request->occupation ?? null;
         //$lead->slug = Str::slug($request->firstName).'-'.Str::random(8);
 
         //Next of kin
@@ -139,6 +141,21 @@ class Lead extends Model
     }
     public static function getCustomerListOfProperties($customerId){
         return Property::where('sold_to', $customerId)->orWhere('occupied_by', $customerId)->get();
+    }
+
+    public function uploadProfilePicture($avatarHandler, $leadId){
+        $filename = $avatarHandler->store('avatars', 'public');
+        $avatar = Lead::find($leadId);
+        if($avatar->avatar != 'avatars/avatar.png'){
+            $this->deleteFile($avatar->avatar); //delete file first
+        }
+        $avatar->avatar = $filename;
+        $avatar->save();
+    }
+    public function deleteFile($file){
+        if(\File::exists(public_path('storage/'.$file))){
+            \File::delete(public_path('storage/'.$file));
+        }
     }
 
 

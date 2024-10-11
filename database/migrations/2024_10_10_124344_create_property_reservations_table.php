@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('actioned_by')->nullable();
             $table->dateTime('date_actioned')->nullable();
             $table->text('note')->nullable();
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

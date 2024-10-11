@@ -125,50 +125,7 @@
                                                         <td>
                                                             <a class="dropdown-item" href="javascript:void(0);" data-bs-target="#showMoreModal_{{$role->id}}" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> </a>
 
-                                                            <div class="modal fade" id="showMoreModal_{{$role->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
-                                                                <div class="modal-dialog modal-lg" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header" >
-                                                                            <h6 class="modal-title text-uppercase" id="myModalLabel2">Manage Role</h6>
-                                                                            <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                        </div>
 
-                                                                        <div class="modal-body">
-                                                                            <form autocomplete="off" autcomplete="off" action="{{route('update-role-permissions')}}" method="post" id="addBranch" data-parsley-validate="">
-                                                                                @csrf
-                                                                                    <div class="accordion-item mb-2">
-                                                                                        <h2 class="accordion-header" id="flush-heading_{{$role->id}}">
-                                                                                            <button class="accordion-button fw-medium " type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse_{{$role->id}}" aria-expanded="false" aria-controls="flush-collapse_{{$role->id}}">
-                                                                                                {{$role->name ?? '' }}
-                                                                                            </button>
-                                                                                        </h2>
-                                                                                        <div id="flush-collapse_{{$role->id}}" class="accordion-collapse collapse show" aria-labelledby="flush-heading_{{$role->id}}" data-bs-parent="#accordionFlushExample_{{$role->id}}" style="">
-                                                                                            <div class="accordion-body text-muted">
-                                                                                                    <div class="row">
-                                                                                                        @foreach($permissions as $p)
-                                                                                                            <div class="col-md-3 col-lg-3">
-                                                                                                                <div class="form-check form-checkbox-outline form-check-primary mb-3 text-wrap">
-                                                                                                                        <input class="form-check-input" value="{{ $p->id  }}" {{  in_array($p->id,$role->getPermissionIdsByRoleId($role->id))  ? 'checked' : '' }}  name="permission[]" type="checkbox" >
-                                                                                                                        {{$p->name ?? ''}}
-                                                                                                                    </label>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        @endforeach
-                                                                                                    </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                <hr>
-                                                                                <input type="hidden" name="roleId" value="{{ $role->id ?? '' }}">
-                                                                                <div class="d-flex justify-content-center">
-                                                                                    <button type="submit" class="btn-primary btn">Save changes</button>
-                                                                                </div>
-                                                                            </form>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
 
                                                         </td>
                                                     </tr>
@@ -188,6 +145,61 @@
         </div>
     </div>
 
+
+    @foreach($roles as $key=> $role)
+        <div class="modal fade" id="showMoreModal_{{$role->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" >
+                        <h6 class="modal-title text-uppercase" id="myModalLabel2">Manage Role</h6>
+                        <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form autocomplete="off" autcomplete="off" action="{{route('update-role-permissions')}}" method="post" id="addBranch" data-parsley-validate="">
+                            @csrf
+                            <div class="accordion-item mb-2">
+                                <h2 class="accordion-header" id="flush-heading_{{$role->id}}">
+                                    <button class="accordion-button fw-medium " type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse_{{$role->id}}" aria-expanded="false" aria-controls="flush-collapse_{{$role->id}}">
+                                        {{$role->name ?? '' }}
+                                    </button>
+                                </h2>
+                                <div id="flush-collapse_{{$role->id}}" class="accordion-collapse collapse show" aria-labelledby="flush-heading_{{$role->id}}" data-bs-parent="#accordionFlushExample_{{$role->id}}" style="">
+                                    <div class="accordion-body text-muted">
+                                        <div class="row">
+                                            <div class="col-md-12 bg-dark p-2 text-white">
+                                                <div class="form-check">
+                                                    <input class="form-check-input selectAllPermissions" type="checkbox"  name="selectAllPermissions"  >
+                                                    <label class="form-check-label">Select All</label>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            @foreach($permissions as $p)
+                                                <div class="col-md-3 col-lg-3">
+                                                    <div class="form-check form-checkbox-outline form-check-primary mb-3 text-wrap">
+                                                        <input class="form-check-input" value="{{ $p->id  }}" {{  in_array($p->id,$role->getPermissionIdsByRoleId($role->id))  ? 'checked' : '' }}  name="permission[]" type="checkbox" >
+                                                        {{$p->name ?? ''}}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <input type="hidden" name="roleId" value="{{ $role->id ?? '' }}">
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn-primary btn">Save changes</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
 @endsection
 
 @section('extra-scripts')
@@ -206,6 +218,20 @@
                 else
                     $('#permissionWrapper').show();
             });
+
+            $('.selectAllPermissions').click(function(event) {
+                if(this.checked) {
+                    // Iterate each checkbox
+                    $(':checkbox').each(function() {
+                        this.checked = true;
+                    });
+                } else {
+                    $(':checkbox').each(function() {
+                        this.checked = false;
+                    });
+                }
+            });
+
         });
     </script>
 

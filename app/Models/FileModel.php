@@ -38,6 +38,35 @@ class FileModel extends Model
 
     }
 
+    public function uploadSingleFile(Request $request)
+    {
+        if ($request->hasFile('attachment')) {
+                $extension = $request->attachment->getClientOriginalExtension();
+                $size = $request->attachment->getSize();
+                $filename = uniqid() . '_' . time() . '_' . date('Ymd') . '.' . $extension;
+                $dir = 'assets/drive/cloud/';
+                $request->attachment->move(public_path($dir), $filename);
+                $file = new FileModel();
+                $file->filename = $filename;
+                $file->name = $request->fileName ?? 'Offer Letter';
+                $file->folder_id = $request->folder ?? 0;
+                $file->calendar_id = $request->calendarId ?? null;
+                $file->uploaded_by = Auth::user()->id;
+                $file->slug = substr(sha1(time()),32,40);
+                $file->size = $size;
+                $file->client_id = $request->client ?? null;
+                $file->lead_id = $request->lead ?? null;
+                $file->type = isset($request->lead) ? 1 : 0;
+                $file->org_id = Auth::user()->org_id;
+                $file->save();
+                return $file;
+
+        }
+
+    }
+
+
+
     public function getUploadedBy(){
         return $this->belongsTo(User::class, 'uploaded_by');
     }

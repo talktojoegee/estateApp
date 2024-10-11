@@ -36,6 +36,9 @@
                                         <i class="bx bx-check-circle"></i>  Activate Account
                                     </a>
                                 @endif
+                                <a href="javascript:void(0);" data-bs-target="#grantPermissionModal" data-bs-toggle="modal" class="btn btn-primary btn-sm btn-icon-text">
+                                    <i class="bx bx-shield"></i>  Assign Role
+                                </a>
                                 <a href="javascript:void(0);" data-bs-target="#permissionModal" data-bs-toggle="modal" class="btn btn-secondary btn-sm btn-icon-text">
                                     <i class="bx bx-lock-alt"></i>  Access Level
                                 </a>
@@ -381,6 +384,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="permissionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -426,6 +430,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="deletePractitionerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -485,6 +490,41 @@
                                         <div class="btn-group d-flex justify-content-center">
                                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="bx bx-stop text-white mr-2"></i> Close</button>
                                             <button type="submit" class="btn btn-primary btn-sm waves-light" id="customBackgroundBtn"> <i class="bx bx-check-circle text-white mr-2"></i> Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="grantPermissionModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="card">
+                                <div class="card-block" style="background: #EEF2F4;">
+                                    <form action="{{route('assign-revoke-role')}}" method="post">
+                                        @csrf
+                                        <h6 class="card-header bg-custom text-white mb-3">Assign Role</h6>
+                                        <div class="form-group">
+                                            <label for="">Role Assignment</label>
+                                            <select name="role" id="role" class="form-control">
+                                                <option disabled selected>--Choose role--</option>
+                                                @foreach($roles as $role)
+                                                    <option value="{{$role->id}}"> {{$role->name ?? '' }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="hidden" name="userId" value="{{$user->id}}">
+                                            <input type="hidden" name="action" value="1">
+                                        </div>
+                                        <div class="form-group mt-3 d-flex justify-content-center">
+                                            <button type="submit" class="btn btn-primary btn-sm">Save changes <i class="bx bxs-right-arrow"></i> </button>
                                         </div>
                                     </form>
                                 </div>

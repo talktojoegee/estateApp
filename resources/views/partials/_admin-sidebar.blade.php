@@ -35,7 +35,7 @@
             <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{route('property-reservation')}}" key="t-reservations"> New</a></li>
                 <li><a href="{{route('manage-properties', 'reserved')}}" key="t-reservations">Reservations</a></li>
-                <li><a href="{{route('manage-properties', 'reserved')}}" key="t-reservations">Manage Requests</a></li>
+                <li><a href="{{route('manage-property-reservation-requests')}}" key="t-reservations">Manage Requests</a></li>
             </ul>
         </li>
             <li>
@@ -288,7 +288,7 @@
                 <span key="t-chat">Notifications</span>
             </a>
         </li>
-        @can('access-settings')
+
             <li class="menu-title">Administration</li>
             <li>
                 <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -303,6 +303,6 @@
                     {{--<li><a href="route('general-settings')}}" key="t-settings">General Settings</a></li>--}}
                 </ul>
             </li>
-        @endcan
+
     </ul>
 </div>

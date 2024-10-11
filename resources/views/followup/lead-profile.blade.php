@@ -69,7 +69,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="avatar-md profile-user-wid mb-4 align-content-center" style="width: 120px; height: 120px;" >
-                                    <img style="width: 120px; height: 120px;" src="{{url('storage/avatars/avatar.png')}}" alt="" class="img-thumbnail rounded-circle">
+                                    <img style="width: 120px; height: 120px;" src=" {{url('storage/'.$client->avatar)}}" alt="" class="img-thumbnail rounded-circle">
                                 </div>
                                 <h5 class="font-size-15">{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</h5>
                             </div>
@@ -266,54 +266,7 @@
                                                         <a href="javascript: void(0);" data-bs-target="#deleteNote_{{$note->id}}" data-bs-toggle="modal" style="cursor:pointer;" class="text-danger"><i class="mdi mdi-trash-can"></i> Trash</a>
                                                         <a href="javascript: void(0);" data-bs-target="#editNote_{{$note->id}}" data-bs-toggle="modal"  style="cursor:pointer; margin-left: 15px;" class="text-warning ml-3"><i class="mdi mdi-lead-pencil"></i> Edit</a>
                                                     </div>
-                                                    <div class="modal fade" id="editNote_{{$note->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
-                                                        <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header" >
-                                                                    <h4 class="modal-title" id="myModalLabel2">Edit Note</h4>
-                                                                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form action="{{route('edit-lead-note')}}" id="leadNoteForm" method="post">
-                                                                        @csrf
-                                                                        <div class="form-group">
-                                                                            <label for=""> Note</label>
-                                                                            <textarea name="addNote" data-parsley-required-message="Leave a note in the box provided above" required style="resize: none;" cols="30" rows="4" placeholder="Type Note here..." class="form-control">{{$note->note ?? '' }}</textarea>
-                                                                            @error('addNote') <i class="text-danger">{{$message}}</i> @enderror
-                                                                        </div>
-                                                                        <input type="hidden" value="{{$note->id}}" name="noteId">
-                                                                        <input type="hidden" value="{{$client->id}}" name="leadId">
-                                                                        <div class="form-group mt-1 float-end">
-                                                                            <button type="submit" class="btn btn-info btn-lg">Save changes <i class="bx bxs-note"></i> </button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal fade" id="deleteNote_{{$note->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
-                                                        <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header" >
-                                                                    <h4 class="modal-title" id="myModalLabel2">Delete Note</h4>
-                                                                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form action="{{route('delete-lead-note')}}" id="leadNoteForm" method="post">
-                                                                        @csrf
-                                                                        <div class="form-group">
-                                                                            <p>Are you sure you want to delete this note?</p>
-                                                                        </div>
-                                                                        <input type="hidden" value="{{$note->id}}" name="noteId">
-                                                                        <input type="hidden" value="{{$client->id}}" name="leadId">
-                                                                        <div class="form-group mt-1 float-end">
-                                                                            <button type="submit" class="btn btn-danger btn-lg">Delete <i class="bx bxs-trash"></i> </button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+
                                                 </div>
                                             </div>
                                         @endforeach
@@ -385,7 +338,7 @@
                                                                             <img src="/assets/drive/property/{{$property->getGalleryFeaturedImageByPropertyId($property->id)->attachment ?? 'placeholder.png' }}" alt="{{$property->property_name ?? '' }}" class="rounded-circle avatar-xs">
                                                                         </div>
                                                                         <div class="flex-grow-1 overflow-hidden">
-                                                                            <h6 class="text-truncate font-size-14 mb-1">{{ substr($property->property_name,0,35).'...' ?? ''  }}</h6>
+                                                                            <h6 class="text-truncate text-info font-size-14 mb-1">{{ substr($property->property_name,0,35).'...' ?? ''  }}</h6>
                                                                         </div>
                                                                     </div>
                                                                 </a>
@@ -633,6 +586,57 @@
             </div>
         </div>
     </div>
+
+    @foreach($client->getLeadNotes as $note)
+        <div class="modal fade" id="editNote_{{$note->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" >
+                        <h4 class="modal-title text-info" id="myModalLabel2">Edit Note</h4>
+                        <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{route('edit-lead-note')}}" id="leadNoteForm" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label for=""> Note</label>
+                                <textarea name="addNote" data-parsley-required-message="Leave a note in the box provided above" required style="resize: none;" cols="30" rows="4" placeholder="Type Note here..." class="form-control">{{$note->note ?? '' }}</textarea>
+                                @error('addNote') <i class="text-danger">{{$message}}</i> @enderror
+                            </div>
+                            <input type="hidden" value="{{$note->id}}" name="noteId">
+                            <input type="hidden" value="{{$client->id}}" name="leadId">
+                            <div class="form-group mt-1 float-end">
+                                <button type="submit" class="btn btn-info btn-lg">Save changes <i class="bx bxs-note"></i> </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="deleteNote_{{$note->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" >
+                        <h4 class="modal-title text-info" id="myModalLabel2">Delete Note</h4>
+                        <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{route('delete-lead-note')}}" id="leadNoteForm" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <p>Are you sure you want to delete this note?</p>
+                            </div>
+                            <input type="hidden" value="{{$note->id}}" name="noteId">
+                            <input type="hidden" value="{{$client->id}}" name="leadId">
+                            <div class="form-group mt-1 float-end">
+                                <button type="submit" class="btn btn-danger btn-lg">Delete <i class="bx bxs-trash"></i> </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 
     @foreach($client->getCustomerFiles as $file)
         <div id="renameModal_{{$file->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">

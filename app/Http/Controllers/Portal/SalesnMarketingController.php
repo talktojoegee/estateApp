@@ -504,9 +504,9 @@ class SalesnMarketingController extends Controller
             "mobileNo.required"=>"Enter client mobile phone number",
         ]);
         $this->lead->editLead($request);
-       /* if(isset($request->profilePhoto)){
-            $this->client->uploadProfilePicture($request->profilePhoto, $request->clientId);
-        }*/
+        if(isset($request->profilePhoto)){
+            $this->lead->uploadProfilePicture($request->profilePhoto, $request->leadId);
+        }
         $title = "Customer profile edited!";
         $log = Auth::user()->first_name." ".Auth::user()->last_name." edited client profile";
         ActivityLog::registerActivity(Auth::user()->org_id, $request->clientId, null, null, $title, $log);

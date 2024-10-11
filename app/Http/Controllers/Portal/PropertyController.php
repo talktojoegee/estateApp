@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\UtilityTrait;
 use App\Imports\PropertyImport;
+use App\Models\ActivityLog;
 use App\Models\BqOption;
 use App\Models\BuildingType;
 use App\Models\ChartOfAccount;
 use App\Models\ConstructionStage;
 use App\Models\Estate;
+use App\Models\FileModel;
 use App\Models\InvoiceMaster;
 use App\Models\Lead;
 use App\Models\PaymentPlan;
@@ -44,6 +46,7 @@ class PropertyController extends Controller
         $this->receipt = new Receipt();
         $this->propertyallocation = new PropertyAllocation();
         $this->propertyreservation = new PropertyReservation();
+        $this->file = new FileModel();
 
     }
 
@@ -87,10 +90,10 @@ class PropertyController extends Controller
             case 'POST':
                 $this->validate($request,[
                    "propertyCode"=>"required",
-                    "customer"=>"required"
+                    "lead"=>"required"
                 ],[
                     "propertyCode.required"=>"Enter property code",
-                    "customer.required"=>"Select customer from the list provided",
+                    "lead.required"=>"Select customer from the list provided",
                 ]);
                 $property = $this->property->getPropertyByPropertyCode($request->propertyCode);
                 if(empty($property)){
@@ -101,12 +104,90 @@ class PropertyController extends Controller
                     session()->flash("error", "Whoops! This property is not available for reservation.");
                     return back();
                 }
-                $this->propertyreservation->addReservation($request, $property->id);
+                $filename = null;
+                if ($request->hasFile('attachment')) {
+                    $attachment = $this->file->uploadSingleFile($request);
+                    $filename = $attachment->filename;
+                }
+                $reservation = $this->propertyreservation->addReservation($request, $property->id);
+                $reservation->file = $filename;
+                $reservation->save();
                 session()->flash("success", "Action successful.");
                 return back();
             default:
                 abort(404);
         }
+    }
+
+    public function managePropertyReservation(Request $request){
+        switch ($request->method()){
+            case 'GET':
+                return view('property.manage-reservation-requests',[
+                    'requests'=>$this->propertyreservation->getAllReservationRequests(),
+
+                ]);
+            case 'POST':
+                $this->validate($request,[
+                   "propertyCode"=>"required",
+                    "lead"=>"required"
+                ],[
+                    "propertyCode.required"=>"Enter property code",
+                    "lead.required"=>"Select customer from the list provided",
+                ]);
+                $property = $this->property->getPropertyByPropertyCode($request->propertyCode);
+                if(empty($property)){
+                    session()->flash("error", "Whoops! No record found.");
+                    return back();
+                }
+                if($property->status != 0){
+                    session()->flash("error", "Whoops! This property is not available for reservation.");
+                    return back();
+                }
+                $filename = null;
+                if ($request->hasFile('attachment')) {
+                    $attachment = $this->file->uploadSingleFile($request);
+                    $filename = $attachment->filename;
+                }
+                $reservation = $this->propertyreservation->addReservation($request, $property->id);
+                $reservation->file = $filename;
+                $reservation->save();
+                session()->flash("success", "Action successful.");
+                return back();
+            default:
+                abort(404);
+        }
+    }
+
+    public function actionReservation($type, $id){
+        $authUser = Auth::user();
+        $reservation = PropertyReservation::find($id);
+        if(empty($reservation)){
+            session()->flash("error", "No record found.");
+            return back();
+        }
+        $action = $type ?? null;
+        if(is_null($action)){
+            session()->flash("error", "Something went wrong.");
+            return back();
+        }
+        $intAction = $type == 'approve' ? 1 : 2;
+        $reservation->status = $intAction;
+        $reservation->date_actioned = now();
+        $reservation->actioned_by = $authUser->id;
+        $reservation->save();
+        $property = $this->property->getPropertyById($reservation->property_id);
+        if($action == 'approve'){
+            if(!empty($property)){
+                $property->status = 3; //reserved
+                $property->save();
+            }
+        }
+
+        $act = $action == 'approve' ? 'approved' : 'declined';
+        $log = $authUser->first_name." ".$authUser->last_name." ".$act." property reservation request for(".$property->property_code.")";
+        ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'Property Reservation Request', $log);
+        session()->flash("success", "Action successful.");
+        return back();
     }
 
     public function getProperty(Request $request){
@@ -123,7 +204,7 @@ class PropertyController extends Controller
         $title = null;
         switch ($type){
             case 'all':
-                $properties = $this->property->getAllProperties([0,1,2]);
+                $properties = $this->property->getAllProperties([0,1,2,3]);
                 $title = 'All';
             break;
             case 'sold':

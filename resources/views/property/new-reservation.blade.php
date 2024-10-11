@@ -21,16 +21,25 @@
     @if(session()->has('success'))
         <div class="row" role="alert">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="mdi mdi-check-all me-2"></i>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="mdi mdi-check-all me-2"></i>
 
-                            {!! session()->get('success') !!}
+                    {!! session()->get('success') !!}
 
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    @endif
+    @if(session()->has('error'))
+        <div class="row" role="alert">
+            <div class="col-md-12">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="mdi mdi-check-all me-2"></i>
+
+                    {!! session()->get('error') !!}
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -54,13 +63,13 @@
                         <div class="row">
 
                             <div class="col-sm-4 col-md-4 lg-4">
-                                <form action="{{ route('property-reservation') }}" data-parsley-validate="" method="post" autocomplete="off" id="addPropertyForm" enctype="multipart/form-data">
+                                <form action="{{ route('property-reservation') }}" data-parsley-validate="" method="post" autocomplete="off"  enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="">Property Code <sup style="color: #ff0000;">*</sup> </label>
-                                                <input type="text" id="propertyCode" placeholder="Enter Property Code" name="propertyCode" class="form-control">
+                                                <input type="text" value="{{ old('propertyCode') }}" id="propertyCode" placeholder="Enter Property Code" name="propertyCode" class="form-control">
                                                 @error('propertyCode')
                                                 <i class="text-danger mt-2">{{$message}}</i>
                                                 @enderror
@@ -69,13 +78,20 @@
                                         <div class="col-sm-12 col-md-12 lg-12 mt-3">
                                             <div class="form-group">
                                                 <label for="">Customer<sup class="text-danger">*</sup></label>
-                                                <select data-parsley-required-message="Select customer" required  class="form-control p-3 select2" name="customer">
+                                                <select data-parsley-required-message="Select customer" required  class="form-control p-3 select2" name="lead">
                                                     <option disabled selected>Select customer</option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{$customer->id}}">{{ $customer->first_name ?? '' }} {{ $customer->last_name ?? '' }}</option>
                                                     @endforeach
                                                 </select>
                                                 <br> @error('customer')<i class="text-danger">{{$message}}</i>@enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 lg-12 mt-3">
+                                            <div class="form-group">
+                                                <label for="">Attachment(Ex. Offer letter)<small class="">(Optional)</small></label>
+                                                <input type="file" class="form-control-file" name="attachment"  accept="application/pdf">
+                                                <br> @error('attachments')<i class="text-danger">{{$message}}</i>@enderror
                                             </div>
                                         </div>
                                         <div class="col-sm-12 col-md-12 lg-12 mt-3">

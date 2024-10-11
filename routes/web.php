@@ -512,6 +512,8 @@ Route::group(['prefix'=>'estates', 'middleware'=>'auth'],function(){
 Route::group(['prefix'=>'property','middleware'=>'auth'],function(){
    Route::match(['GET', 'POST'],'/new', [App\Http\Controllers\Portal\PropertyController::class, 'showAddProperty'])->name('add-new-property');
    Route::match(['GET', 'POST'],'/property-reservation', [App\Http\Controllers\Portal\PropertyController::class, 'propertyReservation'])->name('property-reservation');
+   Route::match(['GET', 'POST'],'/manage-property-reservation-requests', [App\Http\Controllers\Portal\PropertyController::class, 'managePropertyReservation'])->name('manage-property-reservation-requests');
+    Route::get('/reservation/{type}/{id}', [App\Http\Controllers\Portal\PropertyController::class, 'actionReservation'])->name('action-reservation');
     Route::post('/get-property', [App\Http\Controllers\Portal\PropertyController::class,'getProperty'])->name('get-property');
 
    Route::get('/show/{type}', [App\Http\Controllers\Portal\PropertyController::class, 'showManagePropertiesView'])->name('manage-properties');
