@@ -5,10 +5,12 @@
             <span class="d-none d-sm-block">Dashboard</span>
         </a>
     </li>
+    @can('can-add-customer')
     <li class="nav-item">
         <a class="nav-link {{request()->routeIs('leads') ? 'active' : '' }}"  href="{{route('leads')}}" role="tab">
             <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
             <span class="d-none d-sm-block">Customers</span>
         </a>
     </li>
+    @endcan
 </ul>

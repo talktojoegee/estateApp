@@ -194,6 +194,7 @@
                                     </table>
                                 </div>
                             </div>
+                        @can('can-approve-decline-refund')
                             <div class="form-group d-flex justify-content-center mt-3">
                                 @if($ref->status == 0)
                                     <div class="btn-group">
@@ -202,6 +203,7 @@
                                     </div>
                                 @endif
                             </div>
+                        @endcan
 
                     </div>
                 </div>

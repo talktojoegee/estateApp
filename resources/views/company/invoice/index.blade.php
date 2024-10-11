@@ -182,9 +182,11 @@
                                                 <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="{{route('show-invoice-detail', $flow->ref_no)}}" > <i class="bx bxs-book-open"></i> View</a>
+                                                    @can('can-receive-payment')
                                                     @if((($flow->total ?? 0) - ($flow->amount_paid ?? 0)) > 0)
                                                         <a class="dropdown-item" href="{{route('receive-payment', $flow->ref_no)}}" > <i class="bx bx-wallet-alt"></i> Receive Payment</a>
                                                     @endif
+                                                    @endcan
                                                 </div>
                                             </div>
                                         </td>

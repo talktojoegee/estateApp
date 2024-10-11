@@ -23,8 +23,10 @@
             <div class="card-header mb-4">
                 <a href="{{ url()->previous() }}" class="btn btn-secondary "> <i
                         class="bx bx bxs-left-arrow"></i> Go back</a>
+                @can('can-add-coa')
                 <a href="{{ route('new-chart-of-account') }}" class="btn btn-primary ">  Add New Account <i
                         class="bx bx-list-plus"></i></a>
+                @endcan
 
                 <div class="card-body accordion-block">
                     <div class="col-xs-12 col-sm-12 mb-4 ">

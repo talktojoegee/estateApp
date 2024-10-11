@@ -118,12 +118,14 @@
                         </div>
                     </div>
                     <div class="col-xl-12 col-md-12 mb-2 mt-2 d-flex justify-content-end">
-                        @if($record->status == 0)
-                            <div class="btn-group">
-                                <a href="{{ route("post-property-record", $record->batch_code) }}" class="btn btn-primary ">Post Record <i class="bx bxs-check-circle"></i> </a>
-                                <a href="{{ route("discard-property-record", $record->batch_code) }}" class="btn btn-danger ">Discard Record <i class="bx bxs-trash"></i> </a>
-                            </div>
-                        @endif
+                        @can('can-post-discard-import')
+                            @if($record->status == 0)
+                                <div class="btn-group">
+                                    <a href="{{ route("post-property-record", $record->batch_code) }}" class="btn btn-primary ">Post Record <i class="bx bxs-check-circle"></i> </a>
+                                    <a href="{{ route("discard-property-record", $record->batch_code) }}" class="btn btn-danger ">Discard Record <i class="bx bxs-trash"></i> </a>
+                                </div>
+                            @endif
+                        @endcan
                     </div>
                     <div class="col-xl-12 col-md-12">
                         <div class="card">

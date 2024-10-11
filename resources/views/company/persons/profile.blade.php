@@ -36,9 +36,16 @@
                                         <i class="bx bx-check-circle"></i>  Activate Account
                                     </a>
                                 @endif
+                                @can('can-grant-permission')
                                 <a href="javascript:void(0);" data-bs-target="#grantPermissionModal" data-bs-toggle="modal" class="btn btn-primary btn-sm btn-icon-text">
                                     <i class="bx bx-shield"></i>  Assign Role
                                 </a>
+                                @endcan
+                                @can('can-revoke-permission')
+                                <a href="javascript:void(0);" data-bs-target="#grantPermissionModa" data-bs-toggle="modal" class="btn btn-danger btn-sm btn-icon-text">
+                                    <i class="bx bx-lock"></i>  Revoke Access
+                                </a>
+                                @endcan
                                 <a href="javascript:void(0);" data-bs-target="#permissionModal" data-bs-toggle="modal" class="btn btn-secondary btn-sm btn-icon-text">
                                     <i class="bx bx-lock-alt"></i>  Access Level
                                 </a>

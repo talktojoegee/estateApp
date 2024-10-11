@@ -88,7 +88,7 @@
 
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-end">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-warning"> Edit Details <i class="bx bxs-pencil"></i> </a>
+                       @can('can-edit-estate-info') <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-warning"> Edit Details <i class="bx bxs-pencil"></i> </a> @endcan
                         <a href="{{route('estates')}}"   class=" ml-2 btn btn-secondary"> Go Back <i class="bx bx-arrow-back"></i> </a>
                     </div>
                 </div>

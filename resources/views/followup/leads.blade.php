@@ -52,11 +52,11 @@
                                     Bulk Action <i class="bx bx-upload"></i>
                                 </a>
                                 <div class="dropdown-menu" style="">
-                                    <a class="dropdown-item" href="{{ route("bulk-import-leads") }}">Bulk Import Customers</a>
-                                    <a class="dropdown-item" href="{{ route('manage-bulk-lead-list') }}">Manage List</a>
+                                    @can('can-import-customers')<a class="dropdown-item" href="{{ route("bulk-import-leads") }}">Bulk Import Customers</a>@endcan
+                                   @can('can-approve-decline-customer-import') <a class="dropdown-item" href="{{ route('manage-bulk-lead-list') }}">Manage List</a> @endcan
                                 </div>
                             </div>
-                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#lead" class="btn btn-primary ml-2"> Create Customer <i class="bx bxs-briefcase-alt-2"></i> </a>
+                            @can('can-add-customer')<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#lead" class="btn btn-primary ml-2"> Create Customer <i class="bx bxs-briefcase-alt-2"></i> </a>@endcan
                         </div>
 
                     </div>

@@ -224,7 +224,9 @@
                                     <button type="button" data-bs-target="#declinePayment" data-bs-toggle="modal" class="btn btn-danger w-md waves-effect waves-light">Decline <i class="bx bx-x"></i> </button>
                                     <button type="button" data-bs-target="#verifyPayment" data-bs-toggle="modal" class="btn btn-success w-md waves-effect waves-light">Post <i class="bx bx-check-double"></i> </button>
                                     @endif
+                                    @can('can-print-invoice')
                                     <button type="button" onclick="generatePDF()" class="btn btn-warning w-md waves-effect waves-light">Print <i class="bx bx-printer"></i> </button>
+                                    @endcan
                                 </div>
                             </div>
                         </div>
@@ -232,6 +234,7 @@
                 </div>
 
         </div>
+        @can('can-access-payment-history')
         @if($invoice->status >= 1) <!-- Paid,Verified,Declined -->
         <div class="row">
             <div class="col-md-12 col-lg-12">
@@ -287,6 +290,7 @@
             </div>
         </div>
         @endif
+        @endcan
     </div>
 
 

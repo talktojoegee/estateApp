@@ -90,6 +90,7 @@
                                     @break
                                     @endswitch
                                     <td>
+                                        @can('can-approve-decline-allocation')
                                         <div class="btn-group">
                                             @if($allocation->status == 0)
                                             <button class="btn btn-success" data-bs-target="#approveModal_{{$allocation->id}}" data-bs-toggle="modal"><i class="bx bx-check-double"></i></button>
@@ -98,6 +99,7 @@
                                                 <button class="btn btn-info" data-bs-target="#approveModal_{{$allocation->id}}" data-bs-toggle="modal"><i class="bx bx-show"></i></button>
                                             @endif
                                         </div>
+                                        @endcan
 
 
                                     </td>

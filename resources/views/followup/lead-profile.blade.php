@@ -162,30 +162,34 @@
                     <div class="card-body">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                            <li class="nav-item">
+                           @can('can-add-note') <li class="nav-item">
                                 <a class="nav-link active" data-bs-toggle="tab" href="#profile1" role="tab">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
                                     <span class="d-none d-sm-block">Notes</span>
                                 </a>
-                            </li>
+                            </li> @endcan
                             <li class="nav-item" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#properties" role="tab">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Properties</span>
                                 </a>
                             </li>
-                            <li class="nav-item" >
-                                <a class="nav-link" data-bs-toggle="tab" href="#documents" role="tab">
-                                    <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                                    <span class="d-none d-sm-block">Documents</span>
-                                </a>
-                            </li>
+                               @can('can-upload-documents')
+                                <li class="nav-item" >
+                                    <a class="nav-link" data-bs-toggle="tab" href="#documents" role="tab">
+                                        <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                        <span class="d-none d-sm-block">Documents</span>
+                                    </a>
+                                </li>
+                               @endcan
+                               @can('can-send-sms')
                             <li class="nav-item" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#sms" role="tab">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">SMS</span>
                                 </a>
                             </li>
+                               @endcan
                             <li class="nav-item">
                                 <a class="nav-link " data-bs-toggle="tab" href="#home1" role="tab">
                                     <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
@@ -222,6 +226,7 @@
                                     </ul>
                                 </div>
                             </div>
+                            @can('can-add-note')
                             <div class="tab-pane active" id="profile1" role="tabpanel">
                                 <form action="{{route('leave-lead-note')}}" id="leadNoteForm" method="post">
                                     @csrf
@@ -275,6 +280,8 @@
                                     @endif
                                 </div>
                             </div>
+                            @endcan
+                            @can('can-upload-documents')
                             <div class="tab-pane" id="documents" role="tabpanel">
                                 <div class="card" style="opacity: 1 !important;">
                                     <div class="card-body">
@@ -307,6 +314,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endcan
                             <div class="tab-pane" id="properties" role="tabpanel">
                                 <div class="card">
                                     <div class="card-body">

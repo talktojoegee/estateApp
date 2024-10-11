@@ -8,8 +8,8 @@
                     Bulk Action <i class="bx bx-upload"></i>
                 </a>
                 <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="{{ route("show-bulk-property-import-form") }}">Bulk Import Properties</a>
-                    <a class="dropdown-item" href="{{ route('show-imported-properties') }}">Manage List</a>
+                    @can('can-import-properties')<a class="dropdown-item" href="{{ route("show-bulk-property-import-form") }}">Bulk Import Properties</a>@endcan
+                    @can('access-import-properties')<a class="dropdown-item" href="{{ route('show-imported-properties') }}">Manage List</a>@endcan
                 </div>
             </div>
             <div class="dropdown mt-sm-0">
@@ -17,8 +17,8 @@
                     More Actions <i class="bx bx-align-justify"></i>
                 </a>
                 <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="{{route('add-new-property')}}">Add New Property</a>
-                    <a class="dropdown-item" href="{{route('manage-properties','all')}}">All Properties</a>
+                    @can('can-add-property')<a class="dropdown-item" href="{{route('add-new-property')}}">Add New Property</a>@endcan
+                    @can('access-all-properties')<a class="dropdown-item" href="{{route('manage-properties','all')}}">All Properties</a>@endcan
                     <a class="dropdown-item" href="{{route('property-reservation')}}">New Reservation</a>
                     <a class="dropdown-item" href="{{route('manage-properties', 'reserved')}}">All Reservations</a>
                 </div>

@@ -7,7 +7,7 @@
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#renameModal_{{$file->id}}"><i class="bx bx-pencil mr-2 text-warning"></i> Rename</a>
         <a class="dropdown-item" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#infoModal_{{$file->id}}"><i class="bx bx-info-circle mr-2 text-info"></i> Info</a>
-        <a class="dropdown-item" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#fileModal_{{$file->id}}"><i class="bx bx-trash mr-2 text-danger"></i> Delete</a>
+        @can('can-delete-document')<a class="dropdown-item" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#fileModal_{{$file->id}}"><i class="bx bx-trash mr-2 text-danger"></i> Delete</a> @endcan
     </div>
 </div>
 

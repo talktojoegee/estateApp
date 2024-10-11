@@ -91,13 +91,13 @@
             </div>
         </div>
     </div>
-
+    @can('can-process-refund')
     <div class="row mb-3">
         <div class="col-md-12 d-flex justify-content-end ">
             <a href="{{ route('show-new-refund-form') }}" class="btn btn-primary ">Process Refund  <i class="bx bx-loader"></i> </a>
         </div>
     </div>
-
+    @endcan
 
     <div class="row">
         <div class="col-md-12 col-lg-12">
