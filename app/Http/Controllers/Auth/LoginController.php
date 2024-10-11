@@ -63,7 +63,7 @@ class LoginController extends Controller
                     session()->flash("error", " Your account is no longer active. Kindly contact admin.");
                     return back();
                 }
-                if(($user->getUserRole->name == 'Tech Support') || ($user->getUserRole->name == 'Super Admin')){ //admin
+                if(($user->getUserRole->name == 'Dev') || ($user->getUserRole->name == 'Super Admin')){ //admin
                     $log = $user->first_name." ".$user->last_name." logged in successfully.";
                     ActivityLog::registerActivity($user->org_id, null, $user->id, null, 'New login', $log);
                     return redirect()->route('marketing-dashboard');

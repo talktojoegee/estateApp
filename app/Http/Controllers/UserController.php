@@ -254,6 +254,8 @@ class UserController extends Controller
         $user = $this->user->getUserById($request->userId);
         if(!empty($role) && !empty($user)){
             $user->syncRoles([$role->name]);
+            $user->role = $request->role;
+            $user->save();
             session()->flash("success", "Action successful!");
             return back();
         }else{
