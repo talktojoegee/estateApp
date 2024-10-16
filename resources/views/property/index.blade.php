@@ -95,7 +95,7 @@
                                 <th class="wd-15p">Estate</th>
                                 <th class="wd-15p">House No.</th>
                                 <th class="wd-15p">Code</th>
-                                <th class="wd-15p">Property Name</th>
+                                <th class="wd-15p">Property Spec.</th>
                                 <th class="wd-15p" style="text-align: right;">Price(₦)</th>
                                 <th class="wd-15p">Status</th>
                                 <th class="wd-15p">Action</th>

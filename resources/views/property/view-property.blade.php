@@ -74,7 +74,7 @@
                             <tbody>
                             <tr>
                                 <th scope="row" >Estate: &nbsp; &nbsp; <span class="text-info">{{$property->getEstate->e_name ?? '' }} </span></th>
-                                <th scope="row">Building Type: &nbsp; &nbsp; <span class="text-info">{{$property->getBuildingType->bt_name ?? '' }}</span></th>
+                                <th scope="row">Property Type: &nbsp; &nbsp; <span class="text-info">{{$property->getBuildingType->bt_name ?? '' }}</span></th>
                             </tr>
                             <tr>
                                 <th scope="row" >Property Title: &nbsp; &nbsp; <span class="text-info">{{$property->getPropertyTitle->pt_name ?? '' }} </span></th>
@@ -450,7 +450,7 @@
                             </div>
                             <div class="col-sm-4 col-md-4 lg-6">
                                 <div class="form-group">
-                                    <label for="">Building Type<sup class="text-danger">*</sup></label>
+                                    <label for="">Property Type<sup class="text-danger">*</sup></label>
                                     <select data-parsley-required-message="What kind of building is this?" required  class="form-control select2" name="buildingType">
                                         @foreach($buildingTypes as $key=> $bType)
                                             <option value="{{$bType->bt_id}}" {{ $property->building_type == $bType->bt_id ? 'selected' : null }}>{{ $bType->bt_name ?? '' }}</option>
@@ -620,12 +620,12 @@
                             <div class="row mt-3">
                                 <div class="col-md-8 col-sm-8 col-lg-8 mt-3">
                                     <div class="form-group">
-                                        <label for="">Property Name <sup>*</sup></label>
-                                        <input type="text" data-parsley-required-message="What name would you give to this property?" required  placeholder="Property Name" name="propertyName" id="propertyName" value="{{old('propertyName',$property->property_name)}}" class="form-control">
+                                        <label for="">Property Specification <sup>*</sup></label>
+                                        <input type="text" data-parsley-required-message="Enter property specification?" required  placeholder="Property Specification" name="propertyName" id="propertyName" value="{{old('propertyName',$property->property_name)}}" class="form-control">
                                         @error('propertyName') <i class="text-danger">{{$message}}</i> @enderror
                                     </div>
                                     <div class="form-group mt-3">
-                                        <label for="">Description</label>
+                                        <label for="">Additional Information</label>
                                         <div id="editor" style="height: 250px;">{!! $property->description ?? '' !!}</div>
                                         <textarea data-parsley-required-message="Give us brief information about this property."   name="propertyDescription" id="hiddenContent" style="display: none">{{old('hiddenContent')}}</textarea>
                                         @error('propertyDescription') <i class="text-danger">{{$message}}</i> @enderror
@@ -830,7 +830,7 @@
 
             $('.editPropertyWindow').hide();
             let options = {
-                placeholder: 'Enter property description here...',
+                placeholder: 'Enter additional information here...',
                 theme: 'snow'
             };
             let quill = new Quill('#editor', options);

@@ -115,8 +115,8 @@
                             </div>
                             <div class="col-sm-4 col-md-4 lg-6">
                                 <div class="form-group">
-                                    <label for="">Building Type<sup class="text-danger">*</sup></label>
-                                    <select data-parsley-required-message="What kind of building is this?" required  class="form-control select2" name="buildingType">
+                                    <label for="">Property Type<sup class="text-danger">*</sup></label>
+                                    <select data-parsley-required-message="Indicate property type" required  class="form-control select2" name="buildingType">
                                         @foreach($buildingTypes as $key=> $bType)
                                             <option value="{{$bType->bt_id}}" {{ $key == 0 ? 'selected' : null }}>{{ $bType->bt_name ?? '' }}</option>
                                         @endforeach
@@ -265,14 +265,14 @@
                             <div class="row mt-3">
                                 <div class="col-md-8 col-sm-8 col-lg-8 mt-3">
                                     <div class="form-group">
-                                        <label for="">Property Name <sup>*</sup></label>
-                                        <input type="text" data-parsley-required-message="What name would you give to this property?" required  placeholder="Property Name" name="propertyName" id="propertyName" value="{{old('propertyName')}}" class="form-control">
+                                        <label for="">Property Specification <sup>*</sup></label>
+                                        <input type="text" data-parsley-required-message="What's the property specification?" required  placeholder="Property Specification" name="propertyName" id="propertyName" value="{{old('propertyName')}}" class="form-control">
                                         @error('propertyName') <i class="text-danger">{{$message}}</i> @enderror
                                     </div>
                                     <div class="form-group mt-3">
-                                        <label for="">Description</label>
+                                        <label for="">Additional Information</label>
                                         <div id="editor" style="height: 250px;"></div>
-                                        <textarea data-parsley-required-message="Give us brief information about this property."   name="propertyDescription" id="hiddenContent" style="display: none">{{old('hiddenContent')}}</textarea>
+                                        <textarea data-parsley-required-message="Type additional information here.."   name="propertyDescription" id="hiddenContent" style="display: none">{{old('hiddenContent')}}</textarea>
                                         @error('propertyDescription') <i class="text-danger">{{$message}}</i> @enderror
                                     </div>
                                 </div>
@@ -469,7 +469,7 @@
                     return true;
                 });
             let options = {
-                placeholder: 'Enter property description here...',
+                placeholder: 'Enter additional information here...',
                 theme: 'snow'
             };
             let quill = new Quill('#editor', options);
