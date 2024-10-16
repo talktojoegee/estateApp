@@ -191,13 +191,13 @@ class UserController extends Controller
             $log = Auth::user()->first_name." ".Auth::user()->last_name." created $user->first_name $user->last_name 's account";
             ActivityLog::registerActivity(Auth::user()->org_id, null, Auth::user()->id, null, 'Account Creation', $log);
             $message = "You've successfully added a new  user to the system.";
-            //try {
+            try {
                 Mail::to($user)->send(new NewUserMail($user, $password));
                 EmailQueue::queueEmail($user->id, 'New Account', 'Your account was successfully registered.');
                 //\Mail::to($contact)->send(new ReceiptMailer($receipt, $contact));
-           /* } catch (\Exception $exception) {
-
-            }*/
+            } catch (\Exception $exception) {
+                throw new  \Exception($exception);
+            }
 
             session()->flash("success", $message);
             return back();
