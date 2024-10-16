@@ -140,6 +140,10 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Exception
+     */
     public function addNewUser(Request $request){
         $this->validate($request,[
             "firstName"=>"required",
@@ -170,10 +174,12 @@ class UserController extends Controller
             "branch.required"=>"Assign this person to a branch",
             "role.required"=>"What role best fits this person?",
         ]);
+
         try {
             $password = Str::random(8);
             $user = $this->user->createUser($request, $password);
             $role = $this->role->getRoleById($request->role);
+
             if(!empty($role)){
                 $user->assignRole($role->name);
             }
@@ -196,6 +202,7 @@ class UserController extends Controller
             session()->flash("success", $message);
             return back();
         }catch (\Exception $exception){
+            //throw new  \Exception($exception);
             session()->flash("error", 'Whoops! Something went wrong. Try again later.');
             return back();
         }

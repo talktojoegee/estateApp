@@ -831,7 +831,7 @@
             $('.editPropertyWindow').hide();
             let options = {
                 placeholder: 'Enter additional information here...',
-                theme: 'snow'
+                theme: 'snow' // | no-reply@efabpropertiesdatabase.com
             };
             let quill = new Quill('#editor', options);
             $('#addPropertyForm').on('submit',function(){

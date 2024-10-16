@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="col-md-12 col-lx-12">
                                 <div class="modal-header mb-3" >
-                                    <h6 class="modal-title text-uppercase" id="myModalLabel2">Add New Employee</h6>
+                                    <h6 class="modal-title text-uppercase text-info" id="myModalLabel2">Add New Employee</h6>
                                 </div>
                                 <form autocomplete="off" action="{{route('add-new-user')}}" enctype="multipart/form-data" method="post" id="addNewUser" data-parsley-validate="">
                                     @csrf

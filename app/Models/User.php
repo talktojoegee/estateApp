@@ -145,7 +145,7 @@ class User extends Authenticatable
         $user->cellphone_no = $request->mobileNo;
         $user->marital_status = $request->maritalStatus;
         $user->role = $request->role ?? null;
-        $user->pastor = isset($request->pastor) ? 1 : 0;
+        //$user->pastor = isset($request->pastor) ? 1 : 0;
         $user->gender = isset($request->gender) ? 1 : 0;
         $user->email = $request->email;
         $user->occupation = $request->occupation ?? null;
