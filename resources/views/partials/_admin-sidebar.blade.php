@@ -120,7 +120,8 @@
                 <span key="t-invoice"> Invoice </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
-                @can('can-setup-invoice')<li><a href="{{route('new-invoice')}}" key="t-invoice">New Invoice</a></li>@endcan
+                <li><a href="{{route('manage-invoices', 'expiring-soon')}}" key="t-invoice">Expiring Soon</a></li>
+            @can('can-setup-invoice')<li><a href="{{route('new-invoice')}}" key="t-invoice">New Invoice</a></li>@endcan
                 @can('can-manage-invoice')<li><a href="{{route('manage-invoices', 'invoices')}}" key="t-invoice">All Invoices</a></li>
                 <li><a href="{{route('manage-invoices', 'fully-paid')}}" key="t-invoice">Fully-Paid</a></li>
                 <li><a href="{{route('manage-invoices', 'partly-paid')}}" key="t-invoice">Partly-Paid</a></li>

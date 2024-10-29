@@ -455,11 +455,13 @@ class PropertyController extends Controller
                         $item->save();
                     }
                 }
+
                 $data = [
                         'estate_id' => $item->estate_id ?? 1 ,
                         'property_title' => $item->property_title ?? null ,
                         'property_name' => $item->property_name ?? null ,
                         'house_no' => $item->house_no ?? null,
+                        'street' => $item->street ?? null,
                         'shop_no' => $item->shop_no ?? null,
                         'plot_no' => $item->plot_no ?? null,
                         'no_of_office_rooms' => $item->no_of_office_rooms ?? 0,
@@ -484,6 +486,12 @@ class PropertyController extends Controller
                         'slug'=>Str::slug($item->property_name).'-'.substr(sha1( (time() + $key) ),32,40)
                     ];
                 $property = Property::create($data);
+                $estate = Estate::getEstateById($item->estate_id);
+                if(!empty($estate)){
+                    $code = $estate->e_ref_code.$this->padNumber($property->id,6);
+                    $property->property_code = $code;
+                    $property->save();
+                }
                 $houseNo = $item->house_no ?? '';
                 $service = "Invoice generated for  ".$item->property_name." for house number: $houseNo";
                 //Generate invoice && then receipt

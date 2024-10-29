@@ -441,6 +441,24 @@ class RadioController extends Controller
                     'invoices'=> $this->invoicemaster->getAllInvoices([3]),
                     'title'=>'Declined Invoices'
                 ]);
+            case 'expiring-soon':
+                $invoices = $this->invoicemaster->getAllInvoices([0,1,2,3,4]);
+                $invoiceIds = [];
+                foreach($invoices as $invoice){
+                    $date1 = $invoice->issue_date;
+                    $date2 = $invoice->due_date;
+                    $diff = abs(strtotime($date2) - strtotime($date1));
+                    $years = floor($diff / (365*60*60*24));
+                    $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+                    $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+                    if($days > 7){
+                        array_push($invoiceIds, $invoice->id);
+                    }
+                }
+                return view('company.invoice.index',[
+                    'invoices'=> $this->invoicemaster->getInvoiceList($invoiceIds),
+                    'title'=>'Expired/Expiring Soon'
+                ]);
 
             default:
                 abort(404);

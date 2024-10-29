@@ -141,13 +141,14 @@
                                                     <thead>
                                                     <tr>
                                                         <th class="">#</th>
-                                                        <th class="wd-15p">Property Name</th>
+                                                        <th class="wd-15p">Property Spec.</th>
                                                         <th class="wd-15p">House No.</th>
+                                                        <th class="wd-15p">Street.</th>
                                                         <th class="wd-15p">Customer</th>
                                                         <th class="wd-15p">Price</th>
                                                         <th class="wd-15p">Amount Paid</th>
                                                         <th class="wd-15p">Estate</th>
-                                                        <th class="wd-15p">Building Type</th>
+                                                        <th class="wd-15p">Property Type</th>
                                                         <th class="wd-15p">Shop No.</th>
                                                         <th class="wd-15p">Plot No.</th>
                                                         <th class="wd-15p">No. of Office Rooms</th>
@@ -160,7 +161,7 @@
                                                         <th class="wd-15p">No. of Car Parking Space</th>
                                                         <th class="wd-15p">No. of Units</th>
                                                         <th class="wd-15p">Property Condition</th>
-                                                        <th class="wd-15p">Construction Stage</th>
+                                                        <th class="wd-15p">Property Status</th>
                                                         <th class="wd-15p">Land size</th>
                                                         <th class="wd-15p">Property Title</th>
                                                         <th class="wd-15p">Description</th>
@@ -180,6 +181,9 @@
                                                             </td>
                                                             <td>
                                                                 <input type="text" name="house_no[]" style="width: 150px;" value="{{ $item->house_no ?? '' }}" placeholder="House No" class="form-control">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="street[]" style="width: 150px;" value="{{ $item->street ?? '' }}" placeholder="Street" class="form-control">
                                                             </td>
                                                             <td>
                                                                 <select class="form-control select2" style="width: 150px;" name="occupied_by[]"><!-- Serves as customer -->

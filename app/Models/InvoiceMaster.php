@@ -166,6 +166,9 @@ class InvoiceMaster extends Model
         return InvoiceMaster::where('invoice_no',$invoiceNo)->first();
     }
 
+    public function getInvoiceList($ids){
+        return InvoiceMaster::whereIn('id', $ids)->orderBy('id', 'DESC')->get();
+    }
     public function getAllInvoices($status){
         return InvoiceMaster::whereIn('status', $status)->orderBy('id', 'DESC')->get();
     }

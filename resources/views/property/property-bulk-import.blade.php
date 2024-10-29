@@ -62,7 +62,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="modal-header mb-3">
-                                                    <h6 class="text-uppercase modal-title">  Import Properties</h6>
+                                                    <h6 class="text-uppercase text-info modal-title">  Import Properties</h6>
                                                 </div>
                                                 <form action="{{ route('show-bulk-property-import-form') }}" method="post" enctype="multipart/form-data">
                                                     @csrf

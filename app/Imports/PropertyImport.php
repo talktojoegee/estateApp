@@ -54,15 +54,15 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
     public function model(array $row)
     {
         //return dd($row);
-        $constructionStage = ConstructionStage::getConstructionStageByName($row[18]);
+        $constructionStage = ConstructionStage::getConstructionStageByName($row[19]);
         $estate = Estate::getEstateByName($row[1]);
         $buildingType = BuildingType::getBuildingTypeByName($row[2]);
-        $bq = BqOption::getBQOptionByName($row[10]);
-        $propertyTitle = PropertyTitle::getPropertyTitleByName($row[20]);
+        $bq = BqOption::getBQOptionByName($row[11]);
+        $propertyTitle = PropertyTitle::getPropertyTitleByName($row[21]);
         $enSuite = 1;
         $randNum = rand(99,999);
         //return dd($estate);
-        switch ($row[7]){
+        switch ($row[8]){
             case 'None':
               $enSuite = 0;
               break;
@@ -74,7 +74,7 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
                 break;
         }
         $propertyCondition = 1;
-        switch ($row[17]){
+        switch ($row[18]){
             case 'Good':
                 $propertyCondition = 0;
               break;
@@ -96,25 +96,26 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
         'property_title' => !empty($propertyTitle) ? $propertyTitle->pt_id : 1,
         'property_name' => $row[0] ?? 'Unknown_'.$randNum,
         'house_no' => $row[3] ?? null,
-        'shop_no' => $row[4] ?? null,
-        'plot_no' => $row[5] ?? null,
-        'no_of_office_rooms' => $row[6] ?? null,
+        'street' => $row[4] ?? null,
+        'shop_no' => $row[5] ?? null,
+        'plot_no' => $row[6] ?? null,
+        'no_of_office_rooms' => $row[7] ?? null,
         'office_ensuite_toilet_bathroom' => $enSuite,
         'no_of_shops' => $row[8] ?? null,
         'building_type' => !empty($buildingType) ? $buildingType->bt_id : 1,
-        'total_no_bedrooms' => $row[9] ?? 0,
+        'total_no_bedrooms' => $row[10] ?? 0,
         'with_bq' => !empty($bq) ? $bq->bqo_id : 1,
-        'no_of_floors' => $row[11] ?? 0,
-        'no_of_toilets' => $row[12] ?? 0,
-        'no_of_car_parking' => $row[13] ?? 0,
-        'no_of_units' => $row[14] ?? 0,
-        'price' => !empty($row[15]) ? floatval(preg_replace('/[^\d.]/', '', $row[15])) : 0,
-        'amount_paid' => !empty($row[16]) ? floatval(preg_replace('/[^\d.]/', '', $row[16])) : 0,
+        'no_of_floors' => $row[12] ?? 0,
+        'no_of_toilets' => $row[13] ?? 0,
+        'no_of_car_parking' => $row[14] ?? 0,
+        'no_of_units' => $row[15] ?? 0,
+        'price' => !empty($row[16]) ? floatval(preg_replace('/[^\d.]/', '', $row[16])) : 0,
+        'amount_paid' => !empty($row[17]) ? floatval(preg_replace('/[^\d.]/', '', $row[17])) : 0,
         'property_condition' => $propertyCondition,
         'construction_stage' => !empty($constructionStage) ? $constructionStage->cs_id : 1,
-        'land_size' => $row[19] ?? null,
+        'land_size' => $row[20] ?? null,
         'gl_id' => 1,
-        'description' => $row[21] ?? null,
+        'description' => $row[22] ?? null,
         'occupied_by'=>null,
 
         'kitchen' => 1,
