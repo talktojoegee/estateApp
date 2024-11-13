@@ -408,15 +408,169 @@ class PropertyController extends Controller
     }
 
 
-    public function deletePropertyRecord($recordId){
+    public function actionPropertyRecord($recordId, $action){
         $record = $this->propertyimportdetail->getPropertyDetailById($recordId);
         if(empty($record)){
             session()->flash("error", "Whoops! Record does not exist");
             return back();
         }
-        $record->delete();
-        session()->flash("success", "Success! Record deleted");
-        return back();
+        switch($action){
+            case 'delete':
+                $record->delete();
+                session()->flash("success", "Success! Record deleted");
+                return back();
+            case 'approve':
+                $record->action_status = 1;
+                $record->actioned_by = Auth::user()->id;
+                $record->date_actioned = now();
+                $record->save();
+                $item = $record;
+                $this->__saveAndPostItem($item);
+                session()->flash("success", "Success! Record posted");
+                return back();
+            case 'save-changes':
+                $item = $record;
+
+                $data = [
+                    'estate_id' => request('estate_id') ?? 1 ,
+                    'property_title' => request('property_title') ?? null ,
+                    'property_name' => request('property_name') ?? null ,
+                    'house_no' => request('house_no') ?? null,
+                    'street' => request('street') ?? null,
+                    'shop_no' => request('shop_no') ?? null,
+                    'plot_no' => request('plot_no') ?? null,
+                    'no_of_office_rooms' => request('no_of_office_rooms') ?? 0,
+                    'office_ensuite_toilet_bathroom' => request('office_ensuite_toilet_bathroom') ?? null,
+                    'no_of_shops' => request('no_of_shops') ?? 0,
+                    'building_type' => request('building_type') ?? null,
+                    'total_no_bedrooms' => request('total_no_bedrooms') ?? 0,
+                    'with_bq' => request('with_bq') ?? null,
+                    'no_of_floors' => request('no_of_floors') ?? 0,
+                    'no_of_toilets' => request('no_of_toilets') ?? 0,
+                    'no_of_car_parking' => request('no_of_car_parking') ?? 0,
+                    'no_of_units' => request('no_of_units') ?? 0,
+                    'price' => request('price') ?? 0,
+                    'amount_paid' => request('amount_paid') ?? 0,
+                    'property_condition' => request('property_condition') ?? null,
+                    'construction_stage' => request('constructionStage') ?? null,
+                    'land_size' => request('land_size') ?? null,
+                    'description' => request('description') ?? null,
+                    'occupied_by' => request('occupied_by') == 0 ? null : request('occupied_by'),
+                    'added_by' => Auth::user()->id ?? null,
+                    'sold_to' => request('occupied_by') == 0 ? null : request('occupied_by'),
+                    'slug'=>Str::slug(request('property_name').'-'.substr(sha1( (time() + rand(99,9999)) ),32,40))
+                ];
+                $item->update($data);
+                session()->flash("success", "Success! Changes saved.");
+                return back();
+            default:
+                abort(404);
+
+        }
+
+    }
+
+    private function __saveAndPostItem($item){
+
+        if($item->amount_paid > 0){
+            $item->payment_status = 1;
+            $item->save();
+            if($item->amount_paid >= $item->price){
+                $item->payment_status = 2;
+                $item->save();
+            }
+        }
+
+        $data = [
+            'estate_id' => $item->estate_id ?? 1 ,
+            'property_title' => $item->property_title ?? null ,
+            'property_name' => $item->property_name ?? null ,
+            'house_no' => $item->house_no ?? null,
+            'street' => $item->street ?? null,
+            'shop_no' => $item->shop_no ?? null,
+            'plot_no' => $item->plot_no ?? null,
+            'no_of_office_rooms' => $item->no_of_office_rooms ?? 0,
+            'office_ensuite_toilet_bathroom' => $item->office_ensuite_toilet_bathroom ?? null,
+            'no_of_shops' => $item->no_of_shops ?? 0,
+            'building_type' => $item->building_type ?? null,
+            'total_no_bedrooms' => $item->total_no_bedrooms ?? 0,
+            'with_bq' => $item->with_bq ?? null,
+            'no_of_floors' => $item->no_of_floors ?? 0,
+            'no_of_toilets' => $item->no_of_toilets ?? 0,
+            'no_of_car_parking' => $item->no_of_car_parking ?? 0,
+            'no_of_units' => $item->no_of_units ?? 0,
+            'price' => $item->price ?? 0,
+            //'amount_paid' => $item->amount_paid ?? 0,
+            'property_condition' => $item->property_condition ?? null,
+            'construction_stage' => $item->constructionStage ?? null,
+            'land_size' => $item->land_size ?? null,
+            'description' => $item->description ?? null,
+            'occupied_by' => $item->occupied_by == 0 ? null : $item->occupied_by,
+            'added_by' => Auth::user()->id ?? null,
+            'sold_to' => $item->occupied_by == 0 ? null : $item->occupied_by,
+            'slug'=>Str::slug($item->property_name).'-'.substr(sha1( (time() + rand(99,9999)) ),32,40)
+        ];
+        $property = Property::create($data);
+        $estate = Estate::getEstateById($item->estate_id);
+        if(!empty($estate)){
+            $code = $estate->e_ref_code.$this->padNumber($property->id,6);
+            $property->property_code = $code;
+            $property->save();
+        }
+        $houseNo = $item->house_no ?? '';
+        $service = "Invoice generated for  ".$item->property_name." for house number: $houseNo";
+        //Generate invoice && then receipt
+        if($item->amount_paid > 0){
+            $invoiceStatus = 0;
+            if($item->amount_paid >= $item->price){
+                $invoiceStatus = 1;
+            }
+            $invoice = $this->invoicemaster->generateInvoice($property->id, $item->occupied_by, rand(99,9999),3,
+                now(),date('Y-m-d', strtotime(now(). ' + 30 day')),
+                $item->price,$item->price, $item->amount_paid,$invoiceStatus, $service, 1,
+                $item->amount_paid);
+            //Generate receipt now
+            //$this->receipt->createNewReceipt($counter, $invoice, $amount, $charge, $method, $paymentDate)
+            $this->receipt->createNewReceipt(rand(99,9999), $invoice, $item->amount_paid, 0,1, now());
+
+        }
+        //return true;
+    }
+    private function __saveItemOnly($item){
+
+
+
+        $data = [
+            'estate_id' => request('estate_id') ?? 1 ,
+            'property_title' => request('property_title') ?? null ,
+            'property_name' => request('property_name') ?? null ,
+            'house_no' => request('house_no') ?? null,
+            'street' => request('street') ?? null,
+            'shop_no' => request('shop_no') ?? null,
+            'plot_no' => request('plot_no') ?? null,
+            'no_of_office_rooms' => request('no_of_office_rooms') ?? 0,
+            'office_ensuite_toilet_bathroom' => request('office_ensuite_toilet_bathroom') ?? null,
+            'no_of_shops' => request('no_of_shops') ?? 0,
+            'building_type' => request('building_type') ?? null,
+            'total_no_bedrooms' => request('total_no_bedrooms') ?? 0,
+            'with_bq' => request('with_bq') ?? null,
+            'no_of_floors' => request('no_of_floors') ?? 0,
+            'no_of_toilets' => request('no_of_toilets') ?? 0,
+            'no_of_car_parking' => request('no_of_car_parking') ?? 0,
+            'no_of_units' => request('no_of_units') ?? 0,
+            'price' => request('price') ?? 0,
+            //'amount_paid' => $item->amount_paid ?? 0,
+            'property_condition' => request('property_condition') ?? null,
+            'construction_stage' => request('constructionStage') ?? null,
+            'land_size' => request('land_size') ?? null,
+            'description' => request('description') ?? null,
+            'occupied_by' => request('occupied_by') == 0 ? null : request('occupied_by'),
+            'added_by' => Auth::user()->id ?? null,
+            'sold_to' => request('occupied_by') == 0 ? null : request('occupied_by'),
+            'slug'=>Str::slug(request('property_name').'-'.substr(sha1( (time() + rand(99,9999)) ),32,40))
+        ];
+        PropertyBulkImportDetail::update($data);
+
     }
 
 

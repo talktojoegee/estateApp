@@ -347,14 +347,14 @@
                                     @if(!is_null($property->sold_to))
                                         <tr>
                                             <th scope="row">1</th>
-                                            <td>{{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }}</td>
+                                            <td><a target="_blank" href="{{ route('lead-profile', $property->getSoldTo->slug)}}">{{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }}</a></td>
                                             <td><small><span class="text-success">First Allottee</span></small></td>
                                         </tr>
                                     @endif
                                     @foreach($property->getAllocations as $key =>  $allocation)
                                         <tr>
                                             <td>{{ $key + 2 }}</td>
-                                            <td>{{$allocation->getCustomer->first_name ?? '' }} {{$allocation->getCustomer->last_name ?? '' }} {{$allocation->getCustomer->other_names ?? '' }}</td>
+                                            <td><a target="_blank" href="{{ route('lead-profile', $allocation->getCustomer->slug)}}">{{$allocation->getCustomer->first_name ?? '' }} {{$allocation->getCustomer->last_name ?? '' }} {{$allocation->getCustomer->other_names ?? '' }}</a></td>
                                             <td><small><code>{{$Utility->numToOrdinalWord($allocation->level ?? 0)}} Allottee</code></small></td>
                                         </tr>
                                     @endforeach

@@ -1,6 +1,6 @@
 @extends('layouts.master-layout')
 @section('current-page')
-    Contacts
+    Vendors
 @endsection
 @section('extra-styles')
     <link rel="stylesheet" href="/css/nprogress.css">
@@ -16,14 +16,18 @@
 @section('main-content')
     <div class="container-fluid">
         <div class="row">
+            <div class="col-md-12 col-lg-12 col-12">
+                <div class="d-flex justify-content-end">
+                    <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#client" class="btn btn-primary  mb-3">Add New Vendor <i class="bx bx-plus-circle"></i> </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xl-12 col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#client" class="btn btn-primary  mb-3">Add New Contact <i class="bx bxs-user"></i> </a>
-                    </div>
                     <div class="card-body">
 
-                        <h4 class="card-title">Contacts</h4>
+                        <h4 class="card-title">Vendors</h4>
                         @if(session()->has('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <i class="mdi mdi-check-all me-2"></i>
@@ -303,8 +307,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
+                    <h6 class="modal-title text-uppercase text-info" id="myModalLabel2">Add New Vendor</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <h4 class="modal-title" id="myModalLabel2">Add New Contact</h4>
                 </div>
 
                 <div class="modal-body">
@@ -315,22 +319,27 @@
                             <input type="date" value="{{ date('Y-m-d') }}" name="date" class="form-control" data-parsley-required-message="Choose date" required>
                             @error(' date') <i class="text-danger">{{$message}}</i> @enderror
                         </div>
-                        <div class="form-group mt-1">
+                        <div class="form-group mt-2">
+                            <label for="">Company Name <span class="text-danger">*</span></label>
+                            <input type="text" name="companyName" placeholder="Company Name" class="form-control">
+                            @error('companyName') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-2">
                             <label for="">First Name <span class="text-danger">*</span></label>
                             <input type="text" name="firstName" placeholder="First Name" class="form-control">
                             @error('firstName') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
-                        <div class="form-group mt-1">
+                        <div class="form-group mt-2">
                             <label for="">Last Name <small>(Optional)</small></label>
                             <input type="text" name="lastName" placeholder="Last Name" class="form-control">
                             @error('lastName') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
-                        <div class="form-group mt-1">
+                        <div class="form-group mt-2">
                             <label for="">Mobile Phone Number <span class="text-danger">*</span></label>
                             <input type="text" name="mobileNo" placeholder="Mobile Phone Number" class="form-control">
                             @error('mobileNo') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
-                        <div class="form-group mt-1">
+                        <div class="form-group mt-2">
                             <label for="">Contact Group</label>
                             <select name="clientGroup" id="" class="form-control">
                                 @foreach($clientGroups as $cg)
@@ -338,14 +347,32 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group mt-1">
+                        <div class="form-group mt-2">
                             <label for="">Email Address <small>(Optional)</small></label>
                             <input type="email" name="email" placeholder="Email Address" class="form-control">
                             @error('email') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
+                        <div class="modal-header mt-4" >
+                            <h6 class="modal-title text-uppercase text-info" id="myModalLabel2">Contact Person</h6>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="fullName" placeholder="Full Name" class="form-control">
+                            @error('fullName') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="">Mobile Phone No. <span class="text-danger">*</span></label>
+                            <input type="text" name="contactMobileNo" placeholder="Contact Person Mobile No." class="form-control">
+                            @error('contactMobileNo') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="">Email Address <small>(Optional)</small></label>
+                            <input type="email" name="contactEmail" placeholder="Contact Person Email Address" class="form-control">
+                            @error('email') <i class="text-danger">{{$message}}</i>@enderror
+                        </div>
                         <div class="form-group d-flex justify-content-center mt-3">
                             <div class="btn-group">
-                                <button id="creditChangesBtn" class="btn btn-primary  waves-effect waves-light">Submit <i class="bx bx-plus"></i> </button>
+                                <button id="creditChangesBtn" class="btn btn-primary  waves-effect waves-light">Submit <i class="bx bx-check-double"></i> </button>
                             </div>
                         </div>
                     </form>

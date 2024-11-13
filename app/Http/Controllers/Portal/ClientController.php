@@ -19,6 +19,12 @@ class ClientController extends Controller
 {
     use UtilityTrait;
 
+    /**
+     *
+     *
+     * Client module is considered as vendor
+     */
+
     public function __construct(){
         $this->middleware('auth');
         $this->client = new Client();
@@ -27,6 +33,7 @@ class ClientController extends Controller
         $this->users = new User();
         //$this->notification = new Notification();
     }
+
 
     public function showClients(){
         return view('clients.index', [

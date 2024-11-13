@@ -292,6 +292,42 @@
             </ul>
         </li>
         @endcan
+        <li class="menu-title">Inventory</li>
+        @can('access-payroll-settings')
+            <li>
+                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <i class="bx bxl-product-hunt"></i>
+                    <span key="t-inventory"> Products </span>
+                </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{route('payment-definition')}}" key="t-inventory">Add Product</a></li>
+                    <li><a href="{{route('salary-structure')}}" key="t-inventory">All Products</a></li>
+                    <li><a href="{{route('salary-allowances')}}" key="t-inventory">Stock Count</a></li>
+                    <li><a href="{{route('salary-allowances')}}" key="t-inventory">Category</a></li>
+                    <li><a href="{{route('payroll-month-year')}}" key="t-inventory">Brand</a></li>
+                </ul>
+            </li>
+        @endcan
+        @can('access-payroll-settings')
+            <li>
+                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <i class="bx bxs-hand-up"></i>
+                    <span key="t-vendor"> Vendors </span>
+                </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{route('payment-definition')}}" key="t-vendor">Add Vendor</a></li>
+                    <li><a href="{{route('clients')}}" key="t-vendor">All Vendors</a></li>
+                </ul>
+            </li>
+        @endcan
+        @can('access-account-settings')
+            <li>
+                <a href="{{route('accounting-settings')}}" class="waves-effect">
+                    <i class="bx bxs-hourglass-bottom"></i>
+                    <span key="t-chat">Warehouse</span>
+                </a>
+            </li>
+        @endcan
         <li class="menu-title">Reports</li>
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">

@@ -31,6 +31,7 @@ class Product extends Model
         $product->stock = $request->stock ?? 0;
         $product->photo = $this->uploadProductPhoto($request->photo);
         $product->description = $request->description ?? null;
+        $product->added_by = Auth::user()->id ?? null;
         $product->save();
     }
 

@@ -36,7 +36,7 @@
                         <div class="row">
                             <div class="col-7">
                                 <div class="text-primary p-3">
-                                    <h5 class="text-primary">User Details</h5>
+                                    <h5 class="text-primary">Vendor Details</h5>
                                     <p>Explore user profile</p>
                                 </div>
                             </div>
@@ -51,7 +51,7 @@
                                 <div class="avatar-md profile-user-wid mb-4" style="width: 120px; height: 120px;" >
                                     <img style="width: 120px; height: 120px;" src="{{url('storage/'.$client->avatar)}}" alt="" class="img-thumbnail rounded-circle">
                                 </div>
-                                <h5 class="font-size-15">{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</h5>
+                                <h5 class="font-size-15 text-info">{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</h5>
                                 <p class="text-muted mb-0"><span class="badge rounded-pill bg-success float-start" key="t-new">{{$client->getClientGroup->group_name ?? '' }}</span></p>
                             </div>
 
@@ -69,12 +69,14 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Personal Information</h4>
-                        <h5>Note :</h5>
-                        <p class="text-muted mb-4">{{$client->quick_note ?? 'No note...' }}</p>
+                        <h6 class="card-title mb-4 text-info">Personal Information</h6>
                         <div class="table-responsive">
                             <table class="table table-nowrap mb-0">
                                 <tbody>
+                                <tr>
+                                    <th scope="row">Company Name :</th>
+                                    <td>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</td>
+                                </tr>
                                 <tr>
                                     <th scope="row">Full Name :</th>
                                     <td>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</td>
@@ -102,31 +104,7 @@
                                         <label for="archivedToggler" data-on-label="Yes" data-off-label="No"></label>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Assigned To <span style="cursor: pointer;" id="clientAssignmentToggler"><i class="bx bxs-pencil text-warning"></i></span> :</th>
-                                    <td>{{$client->getAssignedTo->first_name  ?? '' }} {{$client->getAssignedTo->last_name  ?? '' }}</td>
-                                </tr>
-                                <tr class="bg-light" id="clientAssignmentWrapper">
-                                    <td colspan="2">
-                                        <form action="{{route('assign-client-to')}}" method="post">
-                                            @csrf
-                                            <h6 class="card-header bg-custom text-white mb-3">Assign User To...</h6>
-                                            <div class="form-group">
-                                                <label for="">Practitioners & Admins</label>
-                                                <select name="assignTo" id="assignTo" class="form-control">
-                                                    <option disabled selected>--Choose someone--</option>
-                                                    @foreach($users as $user)
-                                                        <option value="{{$user->id}}">{{$user->first_name ?? '' }} {{$user->last_name ?? '' }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <input type="hidden" name="client" value="{{$client->id}}">
-                                            </div>
-                                            <div class="form-group mt-3 d-flex justify-content-center">
-                                                <button type="submit" class="btn btn-primary btn-sm">Save changes <i class="bx bxs-right-arrow"></i> </button>
-                                            </div>
-                                        </form>
-                                    </td>
-                                </tr>
+
                                 </tbody>
                             </table>
                         </div>
@@ -143,13 +121,13 @@
                             <li class="nav-item">
                                 <a class="nav-link active" data-bs-toggle="tab" href="#medication" role="tab">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                                    <span class="d-none d-sm-block">Follow-up</span>
+                                    <span class="d-none d-sm-block">Purchases</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#home1" role="tab">
                                     <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                                    <span class="d-none d-sm-block">Messaging</span>
+                                    <span class="d-none d-sm-block">Payments</span>
                                 </a>
                             </li>
 

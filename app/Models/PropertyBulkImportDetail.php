@@ -16,6 +16,7 @@ class PropertyBulkImportDetail extends Model
         'added_by',
         'occupied_by',
         'property_title',
+        'street',
         'property_name',
         'house_no',
         'shop_no',
@@ -113,6 +114,10 @@ class PropertyBulkImportDetail extends Model
     }
     public function getOccupant(){
         return $this->belongsTo(User::class, 'occupied_by');
+    }
+
+    public function getOccupiedBy(){
+        return $this->belongsTo(Lead::class, 'occupied_by');
     }
 
     public function getEntryById($id){

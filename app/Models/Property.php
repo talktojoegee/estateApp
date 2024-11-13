@@ -21,6 +21,7 @@ class Property extends Model
             'occupied_by',
             'property_title',
             'property_name',
+            'street',
             'house_no',
             'shop_no',
             'plot_no',

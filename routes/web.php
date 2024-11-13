@@ -109,8 +109,9 @@ Route::prefix('/cloud-storage')->group(function(){
     Route::post('/delete-folder', [App\Http\Controllers\Portal\CloudStorageController::class, 'deleteFolder'])->name('delete-folder');
 });
 
-Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
-    Route::get('/', [App\Http\Controllers\Portal\ClientController::class, 'showClients'])->name('clients');
+//renamed users/clients to vendors
+Route::group(['prefix'=>'/vendors', 'middleware'=>'auth'], function(){
+    Route::get('/', [App\Http\Controllers\Portal\ClientController::class, 'showClients'])->name('clients'); //client now is known as vendors
     Route::post('/user-group', [App\Http\Controllers\Portal\ClientController::class, 'addClientGroup'])->name('client-group');
     Route::post('/edit-user-group', [App\Http\Controllers\Portal\ClientController::class, 'changeClientGroup'])->name('edit-client-group');
     Route::post('/add-user', [App\Http\Controllers\Portal\ClientController::class, 'addClient'])->name('add-client');
@@ -118,8 +119,7 @@ Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::post('/archive-unarchive-user', [App\Http\Controllers\Portal\ClientController::class, 'archiveUnarchiveClient'])->name('archive-unarchive-client');
     Route::post('/edit-user-profile', [App\Http\Controllers\Portal\ClientController::class, 'editClientProfile'])->name('edit-client-profile');
     Route::get('/view-profile/{slug}', [App\Http\Controllers\Portal\ClientController::class, 'viewClientProfile'])->name('view-client-profile');
-    Route::get('/show-payslip/', [App\Http\Controllers\Portal\ClientController::class, 'showPayslip'])->name('show-payslip');
-    Route::get('/payslip-report', [App\Http\Controllers\Portal\ClientController::class, 'payslipReport'])->name('payslip-report');
+
 });
 
 
@@ -131,15 +131,24 @@ Route::group(['prefix'=>'/tasks', 'middleware'=>'auth'], function(){
 });
 
 
-Route::group(['prefix'=>'/financials', 'middleware'=>'auth'],function(){
+Route::group(['prefix'=>'/inventory', 'middleware'=>'auth'],function(){
     Route::get('/', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showAllProducts'])->name('all-products');
     Route::post('/add-product-category', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'addProductCategory'])->name('add-product-category');
     Route::post('/edit-product-category', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editProductCategory'])->name('edit-product-category');
     Route::post('/add-product', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'addProduct'])->name('add-product');
     Route::post('/edit-product', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editProduct'])->name('edit-product');
+
+
+    #Vendor routes
+    Route::get('/vendors', [App\Http\Controllers\Portal\VendorController::class, 'showVendors'])->name('show-vendors');
+
+
+
     Route::get('/income', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showIncome'])->name('income');
     Route::post('/record-income', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'recordIncome'])->name('record-income');
     Route::get('/expense', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showExpense'])->name('expense');
+
+
     Route::get('/bulk-import', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showBulkImport'])->name('bulk-import');
     Route::post('/process-bulk-import', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'processBulkImport'])->name('process-bulk-import');
     Route::get('/approve-bulk-import', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'approveBulkImport'])->name('approve-bulk-import');
@@ -165,7 +174,7 @@ Route::group(['prefix'=>'/financials', 'middleware'=>'auth'],function(){
 Route::prefix('/sales')->group(function(){
     Route::get('/dashboard', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'marketing'])->name('marketing-dashboard');
     Route::get('/dashboard-filter', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'filterSalesRevenueReportDashboard'])->name('marketing-dashboard-filter');
-    Route::get('/leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showLeads'])->name('leads');
+    Route::get('/customers', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showLeads'])->name('leads');
     Route::get('/bulk-import-leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showBulkImportLeads'])->name('bulk-import-leads');
     Route::post('/leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'createLead']);
     Route::post('/bulk-lead-import', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'processLeadBulkImport'])->name("bulk-lead-import");
@@ -396,6 +405,9 @@ Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::post('/delete-user', [App\Http\Controllers\UserController::class, 'deleteUser'])->name('delete-user');
     Route::post('/grant-permission', [App\Http\Controllers\UserController::class, 'grantPermission'])->name('grant-permission');
     Route::post('/switch-wallpaper', [App\Http\Controllers\UserController::class, 'switchWallpaper'])->name('switch-wallpaper');
+
+    Route::get('/show-payslip/', [App\Http\Controllers\Portal\ClientController::class, 'showPayslip'])->name('show-payslip');
+    Route::get('/payslip-report', [App\Http\Controllers\Portal\ClientController::class, 'payslipReport'])->name('payslip-report');
 });
 
 
@@ -529,7 +541,7 @@ Route::group(['prefix'=>'property','middleware'=>'auth'],function(){
     Route::match(['GET','POST'],'manage-allocations', [App\Http\Controllers\Portal\PropertyController::class, 'managePropertyAllocation'])->name('manage-property-allocations');
 
 
-    Route::get('/delete-property-entry/{recordId}', [App\Http\Controllers\Portal\PropertyController::class, 'deletePropertyRecord'])->name('delete-property-record');
+    Route::get('/action-property-entry/{recordId}/{action}', [App\Http\Controllers\Portal\PropertyController::class, 'actionPropertyRecord'])->name('action-property-record');
     Route::get('/discard-property-record/{batchCode}', [App\Http\Controllers\Portal\PropertyController::class, 'discardPropertyRecord'])->name('discard-property-record');
     Route::get('/post-property-record/{batchCode}', [App\Http\Controllers\Portal\PropertyController::class, 'postPropertyRecord'])->name('post-property-record');
 });
