@@ -43,6 +43,11 @@ class SendSMSCommand extends Command
     public function handle()
     {
 
+
+        /*
+         * This section handles scheduled SMS messages
+         *
+         */
         $now = Carbon::now('Africa/Lagos')->toDateTimeString();
         $messages = BulkMessage::getRecurringMessages();
         if(count($messages) > 0){
@@ -160,6 +165,10 @@ class SendSMSCommand extends Command
             }
 
         }
+
+
+
+
 
     }
 

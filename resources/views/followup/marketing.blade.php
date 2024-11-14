@@ -297,8 +297,6 @@
         </div>
     </div>
 
-
-
 @endsection
 
 @section('extra-scripts')

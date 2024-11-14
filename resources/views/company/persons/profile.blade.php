@@ -10,6 +10,11 @@
     <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{asset('assets/css/toastify.min.css')}}">
+    <style>
+        .text-danger{
+            color: #ff0000 !important;
+        }
+    </style>
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -649,6 +654,39 @@
             </div>
         </div>
     </div>
+    @if($invoiceCount->count() > 0)
+        @if(!is_null(\Illuminate\Support\Facades\Auth::user()->getUserRole))
+            @if(\Illuminate\Support\Facades\Auth::user()->getUserRole->name == 'Marketers')
+                <div class="modal fade show" id="notificationAlert" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-modal="true" role="dialog" >
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header border-bottom-0">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="text-center mb-4">
+                                    <div class="avatar-md mx-auto mb-4">
+                                        <div class="avatar-title bg-light rounded-circle text-primary h1">
+                                            <i class="mdi mdi-alert"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-xl-10">
+                                            <h4 class="text-danger">Attention!</h4>
+                                            <p class="text-muted font-size-14 mb-4">These invoices are due within the next 7 days. Please review them to ensure timely payments and avoid any late fees. Select an invoice to view details or take action.</p>
+                                            <a class="btn btn-primary btn-block btn-lg" href="{{route('manage-invoices', 'expiring-soon')}}" >
+                                                Take me there <i class="bx bxs-paper-plane"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endif
+    @endif
 @endsection
 
 @section('extra-scripts')
@@ -665,6 +703,7 @@
         let scheme = null;
         let themeId = null;
         $(document).ready(function(){
+            $('#notificationAlert').modal('show');
             let currentImagePath = "{{url('storage/'.$user->image)}}";
             $('#clientAssignmentWrapper').hide();
             $("#clientAssignmentToggler").click(function(){

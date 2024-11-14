@@ -28,6 +28,7 @@ use App\Models\Refund;
 use App\Models\State;
 use App\Models\User;
 use App\Models\Workstation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -442,8 +443,10 @@ class RadioController extends Controller
                     'title'=>'Declined Invoices'
                 ]);
             case 'expiring-soon':
-                $invoices = $this->invoicemaster->getAllInvoices([0,1,2,3,4]);
-                $invoiceIds = [];
+                //$invoices = $this->invoicemaster->getAllInvoices([0,1,2,3,4]);
+                $invoices = InvoiceMaster::where('due_date', '<=', Carbon::now()->addDays(7))->get();
+                //$invoices = InvoiceMaster::whereBetween('due_date', [Carbon::now(), Carbon::now()->addDays(7)])->get();
+           /*     $invoiceIds = [];
                 foreach($invoices as $invoice){
                     $date1 = $invoice->issue_date;
                     $date2 = $invoice->due_date;
@@ -454,9 +457,9 @@ class RadioController extends Controller
                     if($days > 7){
                         array_push($invoiceIds, $invoice->id);
                     }
-                }
+                }*/
                 return view('company.invoice.index',[
-                    'invoices'=> $this->invoicemaster->getInvoiceList($invoiceIds),
+                    'invoices'=> $invoices,//$this->invoicemaster->getInvoiceList($invoiceIds),
                     'title'=>'Expired/Expiring Soon'
                 ]);
 

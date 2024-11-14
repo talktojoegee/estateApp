@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\ChurchBranch;
 use App\Models\Country;
 use App\Models\EmailQueue;
+use App\Models\InvoiceMaster;
 use App\Models\LocalGovernment;
 use App\Models\MaritalStatus;
 use App\Models\ModuleManager;
@@ -17,6 +18,7 @@ use App\Models\State;
 use App\Models\UserBankDetail;
 use App\Models\UserNextKin;
 use App\Models\Wallpaper;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -94,6 +96,7 @@ class UserController extends Controller
         if(empty($user)){
             abort(404);
         }
+        $invoices = InvoiceMaster::whereBetween('due_date', [Carbon::now(), Carbon::now()->addDays(7)])->get();
         if(!empty($user)){
             //branch related
             $branchPostIds = $this->postcorrespondingpersons->getCorrespondingPosts(2,$branchId)
@@ -127,7 +130,8 @@ class UserController extends Controller
                     'countries'=>$this->country->getCountries(),
                     'branches'=>$this->churchbranch->getAllChurchBranches(),
                     'maritalstatus'=>$this->maritalstatus->getMaritalStatuses(),
-                    'wallpapers'=>$this->wallpaper->getAllWallpapers()
+                    'wallpapers'=>$this->wallpaper->getAllWallpapers(),
+                    'invoiceCount'=>$invoices
                 ]);
             /*else{
                 return view('company.persons.profile',[
