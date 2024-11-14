@@ -112,7 +112,14 @@ class User extends Authenticatable
         return $this->belongsTo(Organization::class, 'org_id', 'id');
     }
 
+    public function getState(){
+        return $this->belongsTo(State::class, 'state_origin');
+    }
 
+
+    public function getLGA(){
+        return $this->belongsTo(LocalGovernment::class, 'lga_id');
+    }
 
     public function getUserHomepageSettings(){
         return $this->belongsTo(Homepage::class, 'org_id');
@@ -158,6 +165,10 @@ class User extends Authenticatable
         $user->password = bcrypt($password);
         $user->is_admin = $request->userType;
         $user->address_1 = $request->presentAddress ?? null;
+        $user->religion = $request->religion ?? null;
+        $user->lga_id = $request->lga ?? null;
+        $user->home_address = $request->homeAddress ?? null;
+        $user->state_origin = $request->stateOrigin ?? null;
         $user->uuid = Str::uuid();
         $user->api_token = Str::random(60);
         $user->slug = Str::slug($request->firstName).'-'.Str::random(8);

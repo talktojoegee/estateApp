@@ -7,11 +7,15 @@ use App\Models\ActivityLog;
 use App\Models\ChurchBranch;
 use App\Models\Country;
 use App\Models\EmailQueue;
+use App\Models\LocalGovernment;
 use App\Models\MaritalStatus;
 use App\Models\ModuleManager;
 use App\Models\Post;
 use App\Models\PostCorrespondingPerson;
 use App\Models\Role;
+use App\Models\State;
+use App\Models\UserBankDetail;
+use App\Models\UserNextKin;
 use App\Models\Wallpaper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -30,10 +34,14 @@ class UserController extends Controller
         $this->maritalstatus = new MaritalStatus();
         $this->modulemanager = new ModuleManager();
         $this->role = new Role();
+        $this->lga = new LocalGovernment();
+        $this->state = new State();
 
         $this->post = new Post();
         $this->postcorrespondingpersons = new PostCorrespondingPerson();
         $this->wallpaper = new Wallpaper();
+        $this->usernextkin = new UserNextKin();
+        $this->userbankdetail = new UserBankDetail();
     }
 
     public function customerDashboard(){
@@ -83,7 +91,7 @@ class UserController extends Controller
     public function showUserProfile($slug){
         $user = $this->user->getUserBySlug($slug);
         $branchId = $user->branch ?? 1;
-        if(empty($branchId)){
+        if(empty($user)){
             abort(404);
         }
         if(!empty($user)){
@@ -145,6 +153,7 @@ class UserController extends Controller
      * @throws \Exception
      */
     public function addNewUser(Request $request){
+
         $this->validate($request,[
             "firstName"=>"required",
             "lastName"=>"required",
@@ -158,7 +167,12 @@ class UserController extends Controller
             "presentAddress"=>'required',
             "branch"=>'required',
             "role"=>'required',
-        ],[
+            "religion"=>'required',
+            "stateOrigin"=>'required',
+            "lga"=>'required',
+            "homeAddress"=>'required',
+        ],
+            [
             "firstName.required"=>"What's the person's first name?",
             "lastName.required"=>"Last name is very much important. What's the person's last name?",
             "email.required"=>"Enter a valid email address",
@@ -173,7 +187,12 @@ class UserController extends Controller
             "presentAddress.required"=>"Enter current or residential address",
             "branch.required"=>"Assign this person to a branch",
             "role.required"=>"What role best fits this person?",
+            "religion.required"=>"Indicate religion",
+            "stateOrigin.required"=>"Choose state of origin",
+            "lga.required"=>"Choose LGA",
+            "homeAddress.required"=>"Enter home address",
         ]);
+
 
         try {
             $password = Str::random(8);
@@ -187,17 +206,20 @@ class UserController extends Controller
             if(isset($request->avatar)){
                 $this->user->uploadProfilePicture($request->avatar, $user->id);
             }
+            //user next of kin
+            $this->usernextkin->addUserNextKin($request, $user->id);
+            //user bank details
+            $this->userbankdetail->addBankDetails($request, $user->id);
 
             $log = Auth::user()->first_name." ".Auth::user()->last_name." created $user->first_name $user->last_name 's account";
             ActivityLog::registerActivity(Auth::user()->org_id, null, Auth::user()->id, null, 'Account Creation', $log);
             $message = "You've successfully added a new  user to the system.";
-            try {
+           /* try {
                 Mail::to($user)->send(new NewUserMail($user, $password));
                 EmailQueue::queueEmail($user->id, 'New Account', 'Your account was successfully registered.');
-                //\Mail::to($contact)->send(new ReceiptMailer($receipt, $contact));
             } catch (\Exception $exception) {
                 throw new  \Exception($exception);
-            }
+            }*/
 
             session()->flash("success", $message);
             return back();
@@ -317,7 +339,8 @@ class UserController extends Controller
             'countries'=>$this->country->getCountries(),
             'branches'=>$this->churchbranch->getAllChurchBranches(),
             'maritalstatus'=>$this->maritalstatus->getMaritalStatuses(),
-            'roles'=>$this->role->getRoles()
+            'roles'=>$this->role->getRoles(),
+            'states'=>$this->state->getStatesByCountryId(161)
         ]);
     }
     public function switchWallpaper(Request $request){
@@ -336,5 +359,14 @@ class UserController extends Controller
 
         }
 
+    }
+
+    public function getLocalGovernments(Request $request){
+        $this->validate($request,[
+            'stateId'=>"required"
+        ]);
+        $lgas = $this->lga->getLocalGovernmentByStateId($request->stateId);
+        return view("administration._local-governments",
+            ["lgas"=>$lgas]);
     }
 }

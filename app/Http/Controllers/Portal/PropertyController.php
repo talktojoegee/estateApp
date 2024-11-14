@@ -474,6 +474,9 @@ class PropertyController extends Controller
 
         if($item->amount_paid > 0){
             $item->payment_status = 1;
+            $item->actioned_by = Auth::user()->id;
+            $item->date_actioned = now();
+            $item->action_status = 1;
             $item->save();
             if($item->amount_paid >= $item->price){
                 $item->payment_status = 2;
@@ -500,7 +503,7 @@ class PropertyController extends Controller
             'no_of_car_parking' => $item->no_of_car_parking ?? 0,
             'no_of_units' => $item->no_of_units ?? 0,
             'price' => $item->price ?? 0,
-            //'amount_paid' => $item->amount_paid ?? 0,
+            'amount_paid' => $item->amount_paid ?? 0,
             'property_condition' => $item->property_condition ?? null,
             'construction_stage' => $item->constructionStage ?? null,
             'land_size' => $item->land_size ?? null,

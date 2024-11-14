@@ -91,7 +91,7 @@
             <div class="card rounded">
                 <div class="">
                     <div class="modal-header">
-                        <h6 class="tx-11 fw-bolder text-uppercase">Personal Info</h6>
+                        <h6 class="tx-11 text-info fw-bolder text-uppercase">Personal Info</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -124,12 +124,32 @@
                         <p class="text-muted">{{$user->getUserCountry->name ?? '-'}}</p>
                     </div>
                     <div class="mt-1">
-                        <label class="tx-11 fw-bolder mb-0 text-uppercase">Occupation</label>
+                        <label class="tx-11 fw-bolder mb-0 text-uppercase">State of Origin</label>
+                        <p class="text-muted">{{$user->getState->name ?? '-'}}</p>
+                    </div>
+                    <div class="mt-1">
+                        <label class="tx-11 fw-bolder mb-0 text-uppercase">LGA</label>
+                        <p class="text-muted">{{$user->getLGA->local_name ?? '-'}}</p>
+                    </div>
+                    <div class="mt-1">
+                        <label class="tx-11 fw-bolder mb-0 text-uppercase">Position Title</label>
                         <p class="text-muted">{{$user->occupation ?? '-'}}</p>
                     </div>
                     <div class="mt-1">
-                        <label class="tx-11 fw-bolder mb-0 text-uppercase">Address</label>
+                        <label class="tx-11 fw-bolder mb-0 text-uppercase">Start Date</label>
+                        <p class="text-muted">{{ !is_null($user->start_date) ? date('d M, Y', strtotime($user->start_date)) : '-' }}</p>
+                    </div>
+                    <div class="mt-1">
+                        <label class="tx-11 fw-bolder mb-0 text-uppercase">Religion</label>
+                        <p class="text-muted">{{$user->religion ?? '-'}}</p>
+                    </div>
+                    <div class="mt-1">
+                        <label class="tx-11 fw-bolder mb-0 text-uppercase">Residential Address</label>
                         <p class="text-muted">{{$user->address_1 ?? '' }}</p>
+                    </div>
+                    <div class="mt-1">
+                        <label class="tx-11 fw-bolder mb-0 text-uppercase">Permanent Home Address</label>
+                        <p class="text-muted">{{$user->home_address ?? '' }}</p>
                     </div>
 
                 </div>

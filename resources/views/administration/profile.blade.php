@@ -1,6 +1,6 @@
 @extends('layouts.master-layout')
-@section('current-page')
-
+@section('title')
+    Profile
 @endsection
 @section('extra-styles')
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
@@ -79,7 +79,7 @@
             <div class="card rounded">
                 <div class="">
                     <div class="modal-header">
-                        <h6 class="tx-11 fw-bolder text-uppercase">Personal Info</h6>
+                        <h6 class="tx-11 fw-bolder text-info text-uppercase">Personal Info</h6>
                     </div>
                 </div>
                 <div class="card-body">

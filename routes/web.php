@@ -397,6 +397,7 @@ Route::group(['prefix'=>'/newsfeed', 'middleware'=>'auth'], function(){
 Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::get('/practitioners', [App\Http\Controllers\UserController::class, 'showPractitioners'])->name('practitioners');
     Route::get('/employees', [App\Http\Controllers\UserController::class, 'showAdministrators'])->name('pastors');
+    Route::post('/get-lgas', [App\Http\Controllers\UserController::class,'getLocalGovernments'])->name('get-lgas');
     Route::get('/employees/add-new', [App\Http\Controllers\UserController::class, 'showAddNewPastorForm'])->name('add-new-pastor');
     Route::get('/{slug}', [App\Http\Controllers\UserController::class, 'showUserProfile'])->name('user-profile');
     Route::post('/assign-revoke-role', [App\Http\Controllers\UserController::class, 'assignRevokeRole'])->name('assign-revoke-role');

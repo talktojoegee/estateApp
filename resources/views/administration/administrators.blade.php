@@ -44,7 +44,7 @@
                             <div class="row mb-1" >
                                 <div class="col" >
                                     <p class="mb-1">Total</p>
-                                    <h3 class="mb-0 number-font">{{ number_format($users->where("pastor",1)->where("status",1)->count())  }}</h3>
+                                    <h5 class="mb-0 number-font text-info">{{ number_format($users->where("pastor",1)->where("status",1)->count())  }}</h5>
                                 </div>
                                 <div class="col-auto mb-0" >
                                     <div class="dash-icon text-secondary1" >
@@ -62,7 +62,7 @@
                             <div class="row mb-1" >
                                 <div class="col" >
                                     <p class="mb-1">Total</p>
-                                    <h3 class="mb-0 number-font">{{ number_format($users->where("pastor",1)->where("status",2)->count())  }}</h3>
+                                    <h5 class="mb-0 number-font text-info">{{ number_format($users->where("pastor",1)->where("status",2)->count())  }}</h5>
                                 </div>
                                 <div class="col-auto mb-0" >
                                     <div class="dash-icon text-orange" >
@@ -80,7 +80,7 @@
                             <div class="row mb-1" >
                                 <div class="col" >
                                     <p class="mb-1">Total</p>
-                                    <h3 class="mb-0 number-font">{{ number_format($users->where("pastor",'=',0)->where("status",'=',1)->count())  }}</h3>
+                                    <h5 class="mb-0 number-font text-info">{{ number_format($users->where("pastor",'=',0)->where("status",'=',1)->count())  }}</h5>
                                 </div>
                                 <div class="col-auto mb-0" >
                                     <div class="dash-icon text-secondary" >
@@ -98,7 +98,7 @@
                             <div class="row mb-1" >
                                 <div class="col" >
                                     <p class="mb-1">Total</p>
-                                    <h3 class="mb-0 number-font">{{ number_format($users->where("pastor",0)->where("status",2)->count())  }}</h3>
+                                    <h5 class="mb-0 number-font text-info">{{ number_format($users->where("pastor",0)->where("status",2)->count())  }}</h5>
                                 </div>
                                 <div class="col-auto mb-0" >
                                     <div class="dash-icon text-warning" >
