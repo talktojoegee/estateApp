@@ -20,6 +20,7 @@ Route::get('/book-appointment', [App\Http\Controllers\Portal\BookingController::
 
 Route::get('/migration', function(){
     Artisan::call('migrate');
+    return dd('success');
 });
 Route::get('/process/payment',[App\Http\Controllers\OnlinePaymentController::class, 'processOnlinePayment']);
 Route::prefix('/settings')->group(function(){
