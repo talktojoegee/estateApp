@@ -125,6 +125,7 @@ class User extends Authenticatable
         return $this->belongsTo(Homepage::class, 'org_id');
     }
 
+
     public function registerUser(Request $request, $orgId){
         //$password = Str::random(8);
         $user = new User();
@@ -381,6 +382,13 @@ class User extends Authenticatable
             ->take($counter)
             ->get();
 
+    }
+
+    public function getUserNextKin($userId){
+        return UserNextKin::where('user_id',$userId)->first();
+    }
+    public function getUserBankDetails($userId){
+        return UserBankDetail::where('user_id', $userId)->first();
     }
 
 /*

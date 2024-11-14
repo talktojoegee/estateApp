@@ -162,6 +162,12 @@
                 <div class="card-body">
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#home" role="tab" aria-selected="false" tabindex="-1">
+                                <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                <span class="d-none d-sm-block">Home</span>
+                            </a>
+                        </li>
                         @if(\Illuminate\Support\Facades\Auth::user()->id == $user->id)
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" data-bs-toggle="tab" href="#settings1" role="tab" aria-selected="false" tabindex="-1">
@@ -176,8 +182,9 @@
                             </a>
                         </li>
                         @endif
+
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#log" role="tab" aria-selected="false" tabindex="-1">
+                            <a class="nav-link" data-bs-toggle="tab" href="#log" role="tab" aria-selected="false" tabindex="-1">
                                 <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
                                 <span class="d-none d-sm-block">Activity Log</span>
                             </a>
@@ -379,7 +386,88 @@
                                 </div>
                             </div>
                         @endif
-                        <div class="tab-pane active" id="log" role="tabpanel" >
+                        <div class="tab-pane active" id="home" role="tabpanel" >
+                            <div class="row  mt-4" >
+                                <div class="col-md-6 col-lg-6 col-6">
+                                    <div class="">
+                                        <div class="modal-header">
+                                            <h6 class="tx-11 text-info fw-bolder text-uppercase">Next of Kin</h6>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mt-1">
+
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Full Name</label>
+                                            <p class="text-muted">{{$user->getUserNextKin($user->id)->title ?? '-' }} {{$user->getUserNextKin($user->id)->first_name ?? '-' }} {{$user->getUserNextKin($user->id)->surname ?? '-' }} {{$user->getUserNextKin($user->id)->middle_name ?? '' }}</p>
+                                        </div>
+                                        <div class=" mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Mobile No.</label>
+                                            <p class="text-muted">{{$user->getUserNextKin($user->id)->mobile_no ?? '-' }}</p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Relationship</label>
+                                            <p class="text-muted"><a href="javascript:void(0)">{{$user->getUserNextKin($user->id)->relationship ?? '-'}}</a></p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Occupation</label>
+                                            <p class="text-muted">{{$user->getUserNextKin($user->id)->occupation ?? '-' }}</p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Mother's Maiden Name</label>
+                                            <p class="text-muted">{{$user->getUserNextKin($user->id)->mothers_maiden_name ?? '-' }}</p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Means of Identification ID</label>
+                                            <p class="text-muted">{{ $user->getUserNextKin($user->id)->means_of_id ?? '-' }}</p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Office Address</label>
+                                            <p class="text-muted">{{$user->getUserNextKin($user->id)->office_address ?? '-'}}</p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Home Address</label>
+                                            <p class="text-muted">{{$user->getUserNextKin($user->id)->home_address ?? '-'}}</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-6">
+                                    <div class="">
+                                        <div class="modal-header">
+                                            <h6 class="tx-11 text-info fw-bolder text-uppercase">Bank Details</h6>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Bank Name</label>
+                                            <p class="text-muted"> {{$user->getUserBankDetails($user->id)->bank_name ?? '-' }} </p>
+                                        </div>
+                                        <div class=" mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Account Name</label>
+                                            <p class="text-muted">{{$user->getUserBankDetails($user->id)->account_name ?? '-' }}</p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Account Number</label>
+                                            <p class="text-muted"><a href="javascript:void(0);">{{$user->getUserBankDetails($user->id)->account_no ?? '-'}}</a></p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Tax ID</label>
+                                            <p class="text-muted">{{$user->getUserBankDetails($user->id)->tax_id ?? '-' }}</p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Retirement Savings</label>
+                                            <p class="text-muted">{{$user->getUserBankDetails($user->id)->retirement_savings ?? '-'}}</p>
+                                        </div>
+                                        <div class="mt-1">
+                                            <label class="tx-11 fw-bolder mb-0 text-uppercase">Pension Fund</label>
+                                            <p class="text-muted">{{$user->getUserBankDetails($user->id)->pension_fund ?? '-'}}</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="tab-pane" id="log" role="tabpanel" >
                             <p>Here's a record of @if(Auth::user()->id != $user->id )  <code>{{$user->title ?? '' }} {{$user->first_name ?? '' }} {{$user->last_name ?? '' }} {{$user->other_names ?? '' }}'s</code> @else <code>your</code> @endif activities across board.</p>
                             <div class="mt-4" style="height: 660px; overflow-y: scroll;">
                                 <ul class="verti-timeline list-unstyled">
