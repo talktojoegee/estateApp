@@ -396,7 +396,6 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="mt-1">
-
                                             <label class="tx-11 fw-bolder mb-0 text-uppercase">Full Name</label>
                                             <p class="text-muted">{{$user->getUserNextKin($user->id)->title ?? '-' }} {{$user->getUserNextKin($user->id)->first_name ?? '-' }} {{$user->getUserNextKin($user->id)->surname ?? '-' }} {{$user->getUserNextKin($user->id)->middle_name ?? '' }}</p>
                                         </div>
