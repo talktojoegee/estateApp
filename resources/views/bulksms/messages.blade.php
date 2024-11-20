@@ -115,97 +115,6 @@
                                                                 <a class="dropdown-item" data-bs-target="#messageDetail_{{$message->id}}" data-bs-toggle="modal"> <i class="bx bxs-chart"></i> View</a>
                                                             </div>
                                                         </div>
-                                                        <div class="modal right fade" id="messageDetail_{{$message->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
-                                                            <div class="modal-dialog modal-dialog-scrollable" role="document">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header" >
-                                                                        <h4 class="modal-title" id="myModalLabel2">Message Details</h4>
-                                                                        <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-
-                                                                    <div class="modal-body text-wrap">
-                                                                        @if($message->recurring == 1)
-                                                                        <div class="form-check form-switch form-switch-lg mb-3" dir="ltr">
-                                                                            <input class="form-check-input" type="checkbox" data-bs-target="#promptModal_{{$message->id}}" data-bs-toggle="modal" {{ $message->recurring_active == 1 ? 'checked' : null }}>
-                                                                            <label class="form-check-label" for="activateDeactivate">Toggle to Activate or Deactivate</label>
-                                                                        </div>
-                                                                        @endif
-
-                                                                        <p><strong>Sender ID:</strong> {{$message->sender_id ?? '' }} </p>
-                                                                        <p><strong>Ref. Code:</strong> {{$message->slug ?? '' }} </p>
-                                                                        <p><strong>Message Type:</strong>
-                                                                            @if($message->recurring == 1)
-                                                                                <span class="text-success">Recurring</span>
-                                                                            @elseif($message->recurring == 2)
-                                                                                <span class="text-warning">Time-bond</span>
-                                                                            @else
-                                                                                <span class="text-primary">Instant</span>
-                                                                            @endif
-                                                                        </p>
-                                                                        <p><strong>Status:</strong>
-                                                                            @if($message->recurring_active == 1)
-                                                                                <span class="text-success">Active</span>
-                                                                            @else
-                                                                                <span class="text-danger">Deactivated</span>
-                                                                            @endif
-                                                                        </p>
-                                                                        @if(!is_null($message->bulk_frequency))
-                                                                            <p>
-                                                                                <strong>Frequency:</strong> {{ $message->getFrequency->label ?? '' }}
-                                                                            </p>
-                                                                        @endif
-                                                                        @if(!is_null($message->phone_group))
-                                                                            <p>
-                                                                                <strong>Phone Group:</strong> {{ $message->getPhoneGroup->group_name ?? '' }}
-                                                                            </p>
-                                                                        @endif
-                                                                        <p> <strong>Date & Time:</strong> {{date('d M, Y h:ia', strtotime($message->created_at))}}</p>
-                                                                        @if($message->recurring_active == 1)
-                                                                            <p>
-                                                                                <strong>Next Schedule:</strong> {{ date('d M, Y h:ia', strtotime($message->next_schedule)) }}
-                                                                            </p>
-                                                                        @endif
-                                                                        <p><strong>Message:</strong> {!! $message->message ?? ''  !!}</p>
-
-                                                                        <div class="text-muted mt-4 bg-light p-2">
-                                                                            <h6 class="font-size-12 mt-4">Sent to {{ count(explode(',', $message->sent_to)) ?? 0 }} contacts</h6>
-                                                                            <div style="overflow-y: scroll; height: 300px;">
-                                                                                @for($i = 0; $i < count(explode(',', $message->sent_to)); $i++)
-                                                                                    <p><i class="mdi mdi-chevron-right text-primary me-1"></i>
-                                                                                        {{ explode(',', $message->sent_to)[$i] ?? '' }},
-                                                                                    </p>
-                                                                                @endfor
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div id="promptModal_{{$message->id}}" class="modal fade bs-example-modal-sm" tabindex="-1" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-sm" >
-                                                                <div class="modal-content" >
-                                                                    <div class="modal-header" >
-                                                                        <h5 class="modal-title" id="mySmallModalLabel">Are you sure?</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-                                                                    <div class="modal-body" >
-                                                                        <form action="{{ route('update-message-status') }}" method="post">
-                                                                            @csrf
-                                                                            <div class="form-group">
-                                                                                <p class="text-wrap">Are you sure you want to {!!  $message->recurring_active == 0 ? "<span class='text-success'> activate </span>" : "<span class='text-danger'> deactivate </span>" !!} this message?</p>
-                                                                            </div>
-                                                                            <input type="hidden" name="messageId" value="{{$message->id}}">
-                                                                            <input type="hidden" name="status" value="{{ $message->recurring_active == 0 ? 1 : 0 }}">
-                                                                            <div class="modal-footer d-flex justify-content-center">
-                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                                <button type="submit" class="btn btn-primary">Yes, proceed</button>
-                                                                            </div>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -222,6 +131,104 @@
         </div>
     </div>
 
+
+
+
+    @foreach($messages as $message)
+
+                <div class="modal right fade" id="messageDetail_{{$message->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+                    <div class="modal-dialog modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header" >
+                                <h6 class="modal-title text-info text-uppercase" id="myModalLabel2">Message Details</h6>
+                                <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body text-wrap">
+                                @if($message->recurring == 1)
+                                    <div class="form-check form-switch form-switch-lg mb-3" dir="ltr">
+                                        <input class="form-check-input" type="checkbox" data-bs-target="#promptModal_{{$message->id}}" data-bs-toggle="modal" {{ $message->recurring_active == 1 ? 'checked' : null }}>
+                                        <label class="form-check-label" for="activateDeactivate">Toggle to Activate or Deactivate</label>
+                                    </div>
+                                @endif
+
+                                <p><strong>Sender ID:</strong> {{$message->sender_id ?? '' }} </p>
+                                <p><strong>Ref. Code:</strong> {{$message->slug ?? '' }} </p>
+                                <p><strong>Message Type:</strong>
+                                    @if($message->recurring == 1)
+                                        <span class="text-success">Recurring</span>
+                                    @elseif($message->recurring == 2)
+                                        <span class="text-warning">Time-bond</span>
+                                    @else
+                                        <span class="text-primary">Instant</span>
+                                    @endif
+                                </p>
+                                <p><strong>Status:</strong>
+                                    @if($message->recurring_active == 1)
+                                        <span class="text-success">Active</span>
+                                    @else
+                                        <span class="text-danger">Deactivated</span>
+                                    @endif
+                                </p>
+                                @if(!is_null($message->bulk_frequency))
+                                    <p>
+                                        <strong>Frequency:</strong> {{ $message->getFrequency->label ?? '' }}
+                                    </p>
+                                @endif
+                                @if(!is_null($message->phone_group))
+                                    <p>
+                                        <strong>Phone Group:</strong> {{ $message->getPhoneGroup->group_name ?? '' }}
+                                    </p>
+                                @endif
+                                <p> <strong>Date & Time:</strong> {{date('d M, Y h:ia', strtotime($message->created_at))}}</p>
+                                @if($message->recurring_active == 1)
+                                    <p>
+                                        <strong>Next Schedule:</strong> {{ date('d M, Y h:ia', strtotime($message->next_schedule)) }}
+                                    </p>
+                                @endif
+                                <p><strong>Message:</strong> {!! $message->message ?? ''  !!}</p>
+
+                                <div class="text-muted mt-4 bg-light p-2">
+                                    <h6 class="font-size-12 mt-4 text-info">Sent to {{ count(explode(',', $message->sent_to)) ?? 0 }} contacts</h6>
+                                    <div style="overflow-y: scroll; height: 300px;">
+                                        @for($i = 0; $i < count(explode(',', $message->sent_to)); $i++)
+                                            <p><i class="mdi mdi-chevron-right text-primary me-1"></i>
+                                                {{ explode(',', $message->sent_to)[$i] ?? '' }},
+                                            </p>
+                                        @endfor
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="promptModal_{{$message->id}}" class="modal fade bs-example-modal-sm" tabindex="-1" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-sm" >
+                        <div class="modal-content" >
+                            <div class="modal-header" >
+                                <h6 class="modal-title text-info" id="mySmallModalLabel">Are you sure?</h6>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" >
+                                <form action="{{ route('update-message-status') }}" method="post">
+                                    @csrf
+                                    <div class="form-group">
+                                        <p class="text-wrap">Are you sure you want to {!!  $message->recurring_active == 0 ? "<span class='text-success'> activate </span>" : "<span class='text-danger'> deactivate </span>" !!} this message?</p>
+                                    </div>
+                                    <input type="hidden" name="messageId" value="{{$message->id}}">
+                                    <input type="hidden" name="status" value="{{ $message->recurring_active == 0 ? 1 : 0 }}">
+                                    <div class="modal-footer d-flex justify-content-center">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Yes, proceed</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+    @endforeach
 
 @endsection
 

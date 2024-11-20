@@ -43,7 +43,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <h4>Phone Groups</h4>
+                    <h6 class="text-info text-uppercase">Phone Groups</h6>
                     @if(session()->has('success'))
                         <div class="alert alert-success mb-4">
                             <strong>Great!</strong>
@@ -70,42 +70,6 @@
                                     <td>{{number_format(count(explode(",",$group->phone_numbers) ?? 0))}}</td>
                                     <td>
                                         <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#categoryModal_{{$group->id}}" class="btn btn-sm btn-info">View</a>
-                                        <div id="categoryModal_{{$group->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="myModalLabel">Edit Phone Group</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form action="{{route('edit-phone-group')}}" method="post" autocomplete="off">
-                                                            @csrf
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                        <label for="">Phone Group Name</label>
-                                                                        <input type="text" placeholder="Phone Group Name" name="group_name" value="{{old('group_name', $group->group_name)}}" class="form-control">
-                                                                        @error('group_name')<i class="text-danger">{{$message}}</i>@enderror
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="">Phone Numbers</label>
-                                                                        <textarea name="phone_numbers" id="contact" cols="30" rows="10" style="resize: none" placeholder="Enter a list of phone numbers separated by comma." class="form-control">{{old('contact',$group->phone_numbers)}}</textarea>
-                                                                        @error('phone_numbers') <i class="text-danger mt-2">{{$message}}</i>@enderror
-                                                                    </div>
-                                                                    <div class="form-group d-flex justify-content-center mt-2">
-                                                                        <input type="hidden" name="group" value="{{$group->id}}">
-                                                                        <div class="btn-group">
-                                                                            <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                                                                            <button type="submit" class="btn btn-sm btn-custom"><i class="ti-check mr-2"></i> Save changes</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div><!-- /.modal-content -->
-                                            </div><!-- /.modal-dialog -->
-                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -116,6 +80,46 @@
             </div>
         </div>
     </div>
+
+
+    @foreach($groups as $group)
+        <div id="categoryModal_{{$group->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title text-info text-uppercase" id="myModalLabel">Edit Phone Group</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{route('edit-phone-group')}}" method="post" autocomplete="off">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Phone Group Name</label>
+                                        <input type="text" placeholder="Phone Group Name" name="group_name" value="{{old('group_name', $group->group_name)}}" class="form-control">
+                                        @error('group_name')<i class="text-danger">{{$message}}</i>@enderror
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        <label for="">Phone Numbers</label>
+                                        <textarea name="phone_numbers" id="contact" cols="30" rows="10" style="resize: none" placeholder="Enter a list of phone numbers separated by comma." class="form-control">{{old('contact',$group->phone_numbers)}}</textarea>
+                                        @error('phone_numbers') <i class="text-danger mt-2">{{$message}}</i>@enderror
+                                    </div>
+                                    <div class="form-group d-flex justify-content-center mt-2">
+                                        <input type="hidden" name="group" value="{{$group->id}}">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-sm btn-custom"><i class="ti-check mr-2"></i> Save changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    @endforeach
 @endsection
 
 @section('extra-scripts')

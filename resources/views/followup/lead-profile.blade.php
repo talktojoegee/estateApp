@@ -499,7 +499,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h4 class="modal-title" id="myModalLabel2">Send SMS</h4>
+                    <h6 class="modal-title text-info text-uppercase" id="myModalLabel2">Send SMS</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -698,6 +698,12 @@
                                 <img style="max-height: 700px; width: 100%;" src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}">
                             @break
                             @case('jpeg')
+                            <img style="max-height: 700px; width: 100%;" src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}">
+                            @break
+                            @case('png')
+                            <img style="max-height: 700px; width: 100%;" src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}">
+                            @break
+                            @case('webp')
                             <img style="max-height: 700px; width: 100%;" src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}">
                             @break
                             @default
