@@ -139,9 +139,11 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                <?php $index = 1 ?>
                                                 @foreach($record->getBulkImportDetails->where('action_status', '!=', 1) as $key=> $item)
                                                     <tr class="">
-                                                        <td>{{ $key+1 }}</td>
+
+                                                        <td>{{ $index++ }}</td>
                                                         <td>
                                                             {{ strlen( $item->property_name) > 30 ? substr( $item->property_name,0,30).'...' :  $item->property_name}}
                                                         </td>
