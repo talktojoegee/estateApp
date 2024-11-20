@@ -51,14 +51,14 @@ class ClientController extends Controller
            'clientGroup'=>'required',
            'date'=>'required|date',
         ],[
-            "firstName.required"=>"Enter client first name",
+            "firstName.required"=>"Enter vendor first name",
             //"lastName.required"=>"Enter client last name",
             "date.required"=>"Choose date",
             "date.date"=>"Enter a valid date format",
             //"email.required"=>"Enter client email address",
             //"email.email"=>"Enter a valid email address",
-            "mobileNo.required"=>"Enter client mobile phone number",
-            "clientGroup.required"=>"Assign client to a group",
+            "mobileNo.required"=>"Enter vendor mobile phone number",
+            "clientGroup.required"=>"Assign vendor to a group",
         ]);
 
         try{

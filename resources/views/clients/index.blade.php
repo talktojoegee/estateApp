@@ -60,7 +60,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#messages1" role="tab">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                                    <span class="d-none d-sm-block">Contact Group</span>
+                                    <span class="d-none d-sm-block">Category</span>
                                 </a>
                             </li>
                         </ul>
@@ -79,7 +79,7 @@
                                                    <th class="wd-15p">Name</th>
                                                    <th class="wd-15p">Mobile No.</th>
                                                    <th class="wd-15p">Email</th>
-                                                   <th class="wd-15p">Group</th>
+                                                   <th class="wd-15p">Category</th>
                                                    <th class="wd-15p">Action</th>
                                                </tr>
                                                </thead>
@@ -102,35 +102,8 @@
                                                                </div>
                                                            </div>
 
-                                                           <div id="archiveClientModal_{{$client->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-                                                               <div class="modal-dialog" role="document">
-                                                                   <div class="modal-content">
-                                                                       <div class="modal-header">
-                                                                           <h6 class="modal-title text-uppercase" id="exampleModalLabel">Archive Contact?</h6>
-                                                                       </div>
-                                                                       <form action="{{route('archive-unarchive-client')}}" method="post">
-                                                                           @csrf
-                                                                           <div class="modal-body">
-                                                                               <div class="row">
-                                                                                   <div class="col-md-12">
-                                                                                       <div class="form-group">
-                                                                                           <label for="">Are you sure you want to archive <strong>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</strong>?</label>
-                                                                                       </div>
-                                                                                   </div>
-                                                                                   <input type="hidden" name="clientId" value="{{$client->id}}" >
-                                                                                   <input type="hidden" name="status" value="2" >
-                                                                               </div>
-                                                                           </div>
-                                                                           <div class="modal-footer">
-                                                                               <div class="btn-group">
-                                                                                   <button data-bs-dismiss="modal" type="button" class="btn btn-secondary btn-mini"><i class="bx bx-x mr-2"></i>No, cancel</button>
-                                                                                   <button type="submit" class="btn btn-primary  btn-mini">Yes, archive <i class="bx bxs-right-arrow mr-2"></i></button>
-                                                                               </div>
-                                                                           </div>
-                                                                       </form>
-                                                                   </div>
-                                                               </div>
-                                                           </div>
+
+
                                                        </td>
                                                    </tr>
                                                @endforeach
@@ -173,35 +146,7 @@
                                                                     <a class="dropdown-item" href="javascript:void(0);" data-bs-target="#unarchiveClientModal_{{$client->id}}" data-bs-toggle="modal"> <i class="bx bx-archive"></i> Archive</a>
                                                                 </div>
                                                             </div>
-                                                            <div id="unarchiveClientModal_{{$client->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h6 class="modal-title text-uppercase" id="exampleModalLabel">Un-archive Contact?</h6>
-                                                                        </div>
-                                                                        <form action="{{route('archive-unarchive-client')}}" method="post">
-                                                                            @csrf
-                                                                            <div class="modal-body">
-                                                                                <div class="row">
-                                                                                    <div class="col-md-12">
-                                                                                        <div class="form-group">
-                                                                                            <label for="">Are you sure you want to un-archive <strong>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</strong>?</label>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <input type="hidden" name="clientId" value="{{$client->id}}" >
-                                                                                    <input type="hidden" name="status" value="1" >
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="modal-footer">
-                                                                                <div class="btn-group">
-                                                                                    <button data-bs-dismiss="modal" type="button" class="btn btn-secondary btn-mini"><i class="bx bx-x mr-2"></i>No, cancel</button>
-                                                                                    <button type="submit" class="btn btn-primary btn-mini">Yes, un-archive <i class="bx bxs-right-arrow mr-2"></i></button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -217,12 +162,12 @@
                                     <div class="col-xl-6">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="card-title">Add New Contact Group</div>
-                                                <div class="card-title-desc">Groups can be used to organize your contacts.</div>
+                                                <div class="card-title">Add New Category</div>
+                                                <div class="card-title-desc">Groups can be used to organize your vendors.</div>
                                                 <form action="{{route('client-group')}}" method="post" autocomplete="off">
                                                     @csrf
                                                     <div class="form-group">
-                                                        <label for="">Contact Group Name</label>
+                                                        <label for="">Category Name</label>
                                                         <input type="text" name="groupName" placeholder="Ex: Information Technology" class="form-control">
                                                         @error('groupName') <i class="text-danger">{{$message}}</i>@enderror
                                                     </div>
@@ -236,8 +181,8 @@
                                     <div class="col-xl-6">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h4 class="card-title">Contact Groups</h4>
-                                                <p class="card-title-desc">A list of your registered contact groups</p>
+                                                <h4 class="card-title">Category</h4>
+                                                <p class="card-title-desc">A list of your registered vendor categories</p>
 
                                                 <div class="table-responsive">
                                                     <table class="table mb-0">
@@ -245,7 +190,7 @@
                                                         <thead class="table-light">
                                                         <tr>
                                                             <th>#</th>
-                                                            <th>Group Name</th>
+                                                            <th> Name</th>
                                                             <th>Action</th>
                                                         </tr>
                                                         </thead>
@@ -257,32 +202,8 @@
                                                                 <td>{{$group->group_name ?? '' }}</td>
                                                                 <td>
                                                                     <a href="javascript:void(0);" data-bs-target="#editGroup_{{$group->id}}" data-bs-toggle="modal"> <i class=" bx bx-pencil text-warning"></i> </a>
-                                                                    <div class="modal fade" id="editGroup_{{$group->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
-                                                                        <div class="modal-dialog" role="document">
-                                                                            <div class="modal-content">
-                                                                                <div class="modal-header" >
-                                                                                    <h6 class="modal-title text-uppercase" id="myModalLabel2">Edit Contact Group</h6>
-                                                                                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                                </div>
 
-                                                                                <div class="modal-body">
-                                                                                    <form action="{{route('edit-client-group')}}" method="post" autocomplete="off">
-                                                                                        @csrf
-                                                                                        <div class="form-group">
-                                                                                            <label for="">Contact Group Name</label>
-                                                                                            <input type="text" name="groupName" value="{{$group->group_name ?? '' }}" placeholder="Ex: Nutrition" class="form-control">
-                                                                                            @error('groupName') <i class="text-danger">{{$message}}</i>@enderror
-                                                                                            <input type="hidden" name="groupId" value="{{$group->id}}">
-                                                                                        </div>
-                                                                                        <div class="form-group d-flex justify-content-center mt-3">
-                                                                                            <button type="submit" class="btn btn-primary">Save changes <i class="bx bx-right-arrow"></i> </button>
-                                                                                        </div>
-                                                                                    </form>
 
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -340,7 +261,7 @@
                             @error('mobileNo') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
                         <div class="form-group mt-2">
-                            <label for="">Contact Group</label>
+                            <label for="">Category</label>
                             <select name="clientGroup" id="" class="form-control">
                                 @foreach($clientGroups as $cg)
                                     <option value="{{$cg->id}}">{{$cg->group_name ?? '' }}</option>
@@ -382,6 +303,99 @@
         </div>
     </div>
 
+
+    @foreach($clients as $client)
+        <div id="archiveClientModal_{{$client->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title text-info text-uppercase" id="exampleModalLabel">Archive Contact?</h6>
+                    </div>
+                    <form action="{{route('archive-unarchive-client')}}" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Are you sure you want to archive <strong>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</strong>?</label>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="clientId" value="{{$client->id}}" >
+                                <input type="hidden" name="status" value="2" >
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="btn-group">
+                                <button data-bs-dismiss="modal" type="button" class="btn btn-secondary btn-mini"><i class="bx bx-x mr-2"></i>No, cancel</button>
+                                <button type="submit" class="btn btn-primary  btn-mini">Yes, archive <i class="bx bxs-right-arrow mr-2"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="unarchiveClientModal_{{$client->id}}" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title text-info text-uppercase" id="exampleModalLabel">Un-archive Contact?</h6>
+                    </div>
+                    <form action="{{route('archive-unarchive-client')}}" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Are you sure you want to un-archive <strong>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</strong>?</label>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="clientId" value="{{$client->id}}" >
+                                <input type="hidden" name="status" value="1" >
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="btn-group">
+                                <button data-bs-dismiss="modal" type="button" class="btn btn-secondary btn-mini"><i class="bx bx-x mr-2"></i>No, cancel</button>
+                                <button type="submit" class="btn btn-primary btn-mini">Yes, un-archive <i class="bx bxs-right-arrow mr-2"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+    @foreach($clientGroups as $group)
+
+        <div class="modal fade" id="editGroup_{{$group->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" >
+                        <h6 class="modal-title text-info text-uppercase" id="myModalLabel2">Edit Category</h6>
+                        <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form action="{{route('edit-client-group')}}" method="post" autocomplete="off">
+                            @csrf
+                            <div class="form-group">
+                                <label for="">Category Name</label>
+                                <input type="text" name="groupName" value="{{$group->group_name ?? '' }}" placeholder="Ex: Nutrition" class="form-control">
+                                @error('groupName') <i class="text-danger">{{$message}}</i>@enderror
+                                <input type="hidden" name="groupId" value="{{$group->id}}">
+                            </div>
+                            <div class="form-group d-flex justify-content-center mt-3">
+                                <button type="submit" class="btn btn-primary">Save changes <i class="bx bx-right-arrow"></i> </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
 
 @section('extra-scripts')

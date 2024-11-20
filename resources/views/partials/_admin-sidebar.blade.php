@@ -302,9 +302,6 @@
                 <ul class="sub-menu" aria-expanded="false">
                     <li><a href="{{route('all-products')}}" key="t-inventory">Add Product</a></li>
                     <li><a href="{{route('all-products')}}" key="t-inventory">All Products</a></li>
-                    <li><a href="#" key="t-inventory">Stock Count</a></li>
-                    <li><a href="#" key="t-inventory">Category</a></li>
-                    <li><a href="#" key="t-inventory">Brand</a></li>
                 </ul>
             </li>
         @endcan
