@@ -177,6 +177,33 @@ class User extends Authenticatable
         return $user;
     }
 
+    public function updateUserRecord(Request $request, $userId){
+        $user =  User::find($userId);
+        $user->title = $request->title ?? null;
+        $user->first_name = $request->firstName;
+        $user->last_name = $request->lastName;
+        $user->other_names = $request->otherNames;
+        $user->cellphone_no = $request->mobileNo;
+        $user->marital_status = $request->maritalStatus;
+        $user->role = $request->role ?? null;
+        $user->gender = isset($request->gender) ? 1 : 0;
+        $user->email = $request->email;
+        $user->occupation = $request->occupation ?? null;
+        $user->branch = $request->branch ?? null;
+        $user->country_id = $request->nationality ?? null;
+        $user->birth_date = $request->dob ?? null;
+        $user->birth_year = date('Y', strtotime($request->dob)) ?? null;
+        $user->birth_month = date('m', strtotime($request->dob)) ?? null;
+        $user->birth_day = date('d', strtotime($request->dob)) ?? null;
+        $user->address_1 = $request->presentAddress ?? null;
+        $user->religion = $request->religion ?? null;
+        $user->lga_id = $request->lga ?? null;
+        $user->home_address = $request->homeAddress ?? null;
+        $user->state_origin = $request->stateOrigin ?? null;
+        $user->save();
+        return $user;
+    }
+
     public function createCompanyUser(Request $request, $password){
         //$password = Str::random(8);
         $user = new User();

@@ -234,6 +234,112 @@ class UserController extends Controller
         }
 
     }
+
+
+    public function showUpdateUserRecord($slug){
+        $user = $this->user->getUserBySlug($slug);
+        if(empty($user)){
+            session()->flash("error", 'Whoops! No record found.');
+            return back();
+        }
+
+        return view('administration.edit-profile',[
+            'user'=>$user,
+            'countries'=>$this->country->getCountries(),
+            'branches'=>$this->churchbranch->getAllChurchBranches(),
+            'maritalstatus'=>$this->maritalstatus->getMaritalStatuses(),
+            'roles'=>$this->role->getRoles(),
+            'states'=>$this->state->getStatesByCountryId(161)
+        ]);
+    }
+
+
+    public function updateUserRecord(Request $request){
+
+        $this->validate($request,[
+            "firstName"=>"required",
+            "lastName"=>"required",
+            "email"=>"required|email|unique:users,email",
+            "userType"=>'required',
+            "mobileNo"=>'required',
+            "dob"=>'required|date',
+            "occupation"=>'required',
+            "nationality"=>'required',
+            "maritalStatus"=>'required',
+            "presentAddress"=>'required',
+            "branch"=>'required',
+            "role"=>'required',
+            "religion"=>'required',
+            "stateOrigin"=>'required',
+            "lga"=>'required',
+            "homeAddress"=>'required',
+            "userId"=>"required"
+        ],
+            [
+                "firstName.required"=>"What's the person's first name?",
+                "lastName.required"=>"Last name is very much important. What's the person's last name?",
+                "email.required"=>"Enter a valid email address",
+                "email.email"=>"Enter a valid email address",
+                "email.unique"=>"There's already an account with this email address. Try another one.",
+                "mobileNo.required"=>"Enter mobile number.",
+                "dob.required"=>"Enter date of birth",
+                "dob.date"=>"Invalid date format",
+                "occupation.required"=>"What does this person do for a living?",
+                "nationality.required"=>"What's the person's country or nationality?",
+                "maritalStatus.required"=>"Choose marital status",
+                "presentAddress.required"=>"Enter current or residential address",
+                "branch.required"=>"Assign this person to a branch",
+                "role.required"=>"What role best fits this person?",
+                "religion.required"=>"Indicate religion",
+                "stateOrigin.required"=>"Choose state of origin",
+                "lga.required"=>"Choose LGA",
+                "homeAddress.required"=>"Enter home address",
+                "userId"=>""
+            ]);
+
+
+        try {
+            $user = User::find($request->userId);
+            if(empty($user)){
+                session()->flash("error", "Whoops! Something went wrong.");
+                return back();
+            }
+
+            $user = $this->user->updateUserRecord($request, $user->id);
+            $role = $this->role->getRoleById($request->role);
+
+            if(!empty($role)){
+                $user->assignRole($role->name);
+            }
+
+            if(isset($request->avatar)){
+                $this->user->uploadProfilePicture($request->avatar, $user->id);
+            }
+            //user next of kin
+            $this->usernextkin->addUserNextKin($request, $user->id);
+            //user bank details
+            $this->userbankdetail->addBankDetails($request, $user->id);
+
+            $log = Auth::user()->first_name." ".Auth::user()->last_name." updated $user->first_name $user->last_name 's profile";
+            ActivityLog::registerActivity(Auth::user()->org_id, null, Auth::user()->id, null, 'Account Updated', $log);
+            $message = "Profile changes saved.";
+            /* try {
+                 Mail::to($user)->send(new NewUserMail($user, $password));
+                 EmailQueue::queueEmail($user->id, 'New Account', 'Your account was successfully registered.');
+             } catch (\Exception $exception) {
+                 throw new  \Exception($exception);
+             }*/
+
+            session()->flash("success", $message);
+            return back();
+        }catch (\Exception $exception){
+            //throw new  \Exception($exception);
+            session()->flash("error", 'Whoops! Something went wrong. Try again later.');
+            return back();
+        }
+
+    }
+
     public function updateUserProfile(Request $request){
         $this->validate($request,[
             "firstName"=>"required",

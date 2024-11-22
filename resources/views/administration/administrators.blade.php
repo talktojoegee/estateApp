@@ -160,6 +160,7 @@
                                                             @else
                                                                 <a class="dropdown-item" href="javascript:void(0);" data-bs-target="#deletePractitionerModal_{{$user->id}}" data-bs-toggle="modal"> <i class="bx bx-check-circle text-danger"></i> Activate</a>
                                                             @endif
+                                                            <a class="dropdown-item" href="{{route('show-update-user-record', $user->slug)}}" > <i class="bx bx-pencil text-warning"></i> Edit Profile</a>
                                                         </div>
                                                     </div>
                                                     <div class="modal fade" id="deletePractitionerModal_{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">

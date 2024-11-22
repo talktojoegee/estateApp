@@ -405,6 +405,10 @@ Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::get('/{slug}', [App\Http\Controllers\UserController::class, 'showUserProfile'])->name('user-profile');
     Route::post('/assign-revoke-role', [App\Http\Controllers\UserController::class, 'assignRevokeRole'])->name('assign-revoke-role');
     Route::post('/add-new-user', [App\Http\Controllers\UserController::class, 'addNewUser'])->name('add-new-user');
+
+    Route::get('/update-user-record/{slug}', [App\Http\Controllers\UserController::class, 'showUpdateUserRecord'])->name('show-update-user-record');
+    Route::post('/update-user-record', [App\Http\Controllers\UserController::class, 'updateUserRecord'])->name('update-user-record');
+
     Route::post('/update-user-account', [App\Http\Controllers\UserController::class, 'updateUserProfile'])->name('update-user-account');
     Route::post('/delete-user', [App\Http\Controllers\UserController::class, 'deleteUser'])->name('delete-user');
     Route::post('/grant-permission', [App\Http\Controllers\UserController::class, 'grantPermission'])->name('grant-permission');
