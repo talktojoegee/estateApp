@@ -219,6 +219,9 @@ class Lead extends Model
     public static function getCustomerValuation($customerId){
         return Receipt::where('customer_id', $customerId)->sum('total');
     }
+    /*public static function getValuationByType($type){
+        return Receipt::where('customer_type', $type)->sum('total');
+    }*/
 
     public static function getNumberOfProperties($customerId){
         return Property::where('sold_to', $customerId)->count();

@@ -445,10 +445,28 @@ class SalesnMarketingController extends Controller
         return array("from"=>$from, "to"=>$to);
     }*/
     public function showLeads(){
+        $individual = 0; $partnership = 0; $organization = 0;
+        $leads = $this->lead->getAllOrgLeads();
+        foreach($leads as $lead){
+            switch ($lead->customer_type){
+                case 1:
+                    $individual += $this->lead->getCustomerValuation($lead->id);
+                    break;
+                case 2:
+                    $partnership += $this->lead->getCustomerValuation($lead->id);
+                    break;
+                case 3:
+                    $organization += $this->lead->getCustomerValuation($lead->id);
+                    break;
+            }
+        }
         return view('followup.leads',[
             'sources'=>$this->leadsource->getLeadSources(),
             'statuses'=>$this->leadstatus->getLeadStatuses(),
             'leads'=>$this->lead->getAllOrgLeads(),
+            'individualValue'=>$individual,
+            'partnershipValue'=>$partnership,
+            'organizationValue'=>$organization,
         ]);
     }
 

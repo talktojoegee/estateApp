@@ -44,6 +44,63 @@
                         @include('followup.partial._top-navigation')
                     </div>
                 </div>
+                <div class="row" >
+                    <div class="col-xl-4 col-sm-6" >
+                        <div class="card" >
+                            <div class="card-body" >
+                                <div class="row mb-1" >
+                                    <div class="col" >
+                                        <p class="mb-1">Organization</p>
+                                        <h5 class="text-orange mb-0 number-font">{{env('APP_CURRENCY')}}{{ number_format($organizationValue,2) }}</h5>
+                                    </div>
+                                    <div class="col-auto mb-0" >
+                                        <div class="dash-icon text-orange" >
+                                            <i class="bx bxs-briefcase"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Head Count<code>({{ number_format($leads->where('customer_type',3)->count()) }})</code></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-sm-6" >
+                        <div class="card" >
+                            <div class="card-body" >
+                                <div class="row mb-1" >
+                                    <div class="col" >
+                                        <p class="mb-1">Partnership</p>
+                                        <h5 class="text-secondary mb-0 number-font">{{env('APP_CURRENCY')}}{{ number_format($partnershipValue,2) }}</h5>
+                                    </div>
+                                    <div class="col-auto mb-0" >
+                                        <div class="dash-icon text-secondary" >
+                                            <i class="bx bx-pencil"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Head Count<code>({{ number_format($leads->where('customer_type',2)->count()) }})</code></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-sm-6" >
+                        <div class="card" >
+                            <div class="card-body" >
+                                <div class="row mb-1" >
+                                    <div class="col" >
+                                        <p class="mb-1">Individuals</p>
+                                        <h5 class="text-warning mb-0 number-font">{{env('APP_CURRENCY')}}{{ number_format($individualValue,2) }}</h5>
+                                    </div>
+                                    <div class="col-auto mb-0" >
+                                        <div class="dash-icon text-warning" >
+                                            <i class="bx bx-user"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="fs-12 text-muted">  <span class="text-muted fs-12 ml-0 mt-1">Head Count<code>({{ number_format($leads->where('customer_type',1)->count() )}})</code> </span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="btn-group">
