@@ -24,6 +24,7 @@ use App\Models\LeadBulkImportMaster;
 use App\Models\LeadFollowupScheduleDetail;
 use App\Models\LeadFollowupScheduleMaster;
 use App\Models\LeadNote;
+use App\Models\LeadPartner;
 use App\Models\LeadSource;
 use App\Models\LeadStatus;
 use App\Models\Message;
@@ -453,6 +454,125 @@ class SalesnMarketingController extends Controller
 
     public function createLead(Request $request){
         $this->validate($request,[
+           'customerType'=>"required"
+        ],[
+            "customerType.required"=>"Select customer type"
+        ]);
+
+        if($request->customerType == 1){ //individual
+            $this->__validateIndividualCustomerType($request);
+            $this->lead->addLead($request);
+        }
+
+        if($request->customerType == 2){ //partnership
+            $this->__validatePartnershipCustomerType($request);
+            $lead = null;
+            foreach($request->partnerFullName as $key => $value){
+                if($key == 0){ //save first contact in leads table as the main person
+                    $lead = $this->lead->microAddLead($request->date, $request->customerType, $request->partnerFullName[$key], $request->partnerEmail[$key],
+                        $request->partnerMobileNo[$key], $request->partnerAddress[$key], $request->partnerKinFullName[$key], $request->partnerKinMobile[$key], $request->partnerKinEmail[$key], $request->partnerKinRelationship[$key]);
+
+                }else{
+                    LeadPartner::addPartner($lead->id,$request->partnerFullName[$key], $request->partnerEmail[$key], $request->partnerMobileNo[$key], $request->partnerAddress[$key],
+                        $request->partnerKinFullName[$key], $request->partnerKinMobile[$key], $request->partnerKinEmail[$key], $request->partnerKinRelationship[$key]);
+                }
+
+
+
+            }
+        }
+        if($request->customerType == 3){
+            $this->__validateOrganizationType($request);
+            $this->lead->registerOrg($request->date, $request->customerType, $request->organizationName, $request->organizationEmail,
+                $request->organizationMobileNo, $request->organizationAddress, $request->resourcePersonFullName, $request->resourcePersonMobileNo, $request->resourcePersonEmail, null);
+        }
+        session()->flash("success", "Your lead was added to the system!");
+        return back();
+    }
+
+    private function __validateIndividualCustomerType(Request $request){
+        $this->validate($request,[
+            'date'=>'required|date',
+            'firstName'=>'required',
+            'lastName'=>'required',
+            'email'=>'required|email',
+            'mobileNo'=>'required',
+            'source'=>'required',
+            'status'=>'required',
+            'gender'=>'required',
+            'customerType'=>'required',
+        ],[
+            "date.required"=>"Enter date",
+            "date.date"=>"Enter a valid date",
+            "firstName.required"=>"Enter client first name",
+            "lastName.required"=>"Enter client last name",
+            "email.required"=>"Enter client email address",
+            "email.email"=>"Enter a valid email address",
+            "mobileNo.required"=>"Enter client mobile phone number",
+            "source.required"=>"How did this person get to hear about us? Select one of the options below",
+            "status.required"=>"On what stage is this person? Kindly select...",
+            "customerType.required"=>"Indicate the type of customer",
+        ]);
+    }
+    private function __validatePartnershipCustomerType(Request $request){
+        $this->validate($request,[
+            'date'=>'required|date',
+            'partnerFullName'=>'required|array',
+            'partnerFullName.*'=>'required',
+
+            'partnerKinFullName'=>'required|array',
+            'partnerKinFullName.*'=>'required',
+
+            'partnerEmail'=>'required|array',
+            'partnerEmail.*'=>'required',
+
+            'partnerKinMobile'=>'required|array',
+            'partnerKinMobile.*'=>'required',
+
+            'partnerMobileNo'=>'required|array',
+            'partnerMobileNo.*'=>'required',
+
+            'partnerAddress'=>'required|array',
+            'partnerAddress.*'=>'required',
+
+            'partnerKinEmail'=>'required|array',
+            'partnerKinEmail.*'=>'required',
+
+            'partnerKinRelationship'=>'required|array',
+            'partnerKinRelationship.*'=>'required',
+        ],
+            [
+            'date.required'=>'Choose entry date',
+            'partnerFullName.required'=>'Enter full name',
+            'partnerEmail.required'=>'Enter email address',
+            'partnerMobileNo.required'=>'Enter mobile number',
+            'partnerAddress.required'=>'Enter address',
+        ]);
+    }
+    private function __validateOrganizationType(Request $request){
+        $this->validate($request, [
+           "organizationName"=>"required",
+           "organizationEmail"=>"required",
+           "organizationMobileNo"=>"required",
+           "organizationAddress"=>"required",
+           "resourcePersonFullName"=>"required",
+           "resourcePersonMobileNo"=>"required",
+           "resourcePersonEmail"=>"required",
+        ]);
+    }
+
+    public function showAddNewCustomerForm(Request $request){
+
+        $method = $request->getMethod();
+        switch ($method){
+            case 'GET':
+
+            return view('followup.new-lead',[
+                'sources'=>$this->leadsource->getLeadSources(),
+                'statuses'=>$this->leadstatus->getLeadStatuses(),
+            ]);
+        }
+        $this->validate($request,[
             'date'=>'required|date',
             'firstName'=>'required',
             'lastName'=>'required',
@@ -510,6 +630,52 @@ class SalesnMarketingController extends Controller
         $title = "Customer profile edited!";
         $log = Auth::user()->first_name." ".Auth::user()->last_name." edited client profile";
         ActivityLog::registerActivity(Auth::user()->org_id, $request->clientId, null, null, $title, $log);
+        session()->flash("success", "Your changes were saved!");
+        return back();
+    }
+    public function editOrganizationProfile(Request $request){
+        $this->validate($request,[
+            "organizationName"=>"required",
+            "organizationEmail"=>"required",
+            "organizationMobileNo"=>"required",
+            "organizationAddress"=>"required",
+            "resourcePersonFullName"=>"required",
+            "resourcePersonMobileNo"=>"required",
+            "resourcePersonEmail"=>"required",
+            "leadId"=>"required"
+        ]);
+        $org = $this->lead->editOrg($request->leadId, $request->organizationName, $request->organizationEmail,
+            $request->organizationMobileNo, $request->organizationAddress, $request->resourcePersonFullName, $request->resourcePersonMobileNo, $request->resourcePersonEmail, null);
+
+        $title = "Organizational profile edited!";
+        $log = Auth::user()->first_name." ".Auth::user()->last_name." edited organizational profile";
+        ActivityLog::registerActivity(Auth::user()->org_id, $org->id, null, null, $title, $log);
+        session()->flash("success", "Your changes were saved!");
+        return back();
+    }
+    public function savePartnerChanges(Request $request){
+        $this->validate($request,[
+            'partnerFullName'=>'required',
+            'partnerEmail'=>'required',
+            'partnerMobileNo'=>'required',
+            'partnerAddress'=>'required',
+            'partnerKinFullName'=>'required',
+            'partnerKinMobile'=>'required',
+            'partnerKinEmail'=>'required',
+            'partnerKinRelationship'=>'required',
+            'partnerId'=>'required'
+        ]);
+        $partner = LeadPartner::find($request->partnerId);
+        if(empty($partner)){
+            session()->flash("error", "Whoops! Something went wrong.");
+            return back();
+        }
+        LeadPartner::editPartner($request->partnerId, $request->partnerFullName, $request->partnerEmail,
+            $request->partnerMobileNo, $request->partnerAddress,
+            $request->partnerKinFullName, $request->partnerKinMobile, $request->partnerKinEmail, $request->partnerKinRelationship);
+        $title = "Partner profile edited!";
+        $log = Auth::user()->first_name." ".Auth::user()->last_name." edited partner profile";
+        ActivityLog::registerActivity(Auth::user()->org_id, $partner->lead_id, null, null, $title, $log);
         session()->flash("success", "Your changes were saved!");
         return back();
     }

@@ -83,77 +83,156 @@
                     </div>
                 </div>
                 <!-- end card -->
+                @if($client->customer_type != 3)
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4 text-info">Personal Information <sup>
+                                    @if($client->customer_type == 1)
+                                        <span class="badge rounded-pill bg-info"> Individual </span>
+                                    @elseif($client->customer_type == 2)
+                                        <span class="badge rounded-pill bg-secondary"> Partnership </span>
 
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4 text-info">Personal Information</h4>
-                        <div class="table-responsive">
-                            <table class="table table-nowrap mb-0">
-                                <tbody>
-                                <tr>
-                                    <th scope="row">Full Name :</th>
-                                    <td>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }} <span style="cursor: pointer;" data-bs-target="#editClientModal" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> </span> </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Mobile :</th>
-                                    <td>{{$client->phone ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">E-mail :</th>
-                                    <td>{{$client->email ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Occupation :</th>
-                                    <td>{{$client->occupation ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Address :</th>
-                                    <td>{{$client->street ?? '' }}, {{$client->city ?? '' }} {{$client->state ?? '' }} {{$client->code ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Valuation :</th>
-                                    <td>{{env('APP_CURRENCY')}}{{ number_format($client->getCustomerValuation($client->id) ?? 0,2) ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"># of Properties :</th>
-                                    <td>{{ number_format($client->getNumberOfProperties($client->id) ?? 0) ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Added By :</th>
-                                    <td>{{$client->getAddedBy->first_name  ?? '' }} {{$client->getAddedBy->last_name  ?? '' }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <h4 class="card-title mb-1 mt-3 text-info">Next of Kin</h4>
-                        <div class="table-responsive">
-                            <table class="table table-nowrap mb-0">
-                                <tbody>
-                                <tr>
-                                    <th scope="row">Full Name :</th>
-                                    <td>{{$client->next_full_name ?? '' }}  </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Primary Phone No. :</th>
-                                    <td>{{$client->next_primary_phone ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Alternative Phone No. :</th>
-                                    <td>{{$client->next_alt_phone ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Email :</th>
-                                    <td>{{$client->next_email ?? '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Relationship :</th>
-                                    <td>{{ $client->next_relationship ?? '' }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                                    @else
+                                        <span class="badge rounded-pill bg-danger"> Organization </span>
+                                    @endif
+                                </sup> </h4>
+                            <div class="table-responsive">
+                                <table class="table table-nowrap mb-0">
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">Full Name :</th>
+                                        <td>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }} <span style="cursor: pointer;" data-bs-target="#editClientModal" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> </span> </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Mobile :</th>
+                                        <td>{{$client->phone ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">E-mail :</th>
+                                        <td>{{$client->email ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Occupation :</th>
+                                        <td>{{$client->occupation ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Address :</th>
+                                        <td>{{$client->street ?? '' }}, {{$client->city ?? '' }} {{$client->state ?? '' }} {{$client->code ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Valuation :</th>
+                                        <td>{{env('APP_CURRENCY')}}{{ number_format($client->getCustomerValuation($client->id) ?? 0,2) ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"># of Properties :</th>
+                                        <td>{{ number_format($client->getNumberOfProperties($client->id) ?? 0) ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Added By :</th>
+                                        <td>{{$client->getAddedBy->first_name  ?? '' }} {{$client->getAddedBy->last_name  ?? '' }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <h4 class="card-title mb-1 mt-3 text-info">Next of Kin</h4>
+                            <div class="table-responsive">
+                                <table class="table table-nowrap mb-0">
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">Full Name :</th>
+                                        <td>{{$client->next_full_name ?? '' }}  </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Primary Phone No. :</th>
+                                        <td>{{$client->next_primary_phone ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Alternative Phone No. :</th>
+                                        <td>{{$client->next_alt_phone ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Email :</th>
+                                        <td>{{$client->next_email ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Relationship :</th>
+                                        <td>{{ $client->next_relationship ?? '' }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @else
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4 text-info">Organization Information <sup>
+                                    @if($client->customer_type == 1)
+                                        <span class="badge rounded-pill bg-info"> Individual </span>
+                                    @elseif($client->customer_type == 2)
+                                        <span class="badge rounded-pill bg-secondary"> Partnership </span>
+
+                                    @else
+                                        <span class="badge rounded-pill bg-danger"> Organization </span>
+                                    @endif
+                                </sup> </h4>
+                            <div class="table-responsive">
+                                <table class="table table-nowrap mb-0">
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">Organization Name :</th>
+                                        <td>{{$client->company_name ?? '' }}  <span style="cursor: pointer;" data-bs-target="#editOrganization" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> </span> </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Mobile No.:</th>
+                                        <td>{{$client->company_mobile_no ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">E-mail :</th>
+                                        <td>{{$client->company_email ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Address :</th>
+                                        <td>{{$client->company_address ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Valuation :</th>
+                                        <td>{{env('APP_CURRENCY')}}{{ number_format($client->getCustomerValuation($client->id) ?? 0,2) ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"># of Properties :</th>
+                                        <td>{{ number_format($client->getNumberOfProperties($client->id) ?? 0) ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Added By :</th>
+                                        <td>{{$client->getAddedBy->first_name  ?? '' }} {{$client->getAddedBy->last_name  ?? '' }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <h4 class="card-title mb-1 mt-3 text-info">Resource Person</h4>
+                            <div class="table-responsive">
+                                <table class="table table-nowrap mb-0">
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">Full Name :</th>
+                                        <td>{{$client->company_person_full_name ?? '' }}  </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Mobile No. :</th>
+                                        <td>{{$client->company_person_mobile_no ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Email :</th>
+                                        <td>{{$client->company_person_email ?? '' }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                @endif
 
             </div>
 
@@ -279,6 +358,40 @@
                                         <h6 class="text-center">Be the first to leave a note.</h6>
                                     @endif
                                 </div>
+                                @if($client->customer_type == 2)
+                                    <div class="row mt-3">
+                                        <div class="col-md-12">
+                                            <h6 class="text-info text-uppercase">Partners</h6>
+                                        </div>
+                                        @foreach($client->getPartners as $key => $partner)
+                                            <div class="col-md-6 mb-3" style=" box-shadow: 5px 4px 6px #CDCDCD;
+    ">
+                                                <div class="card" >
+                                                    <div class="card-body">
+                                                        <span class="badge bg-danger rounded-pill" style="background: #ff0000 !important;">{{ $key +1 }}</span>
+                                                        <h5 class="card-title text-info">{{$partner->full_name ?? null }}</h5>
+                                                    </div>
+                                                    <ul class="list-group list-group-flush">
+                                                        <li class="list-group-item"><strong>Email: </strong> {{ $partner->email ?? null  }}</li>
+                                                        <li class="list-group-item"><strong>Mobile No.: </strong> {{ $partner->mobile_no ?? null  }}</li>
+                                                        <li class="list-group-item"><strong>Address: </strong> {{ $partner->address ?? null  }}</li>
+                                                    </ul>
+                                                    <div class="card-footer">
+                                                        <h6 class="text-info text-uppercase">Next of Kin Info</h6>
+                                                        <ul class="list-group list-group-flush">
+                                                            <li class="list-group-item"><strong>Full Name: </strong> {{ $partner->kin_full_name ?? null  }}</li>
+                                                            <li class="list-group-item"><strong>Mobile No.: </strong> {{ $partner->kin_mobile_no ?? null  }}</li>
+                                                            <li class="list-group-item"><strong>Relationship: </strong> {{ $partner->kin_email ?? null  }}</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <a href="javascript:void(0);" data-bs-target="#partnerInfo_{{$partner->id}}" data-bs-toggle="modal" class="card-link">Edit Record <i class="bx bx-pencil text-warning"></i> </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
                             @endcan
                             @can('can-upload-documents')
@@ -408,7 +521,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h4 class="modal-title text-info" id="myModalLabel2">Edit Customer Profile</h4>
+                    <h6 class="modal-title text-info text-uppercase" id="myModalLabel2">Edit Customer Profile</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -494,6 +607,81 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="editOrganization" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h6 class="modal-title text-info text-uppercase" id="myModalLabel2">Edit Organization Profile</h6>
+                    <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form autocomplete="off" action="{{route('edit-organization-profile')}}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="leadId" value="{{$client->id}}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mt-3 organization">
+                                    <label for="">Organization Name <span class="text-danger">*</span></label>
+                                    <input type="text" name="organizationName" placeholder="Organization Name" value="{{ $client->company_name ?? null  }}" class="form-control">
+                                    @error('organizationName') <i class="text-danger">{{$message}}</i>@enderror
+                                </div>
+                                <div class="form-group mt-3 organization">
+                                    <label for=""> Email <span class="text-danger">*</span></label>
+                                    <input type="text" name="organizationEmail" placeholder="Organization Email" value="{{ $client->company_email ?? null  }}" class="form-control">
+                                    @error('organizationEmail') <i class="text-danger">{{$message}}</i>@enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group mt-3 organization">
+                                    <label for="">Mobile No. <span class="text-danger">*</span></label>
+                                    <input type="text" name="organizationMobileNo" placeholder="Organization Mobile No." value="{{ $client->company_mobile_no ?? null  }}" class="form-control">
+                                    @error('organizationMobileNo') <i class="text-danger">{{$message}}</i>@enderror
+                                </div>
+                                <div class="form-group mt-3 organization">
+                                    <label for="">Address <span class="text-danger">*</span></label>
+                                    <input type="text" name="organizationAddress" placeholder="Organization Address" value="{{ $client->company_address ?? null  }}" class="form-control">
+                                    @error('organizationAddress') <i class="text-danger">{{$message}}</i>@enderror
+                                </div>
+                            </div>
+                        </div>
+                        <h6 class="card-title text-uppercase mb-0 mt-4 mb-4 text-info ">Resource Person</h6>
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <div class="form-group">
+                                    <label for="">Full Name <sup style="color: red">*</sup></label>
+                                    <input type="text" name="resourcePersonFullName" placeholder="Full Name" value="{{ $client->company_person_full_name ?? null  }}" class="form-control">
+                                    @error('resourcePersonFullName') <i>{{ $message }}</i> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <div class="form-group">
+                                    <label for="">Mobile No. <sup style="color: red">*</sup></label>
+                                    <input type="text" name="resourcePersonMobileNo" placeholder="Mobile No." value="{{ $client->company_person_mobile_no ?? null  }}" class="form-control">
+                                    @error('resourcePersonMobileNo') <i>{{ $message }}</i> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <div class="form-group">
+                                    <label for="">Email. <sup style="color: red">*</sup></label>
+                                    <input type="text" name="resourcePersonEmail" placeholder="Email Address" value="{{ $client->company_person_email ?? null  }}" class="form-control">
+                                    @error('resourcePersonEmail') <i>{{ $message }}</i> @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group d-flex justify-content-center mt-3">
+                            <div class="btn-group">
+                                <button class="btn btn-primary  waves-effect waves-light">Save changes <i class="bx bxs-right-arrow"></i> </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="modal right fade" id="sendSMS" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
         <div class="modal-dialog" role="document">
@@ -772,6 +960,88 @@
         </div>
 
     @endforeach
+
+    @if($client->customer_type == 2)
+        @foreach($client->getPartners as $key => $partner)
+            <div class="modal  fade" id="partnerInfo_{{$partner->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" >
+                            <h6 class="modal-title text-info text-uppercase" id="myModalLabel2">Edit Record</h6>
+                            <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <form autocomplete="off" action="{{route('save-partner-changes')}}" method="post">
+                                @csrf
+                                <div class="row mt-4 partnership">
+                                    <div >
+                                        <div class="next-of-kin-section">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <input type="hidden" name="partnerId" value="{{ $partner->id }}">
+                                                        <label for="fullName" class="form-label">Full Name</label>
+                                                        <input type="text" class="form-control" value="{{ $partner->full_name ?? '' }}"  name="partnerFullName" placeholder="Enter your full name"   >
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="email" class="form-label">Email Address</label>
+                                                        <input type="email" class="form-control" value="{{ $partner->email ?? '' }}"  name="partnerEmail" placeholder="Enter your email"   >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="mobile" class="form-label">Mobile Number</label>
+                                                        <input type="tel" class="form-control" value="{{ $partner->mobile_no ?? '' }}"  name="partnerMobileNo" placeholder="Enter your mobile number"   >
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="address" class="form-label">Address</label>
+                                                        <textarea class="form-control"  name="partnerAddress"  rows="2" placeholder="Enter your address"   >{{ $partner->address ?? '' }}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h6 class="mt-4 text-info text-uppercase">Next of Kin</h6>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="kinFullName" class="form-label">Full Name</label>
+                                                        <input type="text" class="form-control" value="{{ $partner->kin_full_name ?? '' }}"  name="partnerKinFullName" placeholder="Enter next of kin's full name"   >
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="kinMobile" class="form-label">Mobile Number</label>
+                                                        <input type="tel" class="form-control"  name="partnerKinMobile" value="{{ $partner->kin_mobile_no ?? '' }}" placeholder="Enter next of kin's mobile number"   >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="kinEmail" class="form-label">Email Address</label>
+                                                        <input type="email" class="form-control"  name="partnerKinEmail" value="{{ $partner->kin_email ?? '' }}" placeholder="Enter next of kin's email"   >
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="relationship" class="form-label">Relationship</label>
+                                                        <input type="text" class="form-control"  name="partnerKinRelationship" value="{{ $partner->kin_address ?? '' }}" placeholder="Enter relationship with next of kin"   >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group d-flex justify-content-center mt-3">
+                                    <div class="btn-group">
+                                        <button type="submit"  class="btn btn-primary  waves-effect waves-light">Save changes <i class="bx bxs-right-arrow"></i> </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        @endforeach
+    @endif
 @endsection
 
 @section('extra-scripts')

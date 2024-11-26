@@ -15,6 +15,11 @@ class Lead extends Model
 {
     use HasFactory, SMSServiceTrait;
 
+
+    public function getPartners(){
+        return $this->hasMany(LeadPartner::class, 'lead_id');
+    }
+
     public function getLogs(){
         return $this->hasMany(ActivityLog::class, 'lead_id')->orderBy('id', 'DESC');
     }
@@ -66,6 +71,85 @@ class Lead extends Model
         $lead->save();
         return $lead;
     }
+
+    public function microAddLead($date, $type, $name, $email, $mobileNo,
+    $partnerKinFullName, $partnerAddress, $partnerKinMobile, $partnerKinEmail, $partnerKinRelationship):Lead{
+        $lead = new Lead();
+        $lead->entry_date = $date ??  now();
+        $lead->customer_type = $type;
+        $lead->added_by = Auth::user()->id;
+        $lead->org_id = Auth::user()->org_id;
+        $lead->first_name = $type == 2 ? $name : null ;
+        $lead->street = $type == 2 ? $partnerAddress : null ;
+        //$lead->last_name = $request->lastName;
+        $lead->email = $type == 2 ? $email : null;
+        $lead->phone = $mobileNo; //$this->appendCountryCode($mobileNo);
+        $lead->dob = $date;
+        $lead->source_id = 1;
+        $lead->status = 1;
+        $lead->gender = 1;
+        $lead->street = null;
+        $lead->city = null;
+        $lead->state =  null;
+        $lead->code = null;
+        $lead->occupation =  null;
+        $lead->entry_month = date('m',strtotime($date));
+        $lead->entry_year = date('Y',strtotime($date));
+        $lead->slug = Str::slug($name).'-'.Str::random(8);
+
+        //Next of kin
+        $lead->next_full_name = $type == 2 ? $partnerKinFullName : null;
+        $lead->next_primary_phone = $type == 2 ? $partnerKinMobile /*$this->appendCountryCode($partnerKinMobile)*/ : null;
+        $lead->next_email = $type == 2 ? $partnerKinEmail : null;
+        $lead->next_relationship = $type == 2 ? $partnerKinRelationship : null;
+
+        $lead->save();
+        return $lead;
+    }
+
+
+    public function registerOrg($date, $type, $orgName, $orgEmail, $orgMobileNo, $orgAddress, $name, $mobileNo, $email):Lead{
+        $lead = new Lead();
+        $lead->entry_date = $date ??  now();
+        $lead->customer_type = $type;
+        $lead->added_by = Auth::user()->id;
+        $lead->org_id = Auth::user()->org_id;
+        $lead->company_name = $orgName;
+        $lead->company_email = $orgEmail;
+        $lead->company_mobile_no = $orgMobileNo;
+        $lead->company_address = $orgAddress;
+        $lead->company_person_full_name = $name;
+        $lead->company_person_mobile_no = $mobileNo;
+        $lead->company_person_email = $email;
+        $lead->entry_month = date('m',strtotime($date));
+        $lead->entry_year = date('Y',strtotime($date));
+        $lead->slug = Str::slug($orgName).'-'.Str::random(8);
+
+        $lead->save();
+        return $lead;
+    }
+    public function editOrg($leadId, $orgName, $orgEmail, $orgMobileNo, $orgAddress, $name, $mobileNo, $email):Lead{
+        $lead =  Lead::find($leadId);
+        //$lead->entry_date = $date ??  now();
+        //$lead->customer_type = $type;
+        //$lead->added_by = Auth::user()->id;
+        //$lead->org_id = Auth::user()->org_id;
+        $lead->company_name = $orgName;
+        $lead->company_email = $orgEmail;
+        $lead->company_mobile_no = $orgMobileNo;
+        $lead->company_address = $orgAddress;
+        $lead->company_person_full_name = $name;
+        $lead->company_person_mobile_no = $mobileNo;
+        $lead->company_person_email = $email;
+        //$lead->entry_month = date('m',strtotime($date));
+        //$lead->entry_year = date('Y',strtotime($date));
+        //$lead->slug = Str::slug($orgName).'-'.Str::random(8);
+
+        $lead->save();
+        return $lead;
+    }
+
+
     public function editLead(Request $request):Lead{
         $lead =  Lead::find($request->leadId);
         $lead->first_name = $request->firstName;

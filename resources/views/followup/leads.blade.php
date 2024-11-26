@@ -56,7 +56,7 @@
                                    @can('can-approve-decline-customer-import') <a class="dropdown-item" href="{{ route('manage-bulk-lead-list') }}">Manage List</a> @endcan
                                 </div>
                             </div>
-                            @can('can-add-customer')<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#lead" class="btn btn-primary ml-2"> Create Customer <i class="bx bxs-briefcase-alt-2"></i> </a>@endcan
+                            @can('can-add-customer')<a href="{{route('show-new-lead-form')}}"  class="btn btn-primary ml-2"> Create Customer <i class="bx bxs-briefcase-alt-2"></i> </a>@endcan
                         </div>
 
                     </div>
@@ -72,10 +72,10 @@
                                             <th class="">#</th>
                                             <th class="wd-15p">Date</th>
                                             <th class="wd-15p">Name</th>
-                                            <th class="wd-15p">Phone No.</th>
+                                            <th class="wd-15p">Mobile No.</th>
                                             <th class="wd-15p"># of Properties</th>
                                             <th class="wd-15p" style="text-align: right;">Valuation({{env('APP_CURRENCY')}})</th>
-                                            <th class="wd-15p">Source</th>
+                                            <th class="wd-15p">Type</th>
                                             <th class="wd-15p">Action</th>
                                         </tr>
                                         </thead>
@@ -85,13 +85,35 @@
                                             <tr>
                                                 <td>{{$index++}}</td>
                                                 <td>{{date('M d, Y', strtotime($lead->entry_date))}}</td>
-                                                <td><a href="{{route('lead-profile', $lead->slug)}}">{{$lead->first_name ?? '' }} {{$lead->last_name ?? '' }}</a>
-                                                    <sup class="badge rounded-pill bg-success">{{$lead->getStatus->status ?? '' }}</sup>
+                                                <td>
+                                                    @if($lead->customer_type != 3)
+                                                    <a href="{{route('lead-profile', $lead->slug)}}">{{$lead->first_name ?? '' }} {{$lead->last_name ?? '' }}</a>
+
+                                                    @else
+                                                        <a href="{{route('lead-profile', $lead->slug)}}">{{$lead->company_name ?? '' }}</a>
+
+                                                    @endif
+
                                                 </td>
-                                                <td>{{$lead->phone ?? '' }}</td>
+                                                <td>
+                                                    @if($lead->customer_type != 3)
+                                                        {{$lead->phone ?? '' }}
+                                                    @else
+                                                        {{$lead->company_mobile_no ?? '' }}
+                                                    @endif
+                                                </td>
                                                 <td>{{ number_format($lead->getNumberOfProperties($lead->id) ?? 0) ?? '' }}</td>
                                                 <td style="text-align: right;">{{ number_format($lead->getCustomerValuation($lead->id) ?? 0,2) }}</td>
-                                                <td> <span class="badge rounded-pill bg-info"> {{$lead->getSource->source ?? '' }} </span> </td>
+                                                <td>
+                                                    @if($lead->customer_type == 1)
+                                                        <span class="badge rounded-pill bg-info"> Individual </span>
+                                                    @elseif($lead->customer_type == 2)
+                                                        <span class="badge rounded-pill bg-secondary"> Partnership </span>
+                                                    @else
+                                                        <span class="badge rounded-pill bg-primary"> Organization </span>
+                                                    @endif
+
+                                                </td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>

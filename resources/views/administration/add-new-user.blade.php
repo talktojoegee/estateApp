@@ -75,7 +75,7 @@
                                                      <div class="col-md-3 col-sm-3 col-lg-3 align-content-center">
                                                          <img class="rounded me-2" alt="200x200" width="200" src="/assets/images/small/img-4.jpg" data-holder-rendered="true">
                                                          <p>Profile Picture</p>
-                                                         <input type="file" name="avatar"  class="form-control-file mt-2">
+                                                         <input type="file" required name="avatar"  class="form-control-file mt-2">
                                                      </div>
                                                  </div>
                                                  <div class="col-md-6 col-sm-12 col-lg-6">

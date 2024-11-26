@@ -178,13 +178,17 @@ Route::prefix('/sales')->group(function(){
     Route::get('/dashboard', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'marketing'])->name('marketing-dashboard');
     Route::get('/dashboard-filter', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'filterSalesRevenueReportDashboard'])->name('marketing-dashboard-filter');
     Route::get('/customers', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showLeads'])->name('leads');
+    Route::post('/customers', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'createLead']);
     Route::get('/bulk-import-leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showBulkImportLeads'])->name('bulk-import-leads');
-    Route::post('/leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'createLead']);
+
+    Route::match(['POST', 'GET'],'/new-customer', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showAddNewCustomerForm'])->name('show-new-lead-form');
     Route::post('/bulk-lead-import', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'processLeadBulkImport'])->name("bulk-lead-import");
     Route::get('/manage-bulk-lead-list', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'manageBulkLeadList'])->name("manage-bulk-lead-list");
     Route::get('/manage-bulk-lead-list/{batchCode}', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showBulkLeadImportDetails'])->name("view-bulk-lead-details");
     Route::get('/leads/{slug}', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'leadProfile'])->name('lead-profile');
     Route::post('/edit-leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editLeadProfile'])->name('edit-lead-profile');
+    Route::post('/edit-organization-profile', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editOrganizationProfile'])->name('edit-organization-profile');
+    Route::post('/save-partner-changes', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'savePartnerChanges'])->name('save-partner-changes');
 
     Route::post('/leave-lead-note', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'leaveLeadNote'])->name('leave-lead-note');
     Route::post('/edit-lead-note', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editLeadNote'])->name('edit-lead-note');
