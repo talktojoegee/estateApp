@@ -14,6 +14,8 @@
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
 @endsection
 @section('main-content')
     <div class="row">
@@ -44,11 +46,11 @@
                                                 <button class=" btn btn-primary" id="basic-addon9">
                                                     From
                                                 </button>
-                                            <input type="date" value="{{ date('Y-m-d', strtotime("-90 days")) }}" class="form-control" name="start_date" placeholder="Start Date">
+                                            <input type="text" autocomplete="off" id="datepicker" placeholder="From" class="form-control" name="start_date" placeholder="Start Date">
                                             <button class=" btn btn-primary" id="basic-addon9">
                                                    To
                                                 </button>
-                                            <input type="date" value="{{ date('Y-m-d', strtotime("+1 days")) }}" class="form-control" name="end_date" placeholder="End Date">
+                                            <input type="text" autocomplete="off" id="datepicker2" placeholder="To" class="form-control" name="end_date" placeholder="End Date">
                                             <span class="input-group-addon btn btn-primary" id="basic-addon9">
                                                     <button class="btn btn-primary btn-mini" type="submit">Submit</button>
                                                 </span>
@@ -230,8 +232,11 @@
     <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
     <script src="/assets/js/pages/datatables.init.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function(){
+            $( "#datepicker" ).datepicker();
+            $( "#datepicker2" ).datepicker();
             $(document).on('click', '.approve', function(event){
                 event.preventDefault();
                 $('#applicant').text($(this).data('applicant'));

@@ -18,6 +18,7 @@
             width: 100% !important;
         }
     </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
 @endsection
 @section('main-content')
 
@@ -49,7 +50,7 @@
                                     <div class="col-md-6 col-sm-6 col-lg-6">
                                         <div class="form-group">
                                             <label for="">Date</label>
-                                            <input type="date" placeholder="Date" class="form-control" name="issue_date">
+                                            <input id="datepicker" type="text" placeholder="Date" class="form-control" name="issue_date">
                                             @error('issue_date')
                                             <i class="text-danger mt-2">{{$message}}</i>
                                             @enderror
@@ -169,10 +170,13 @@
     <script src="/assets/libs/select2/js/select2.min.js"></script>
     <script src="/assets/js/pages/form-advanced.init.js"></script>
     <script src="/assets/js/axios.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script>
         var debitTotal = 0;
         var creditTotal = 0;
         $(document).ready(function(){
+            $( "#datepicker" ).datepicker();
+
             $(".select-account").select2({
                 placeholder: "Select account"
             });

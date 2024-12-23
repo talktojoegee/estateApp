@@ -626,6 +626,16 @@ class SalesnMarketingController extends Controller
             return back();
         }
     }
+    public function uploadCustomerDocuments($slug){
+        $lead = $this->lead->getLeadBySlug($slug);
+        if(!empty($lead)){
+            return view('followup.upload-customer-documents',[
+                'client'=>$lead,
+            ]);
+        }else{
+            return back();
+        }
+    }
 
     public function editLeadProfile(Request $request){
         $this->validate($request,[
@@ -1174,4 +1184,10 @@ class SalesnMarketingController extends Controller
         session()->flash("success", "Success! Record posted");
         return back();
     }
+
+
+
+
+
+
 }

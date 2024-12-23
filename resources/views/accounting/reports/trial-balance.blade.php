@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="\assets\css\component.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
 @endsection
 @section('main-content')
     <div class="row">
@@ -46,11 +47,11 @@
                                                 <button class=" btn btn-primary" id="basic-addon9">
                                                     From
                                                 </button>
-                                            <input type="date" value="{{ date('Y-m-d', strtotime("-90 days")) }}" class="form-control" name="start_date" placeholder="Start Date">
+                                            <input type="text" autocomplete="off" id="datepicker"  class="form-control" name="start_date" placeholder="Start Date">
                                             <button class=" btn btn-primary" id="basic-addon9">
                                                     To
                                                 </button>
-                                            <input type="date" value="{{date('Y-m-d', strtotime("+1 days"))}}" class="form-control" name="end_date" placeholder="End Date">
+                                            <input type="text" autocomplete="off" id="datepicker2"  class="form-control" name="end_date" placeholder="End Date">
                                             <span class="input-group-addon btn btn-primary" id="basic-addon9">
                                                     <button class="btn btn-primary btn-mini" type="submit">Submit</button>
                                                 </span>
@@ -318,8 +319,11 @@
     <script src="\bower_components\datatables.net\js\jquery.dataTables.min.js"></script>
     <script src="\bower_components\datatables.net-bs4\js\dataTables.bootstrap4.min.js"></script>
     <script src="\assets\pages\data-table\extensions\key-table\js\key-table-custom.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function(){
+            $( "#datepicker" ).datepicker();
+            $( "#datepicker2" ).datepicker();
             $(document).on('click', '.approve', function(event){
                 event.preventDefault();
                 $('#applicant').text($(this).data('applicant'));

@@ -499,6 +499,8 @@ class AccountingController extends Controller
         $this->validate($request, [
             'date'=>'required|date'
         ]);
+        //return dd($request->all());
+
         $this->current = Carbon::now();
         $date = $request->date;
         $firstGl = $this->generalledger->getFirstGlTransaction();

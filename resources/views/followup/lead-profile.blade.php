@@ -400,7 +400,7 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-xl-12 col-md-12 col-lg-12 d-flex justify-content-end">
-                                               <button class="btn btn-primary" data-bs-target="#newFileModal" data-bs-toggle="modal"> <i class="bx bx-plus-circle"></i> New File(s)</button>
+                                               <a href="{{ route('upload-customer-documents', $client->slug) }}" class="btn btn-primary" > <i class="bx bx-plus-circle"></i> New File(s)</a>
                                             </div>
                                         </div>
                                         <div class="col-md-12 col-lg-12">

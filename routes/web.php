@@ -103,6 +103,8 @@ Route::get('/clear-all-notifications', [App\Http\Controllers\Portal\Notification
 Route::prefix('/cloud-storage')->group(function(){
     Route::get('/', [App\Http\Controllers\Portal\CloudStorageController::class, 'showCloudStorage'])->name('cloud-storage');
     Route::post('/manage-files', [App\Http\Controllers\Portal\CloudStorageController::class, 'storeFiles'] )->name('upload-files');
+    Route::post('/upload-multiple-documents', [App\Http\Controllers\Portal\CloudStorageController::class, 'ajaxMultipleDocumentsUpload'] )->name('upload-multiple-documents');
+
     Route::post('/create-folder', [App\Http\Controllers\Portal\CloudStorageController::class, 'createFolder'] )->name('create-folder');
     Route::get('/folder/{slug}', [App\Http\Controllers\Portal\CloudStorageController::class, 'openFolder'] )->name('open-folder');
     Route::get('/download/{slug}', [App\Http\Controllers\Portal\CloudStorageController::class, 'downloadAttachment'] )->name('download-attachment');
@@ -186,6 +188,8 @@ Route::prefix('/sales')->group(function(){
     Route::get('/manage-bulk-lead-list', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'manageBulkLeadList'])->name("manage-bulk-lead-list");
     Route::get('/manage-bulk-lead-list/{batchCode}', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showBulkLeadImportDetails'])->name("view-bulk-lead-details");
     Route::get('/leads/{slug}', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'leadProfile'])->name('lead-profile');
+    Route::get("/upload-customer-documents/{slug}", [\App\Http\Controllers\portal\SalesnMarketingController::class, "uploadCustomerDocuments"])->name("upload-customer-documents");
+
     Route::post('/edit-leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editLeadProfile'])->name('edit-lead-profile');
     Route::post('/edit-organization-profile', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editOrganizationProfile'])->name('edit-organization-profile');
     Route::post('/save-partner-changes', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'savePartnerChanges'])->name('save-partner-changes');
