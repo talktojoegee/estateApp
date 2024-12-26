@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title>{{config('app.name')}} | @yield('title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Your effective tool for church management and other Kingdom assignment." name="description" />
+    <meta content="Your effective tool for property management and other key assignments" name="description" />
     <meta content="{{config('app.name')}}" name="PoweredBy" />
     <link rel="shortcut icon" href="/assets/drive/logo/logo.png">
     <link href="{{asset('css/parsley.css')}}" rel="stylesheet" type="text/css" />

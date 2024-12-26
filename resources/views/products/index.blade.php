@@ -64,6 +64,7 @@
                             <div class="tab-pane active" id="home1" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-12 col-lx-12">
+                                        <p><strong style="color: #ff0000 !important;" class="text-danger">SKU</strong>(Stock Keeping Unit)</p>
                                         <div class="table-responsive mt-3">
                                             <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                                                 <thead>
@@ -72,7 +73,7 @@
                                                     <th class="wd-15p">Name</th>
                                                     <th class="wd-15p">Category</th>
                                                     <th class="wd-15p">Cost</th>
-                                                    <th class="wd-15p">SKU</th>
+                                                    <th class="wd-15p">SKU <span title="Stock Keeping Unit">?</span> </th>
                                                     <th class="wd-15p">Quantity</th>
                                                     <th class="wd-15p">Action</th>
                                                 </tr>
@@ -214,7 +215,7 @@
                             @error('photo') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
                         <div class="form-group mt-2 mb-3">
-                            <label for="">Store Keeping Unit (SKU)</label>
+                            <label for="">Stock Keeping Unit (SKU)</label>
                             <input type="text" name="sku" placeholder="SKU" class="form-control">
                             @error('sku') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
@@ -332,7 +333,7 @@
                                 @error('photo') <i class="text-danger">{{$message}}</i>@enderror
                             </div>
                             <div class="form-group mt-1 mb-3">
-                                <label for="">Store Keeping Unit (SKU)</label>
+                                <label for="">Stock Keeping Unit (SKU)</label>
                                 <input type="text" name="sku" value="{{$product->sku ?? 0 }}" placeholder="SKU" class="form-control">
                                 @error('sku') <i class="text-danger">{{$message}}</i>@enderror
                             </div>

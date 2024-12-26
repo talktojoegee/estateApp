@@ -12,6 +12,7 @@ use App\Models\Client;
 use App\Models\Lead;
 use App\Models\LeadFollowupScheduleDetail;
 use App\Models\LeadFollowupScheduleMaster;
+use App\Models\Receipt;
 use App\Models\Remittance;
 use App\Models\Sale;
 use App\Models\User;
@@ -39,6 +40,8 @@ class ReportsController extends Controller
         $this->leadfollowupmaster = new LeadFollowupScheduleMaster();
         $this->leadfollowupdetail = new LeadFollowupScheduleDetail();
         $this->bulkmessage = new BulkMessage();
+
+        $this->receipt = new Receipt();
 
     }
 
@@ -481,6 +484,21 @@ class ReportsController extends Controller
             'to'=>$to,
             //'accounts'=>$accounts
 
+        ]);
+    }
+
+
+
+    public function showSalesReport(Request $request){
+        $from = date('d-m-Y', strtotime("-30 days"));
+        $to = date('d-m-Y');
+
+        return view("reports.report-sales",
+        [
+            'search'=>0,
+            'from'=>$from,
+            'to'=>$to,
+            'receipts'=>$this->receipt->getAllTenantReceipts(1),
         ]);
     }
 }

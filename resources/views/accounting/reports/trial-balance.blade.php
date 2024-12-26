@@ -322,8 +322,8 @@
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function(){
-            $( "#datepicker" ).datepicker();
-            $( "#datepicker2" ).datepicker();
+            $( "#datepicker" ).datepicker({ dateFormat: 'dd-mm-yy' });
+            $( "#datepicker2" ).datepicker({ dateFormat: 'dd-mm-yy' });
             $(document).on('click', '.approve', function(event){
                 event.preventDefault();
                 $('#applicant').text($(this).data('applicant'));

@@ -17,6 +17,8 @@ use App\Models\CashBookAttachment;
 use App\Models\Client;
 use App\Models\Currency;
 use App\Models\FolderModel;
+use App\Models\InventoryTransactionDetail;
+use App\Models\InventoryTransactions;
 use App\Models\InvoiceMaster;
 use App\Models\Lead;
 use App\Models\LeadBulkImportDetail;
@@ -1183,6 +1185,155 @@ class SalesnMarketingController extends Controller
         }
         session()->flash("success", "Success! Record posted");
         return back();
+    }
+
+
+
+
+    /*
+     * Inventory management
+     */
+
+    public function showNewStockPurchaseForm(){
+        return view("products.new-purchase",[
+            "vendors"=>$this->client->getClients(),
+            'products'=>$this->product->getAllOrgProducts()
+        ]);
+    }
+
+
+    public function storeInventory(Request $request){
+        $this->validate($request,
+            [
+            "vendor"=>"required",
+            "trans_date"=>"required",
+            "type"=>"required",
+            "item"=>"required|array",
+            "item.*"=>"required",
+            "quantity"=>"required|array",
+            "quantity.*"=>"required",
+            "amount"=>"required|array",
+            "amount.*"=>"required"
+        ],
+            [
+            "vendor.required"=>"Select a vendor",
+            "trans_date.required"=>"Indicate date",
+            "item.required"=>"Select a product",
+            "item.array"=>"Select a product",
+            "quantity.required"=>"Enter quantity",
+            "quantity.array"=>"Enter quantity",
+            "amount.required"=>"Enter amount",
+            "amount.array"=>"Enter amount"
+        ]);
+        $authUser = Auth::user();
+        $intakedate = date('Y-m-d H:i:s', strtotime(str_replace("/","-",
+            $request->trans_date)));
+        $entry = InventoryTransactions::newInventoryTransaction($intakedate,
+            $request->vendor, $authUser->id, $request->type);
+        $total = 0;
+        foreach($request->quantity as $key => $item){
+            InventoryTransactionDetail::addInventoryDetails($entry->id, $request->item[$key],
+            $request->quantity[$key], $request->amount[$key], $request->type);
+            /*//update product stock
+            $item = Product::findOneById($request->item[$key]);
+            if(!empty($item)){
+                if($request->type == 1){ //top up
+                    $item->stock += $request->quantity[$key];
+                    $item->save();
+                    //total
+                    $total += $request->quantity[$key] * $request->amount[$key];
+                }else{
+                    $item->stock -= $request->quantity[$key];
+                    $item->sold += $request->quantity[$key];
+                    $item->save();
+                }
+            }*/
+
+        }
+        $entry->total = $total ?? 0;
+        $entry->save();
+        session()->flash("success", "Success! New inventory record taken.");
+        return back();
+    }
+
+    public function showInventory($type){
+        switch ($type){
+            case 'purchases':
+                return view("products.inventory-index",[
+                    "records"=>InventoryTransactions::findAllByType(1),
+                    "type"=>"Manage Purchases",
+                    "typeIndex"=>1
+                ]);
+            case 'discharge':
+                return view("products.inventory-index",[
+                    "records"=>InventoryTransactions::findAllByType(2),
+                    "type"=>"Manage Discharge",
+                    "typeIndex"=>2
+                ]);
+            default:
+                abort(404);
+        }
+
+
+    }
+
+    public function viewInventory($slug){
+        return view("products.inventory-view",[
+            "record"=>InventoryTransactions::findOneBySlug($slug)]);
+
+    }
+
+
+
+    public function showNewStockDischargeForm(){
+        return view("products.new-discharge",[
+            "users"=>$this->user->getActiveUsers(),
+            'products'=>$this->product->getAllOrgProducts()
+        ]);
+    }
+
+
+    public function actionRequest(Request $request){
+        $this->validate($request,[
+            "record"=>"required",
+            "action"=>"required",
+        ]);
+        $record = InventoryTransactions::findOneById($request->record);
+        if(empty($record)){
+            abort(404);
+        }
+        $items = InventoryTransactionDetail::where('master_id', $record->id)->get();
+        foreach($items as $item){
+            //update product stock
+            $product = Product::findOneById($item->item_id);
+            if(!empty($product)){
+                if(($record->trans_type == 1) && ($request->action == 1)){ //purchase & approved
+                    $product->stock += $item->quantity;
+                    $product->save();
+                    //total
+                    //$total += $item->quantity * $item->amount;
+                }
+
+                if(($record->trans_type == 2)){ //discharge
+                    $product->stock -= $item->quantity;
+                    $product->sold += $item->quantity;
+                    $product->save();
+                }
+                /*if(($request->action == 2)){  // decline
+                    $product->stock -= $item->quantity;
+                    $product->sold += $item->quantity;
+                    $product->save();
+                }*/
+            }
+        }
+        $record->status = $request->action;
+        $record->actioned_by = Auth::user()->id;
+        $record->date_actioned = now();
+        $record->save();
+
+        session()->flash("success", "Action successful!");
+        return back();
+
     }
 
 

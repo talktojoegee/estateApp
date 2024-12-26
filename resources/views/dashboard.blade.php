@@ -2,6 +2,11 @@
 @section('current-page')
     Dashboard
 @endsection
+
+@section('title')
+    Dashboard
+@endsection
+
 @section('extra-styles')
     <link href="/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" />
 @endsection

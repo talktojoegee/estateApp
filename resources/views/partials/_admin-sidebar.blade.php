@@ -317,14 +317,30 @@
                 </ul>
             </li>
         @endcan
-        {{--@can('access-account-settings')
+        @can('access-payroll-settings')
             <li>
-                <a href="{{route('accounting-settings')}}" class="waves-effect">
-                    <i class="bx bxs-hourglass-bottom"></i>
-                    <span key="t-chat">Warehouse</span>
+                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <i class='bx bx-transfer-alt'></i>
+                    <span key="t-vendor"> Purchases </span>
                 </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{route('new-stock-purchase')}}" key="t-vendor">New Purchase</a></li>
+                    <li><a href="{{route('manage-inventory', 'purchases')}}" key="t-vendor">Manage Purchases</a></li>
+                </ul>
             </li>
-        @endcan--}}
+        @endcan
+        @can('access-payroll-settings')
+            <li>
+                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <i class='bx bx-bookmark-minus'></i>
+                    <span key="t-vendor"> Discharge </span>
+                </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{route('new-stock-discharge')}}" key="t-vendor">New Discharge</a></li>
+                    <li><a href="{{route('manage-inventory', 'discharge')}}" key="t-vendor">Manage Discharge</a></li>
+                </ul>
+            </li>
+        @endcan
         <li class="menu-title">Reports</li>
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -332,9 +348,11 @@
                 <span key="t-reports"> Reports </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{ route("sales-report") }}" key="t-reports">Sales</a></li>
+                <li><a href="#" key="t-reports">Payroll</a></li>
                 <li><a href="#" key="t-reports">Property</a></li>
+                <li><a href="#" key="t-reports">Inventory</a></li>
                 <li><a href="#" key="t-reports">Customer</a></li>
-                <li><a href="#" key="t-reports">Sales</a></li>
             </ul>
         </li>
 

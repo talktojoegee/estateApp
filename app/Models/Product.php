@@ -66,4 +66,10 @@ class Product extends Model
     public function getAllOrgProducts(){
         return Product::where('org_id', Auth::user()->org_id)->orderBy('id', 'DESC')->get();
     }
+
+    public static function findOneById($id){
+        return Product::find($id);
+    }
+
+
 }

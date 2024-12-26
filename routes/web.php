@@ -135,6 +135,10 @@ Route::group(['prefix'=>'/tasks', 'middleware'=>'auth'], function(){
     Route::post('/mark-as', [App\Http\Controllers\Portal\TaskController::class, 'markAs'])->name('mark-as');
 });
 
+Route::group(['prefix'=>'/report', 'middleware'=>'auth'], function(){
+    Route::get('/generate/sales', [\App\Http\Controllers\Portal\ReportsController::class, 'showSalesReport'])->name('sales-report');
+});
+
 
 Route::group(['prefix'=>'/inventory', 'middleware'=>'auth'],function(){
     Route::get('/', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showAllProducts'])->name('all-products');
@@ -142,6 +146,13 @@ Route::group(['prefix'=>'/inventory', 'middleware'=>'auth'],function(){
     Route::post('/edit-product-category', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editProductCategory'])->name('edit-product-category');
     Route::post('/add-product', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'addProduct'])->name('add-product');
     Route::post('/edit-product', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editProduct'])->name('edit-product');
+
+    Route::get('/new-purchase', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'showNewStockPurchaseForm'])->name("new-stock-purchase");
+    Route::post('/new-purchase', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'storeInventory']);
+    Route::get('/manage/{type}', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'showInventory'])->name('manage-inventory');
+    Route::get('/view-inventory/{slug}', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'viewInventory'])->name('view-inventory');
+    Route::get('/new-stock-discharge', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'showNewStockDischargeForm'])->name("new-stock-discharge");
+    Route::post('/action-request', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'actionRequest'])->name("action-request");
 
 
     #Vendor routes
@@ -406,6 +417,10 @@ Route::group(['prefix'=>'/newsfeed', 'middleware'=>'auth'], function(){
 });
 
 Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
+    Route::get('/show-payslip/', [App\Http\Controllers\Portal\ClientController::class, 'showPayslip'])->name('show-payslip');
+    Route::get('/payslip-report', [App\Http\Controllers\Portal\ClientController::class, 'payslipReport'])->name('payslip-report');
+
+
     Route::get('/practitioners', [App\Http\Controllers\UserController::class, 'showPractitioners'])->name('practitioners');
     Route::get('/employees', [App\Http\Controllers\UserController::class, 'showAdministrators'])->name('pastors');
     Route::post('/get-lgas', [App\Http\Controllers\UserController::class,'getLocalGovernments'])->name('get-lgas');
@@ -422,8 +437,7 @@ Route::group(['prefix'=>'/users', 'middleware'=>'auth'], function(){
     Route::post('/grant-permission', [App\Http\Controllers\UserController::class, 'grantPermission'])->name('grant-permission');
     Route::post('/switch-wallpaper', [App\Http\Controllers\UserController::class, 'switchWallpaper'])->name('switch-wallpaper');
 
-    Route::get('/show-payslip/', [App\Http\Controllers\Portal\ClientController::class, 'showPayslip'])->name('show-payslip');
-    Route::get('/payslip-report', [App\Http\Controllers\Portal\ClientController::class, 'payslipReport'])->name('payslip-report');
+
 });
 
 

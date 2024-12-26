@@ -146,6 +146,8 @@ class Receipt extends Model
     }
 
 
+
+
     public function getListOfPropertiesSoldRange($start, $end){
         return Receipt::select(
             'property_id',
@@ -159,5 +161,14 @@ class Receipt extends Model
 
     public function getRefund(/*$refundId, */$receiptId){
         return Refund::/*where('id', $refundId)->*/where('receipt_id',$receiptId)->first();
+    }
+
+
+    public function getSalesReportByDateRange($from, $to){
+        return Receipt::whereBetween('payment_date', [$from, $to])
+            //->whereMonth('r_transaction_date', date('m'))
+            //->whereYear('r_transaction_date', date('Y'))
+            ->orderBy('id', 'ASC')
+            ->get();
     }
 }
