@@ -161,12 +161,12 @@ Route::group(['prefix'=>'/inventory', 'middleware'=>'auth'],function(){
     Route::post('/add-product', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'addProduct'])->name('add-product');
     Route::post('/edit-product', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editProduct'])->name('edit-product');
 
-    Route::get('/new-purchase', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'showNewStockPurchaseForm'])->name("new-stock-purchase");
-    Route::post('/new-purchase', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'storeInventory']);
-    Route::get('/manage/{type}', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'showInventory'])->name('manage-inventory');
-    Route::get('/view-inventory/{slug}', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'viewInventory'])->name('view-inventory');
-    Route::get('/new-stock-discharge', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'showNewStockDischargeForm'])->name("new-stock-discharge");
-    Route::post('/action-request', [\App\Http\Controllers\portal\SalesnMarketingController::class, 'actionRequest'])->name("action-request");
+    Route::get('/new-purchase', [\App\Http\Controllers\Portal\SalesnMarketingController::class, 'showNewStockPurchaseForm'])->name("new-stock-purchase");
+    Route::post('/new-purchase', [\App\Http\Controllers\Portal\SalesnMarketingController::class, 'storeInventory']);
+    Route::get('/manage/{type}', [\App\Http\Controllers\Portal\SalesnMarketingController::class, 'showInventory'])->name('manage-inventory');
+    Route::get('/view-inventory/{slug}', [\App\Http\Controllers\Portal\SalesnMarketingController::class, 'viewInventory'])->name('view-inventory');
+    Route::get('/new-stock-discharge', [\App\Http\Controllers\Portal\SalesnMarketingController::class, 'showNewStockDischargeForm'])->name("new-stock-discharge");
+    Route::post('/action-request', [\App\Http\Controllers\Portal\SalesnMarketingController::class, 'actionRequest'])->name("action-request");
 
 
     #Vendor routes

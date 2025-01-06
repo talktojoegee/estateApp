@@ -83,8 +83,8 @@
                                 <div class="mb-3">
                                     <label class="form-label">Password</label>
                                     <div class="input-group auth-pass-inputgroup">
-                                        <input type="password" name="password" class="form-control" placeholder="Enter Password" aria-label="Password" aria-describedby="password-addon">
-                                        <button class="btn btn-light " type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
+                                        <input type="password" name="password" id="password" class="form-control" placeholder="Enter Password" aria-label="Password" aria-describedby="password-addon">
+                                        <button class="btn btn-light " type="button" id="togglePassword"><i class="mdi mdi-eye-outline"></i></button>
                                     </div>
                                     @error('password')
                                     <i class="text-danger">{{$message}}</i>
@@ -124,6 +124,17 @@
 
 <!-- App js -->
 <script src="/assets/js/app.js"></script>
+<script>
+    const passwordField = document.getElementById('password');
+    const togglePasswordButton = document.getElementById('togglePassword');
+
+    togglePasswordButton.addEventListener('click', function () {
+        // Toggle the password visibility
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        this.textContent = type === 'password' ? 'Show' : 'Hide';
+    });
+</script>
 </body>
 </html>
 

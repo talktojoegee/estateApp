@@ -62,7 +62,7 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         @can('can-allocate-property')<li><a href="{{route('property-allocation')}}" key="t-properties">New</a></li> @endcan
-                        @can('can-manage-allocation')<li><a href="{{route('manage-property-allocations')}}" key="t-properties">Manage Alloc.</a></li> @endcan
+                        @can('can-manage-allocation')<li><a href="{{route('manage-property-allocations')}}" key="t-properties">Manage Allocations</a></li> @endcan
                     </ul>
                 </li>
             @endcan
