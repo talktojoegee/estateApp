@@ -19,9 +19,6 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xl-12 col-md-12">
-                <div class="card">
-
-                    <div class="card-body">
                         @if(session()->has('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <i class="mdi mdi-check-all me-2"></i>
@@ -38,12 +35,9 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
-                        @include('followup.partial._top-navigation')
-                    </div>
-                </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <a href="{{ route("leads") }}"  class="btn btn-primary"> Manage Imported Properties <i class="bx bxs-briefcase-alt-2"></i> </a>
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <a href="{{route('show-bulk-property-import-form')}}"  class="btn btn-primary"> <i class="bx bxs-plus-circle"></i> New Import  </a>
                     </div>
                 </div>
                 <div class="row mt-3">
