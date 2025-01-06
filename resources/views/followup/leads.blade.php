@@ -8,11 +8,11 @@
     Customers
 @endsection
 @section('extra-styles')
-    <link rel="stylesheet" href="/css/nprogress.css">
+
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="/css/parsley.css" rel="stylesheet" type="text/css" />
+
 @endsection
 @section('breadcrumb-action-btn')
 

@@ -348,6 +348,19 @@ class Property extends Model
             ->take($counter)
             ->get();
     }
+
+    public function getPropertyReport($location, $status){
+        return Property::where('estate_id', $location)
+            ->where('status', $status)
+            ->orderBy('id', 'DESC')
+            ->get();
+    }
+    public function getAllPropertiesReport($status){
+        return Property::where('status', $status)
+            ->orderBy('id', 'DESC')
+            ->get();
+    }
+
     public function getUnderperformingLocationsWithin($start, $end, $counter){
         return Estate::select(
             'estates.e_id',

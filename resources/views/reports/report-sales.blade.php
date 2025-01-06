@@ -2,6 +2,10 @@
 @section('current-page')
     Sales Report
 @endsection
+
+@section('title')
+    Sales Report
+@endsection
 @section('extra-styles')
     <link href="{{asset('assets/libs/select2/css/select2.min.css')}}" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
@@ -33,19 +37,39 @@
                 @include('reports.partials._sales-search-form')
             @else
                 @include('reports.partials._sales-search-form')
+                <div class="row">
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mb-1">
+                                    <div class="col">
+                                        <p class="mb-1">Total</p>
+                                        <h5 class="mb-0 number-font text-secondary1">{{env('APP_CURRENCY')}} {{number_format($receipts->sum('total'),2)}}</h5>
+                                    </div>
+                                    <div class="col-auto mb-0">
+                                        <div class="dash-icon text-secondary1">
+                                            <i class="bx bxs-wallet"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Overall <code>({{number_format($receipts->count())}})</code></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-xl-12 col-md-12">
                     <div class="card">
                         <div class="col-xl-12">
                             <div class="card">
                                 <div class="card-body">
 
-                                    <h4 class="card-title modal-title"> Sales Report</h4>
+                                    <h4 class="card-title text-uppercase text-info modal-title"> Sales Report</h4>
 
 
 
                                     <div class="row">
                                         <div class="col-md-12 col-lg-12 col-sm-12">
-                                            <p>List of all receipts</p>
+                                            <p>Showing sales report between <code>{{date('d M, Y', strtotime($from))}}</code> to <code>{{date('d M, Y', strtotime($to))}}</code></p>
                                             <div class="table-responsive">
 
                                                 <table id="datatable" class="table table-striped table-bordered nowrap dataTable" role="grid" aria-describedby="focus-key_info" style="position: relative;">
@@ -127,8 +151,8 @@
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function(){
-            $( "#datepicker" ).datepicker({ dateFormat: 'dd-mm-yy' });
-            $( "#datepicker2" ).datepicker({ dateFormat: 'dd-mm-yy' });
+            $( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+            $( "#datepicker2" ).datepicker({ dateFormat: 'yy-mm-dd' });
             $('.js-example-basic-single').select2();
             $('#createIncomeForm').parsley().on('field:validated', function() {
                 let ok = $('.parsley-error').length === 0;

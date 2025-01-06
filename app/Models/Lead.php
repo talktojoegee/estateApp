@@ -245,5 +245,12 @@ class Lead extends Model
         }
     }
 
+    public function getCustomersWithinRange($startDate, $endDate){
+        return Lead::whereBetween('entry_date', [$startDate, $endDate])
+            ->orderBy('id', 'DESC')
+            //->groupby('year','month')
+            ->get();
+    }
+
 
 }

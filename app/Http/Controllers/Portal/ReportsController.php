@@ -9,15 +9,21 @@ use App\Models\Calendar;
 use App\Models\CashBook;
 use App\Models\CashBookAccount;
 use App\Models\Client;
+use App\Models\Estate;
 use App\Models\Lead;
 use App\Models\LeadFollowupScheduleDetail;
 use App\Models\LeadFollowupScheduleMaster;
+use App\Models\PaymentDefinition;
+use App\Models\Property;
 use App\Models\Receipt;
 use App\Models\Remittance;
+use App\Models\Salary;
 use App\Models\Sale;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
@@ -42,6 +48,7 @@ class ReportsController extends Controller
         $this->bulkmessage = new BulkMessage();
 
         $this->receipt = new Receipt();
+        $this->property = new Property();
 
     }
 
@@ -498,7 +505,205 @@ class ReportsController extends Controller
             'search'=>0,
             'from'=>$from,
             'to'=>$to,
-            'receipts'=>$this->receipt->getAllTenantReceipts(1),
         ]);
+    }
+
+
+    public function generateSalesReport(Request $request){
+        $this->validate($request,[
+            'from'=>'required|date',
+            'to'=>'required|date',
+        ],[
+            'from.required'=>'Choose start date',
+            'from.date'=>'Enter a valid date',
+            'to.date'=>'Enter a valid date',
+            'to.required'=>'Choose end date',
+        ]);
+        $from = Carbon::parse($request->input('from'))->format('Y-m-d');
+        $to = Carbon::parse($request->input('to'))->format('Y-m-d');
+        return view("reports.report-sales",
+            [
+                'search'=>1,
+                'from'=>$from,
+                'to'=>$to,
+                'receipts'=>$this->receipt->getSalesReportByDateRange($from, $to),
+            ]);
+    }
+
+
+
+    public function showPayrollReport(Request $request){
+        $from = date('d-m-Y', strtotime("-30 days"));
+        $to = date('d-m-Y');
+        return view("reports.report-payroll",
+            [
+                'search'=>0,
+                'from'=>$from,
+                'to'=>$to,
+            ]);
+    }
+
+
+
+    public function generatePayrollReport(Request $request){
+        $this->validate($request,[
+            'payrollPeriod'=>'required',
+        ],[
+            'from.required'=>'Choose payroll period',
+        ]);
+        $paymentDefinitions = DB::table('payment_definitions')->pluck('payment_name', 'id');
+
+        $selects = ['employee_id'];  // Start with employee_id in the select clause
+
+        // Add dynamic CASE statements for each payment definition
+        foreach ($paymentDefinitions as $id => $name) {
+            $selects[] = DB::raw("MAX(CASE WHEN payment_definition_id = {$id} THEN amount END) as `{$name}`");
+        }
+
+        $payroll = DB::table('salaries')
+            ->select($selects)
+            ->groupBy('employee_id')
+            ->get();
+
+        return $payroll;
+
+        /*$columns = PaymentDefinition::all();
+        $pdIds = PaymentDefinition::pluck('id');
+        $salaries = Salary::all()->groupBy('employee_id')*/;
+        //return dd($columns);
+        //DB::table('payment_definitions')->pluck('payment_name');
+       /* $employees = User::with(['payments.paymentDefinition'])
+            ->get()
+            ->map(function ($employee) use ($columns) {
+                // Create an array with payment amounts keyed by payment_name
+                $employeePayments = $employee->payments->pluck('amount', 'paymentDefinition.payment_name')->toArray();
+
+                // Ensure all column names exist, even if the employee has no value
+                foreach ($columns as $column) {
+                    $employeePayments[$column] = $employeePayments[$column] ?? 0;
+                }
+
+                return [
+                    'name' => $employee->name,
+                    'payments' => $employeePayments,
+                ];
+            });*/
+        //return dd($employees);
+        //$employees = PaymentDefinition::select(['name', ...$columns])->get();
+        //return gettype($columns);
+        return view("reports.report-payroll",
+            [
+                'search'=>1,
+                'period'=>$request->payrollPeriod,
+                'records'=>[],
+                'columns'=>$columns,
+                'salaries'=>$salaries,
+                'pdIds'=>$pdIds
+            ]);
+    }
+
+
+
+    public function showPropertyReport(Request $request){
+        $from = date('d-m-Y', strtotime("-30 days"));
+        $to = date('d-m-Y');
+        return view("reports.report-property",
+            [
+                'search'=>0,
+                'from'=>$from,
+                'to'=>$to,
+                'estates'=>Estate::orderBy('e_name', 'ASC')->get()
+            ]);
+    }
+
+
+
+    public function generateGeneralPropertyReport(Request $request){
+        $this->validate($request,[
+            'location'=>'required',
+            'status'=>'required',
+        ],[
+            'location.required'=>'Choose location',
+            'status.date'=>'Choose status',
+        ]);
+        $status = null;
+        switch ($request->status){
+            case 0:
+                $status = "Available";
+                break;
+            case 1:
+                $status = "Rented";
+                break;
+            case 2:
+                $status = "Sold";
+                break;
+            case 3:
+                $status = "Reserved";
+                break;
+        }
+        $estate = Estate::find($request->location);
+        return view("reports.report-property",
+            [
+                'search'=>1,
+                'status'=>$status,
+                'estate'=>!empty($estate) ? $estate->e_name : 'All Locations',
+                'estates'=>Estate::orderBy('e_name', 'ASC')->get(),
+                'properties'=>$request->location != 0 ? $this->property->getPropertyReport($request->location, $request->status) : $this->property->getAllPropertiesReport($request->status),
+            ]);
+    }
+
+
+
+    public function showInventoryReport(Request $request){
+
+        return view("reports.report-inventory",
+            [
+                'search'=>0
+                //'estates'=>Estate::orderBy('e_name', 'ASC')->get()
+            ]);
+    }
+
+    public function showCustomerReport(){
+
+        $from = date('d-m-Y', strtotime("-30 days"));
+        $to = date('d-m-Y');
+        return view("reports.report-customer",
+            [
+                'search'=>0,
+                'from'=>$from,
+                'to'=>$to,
+            ]);
+    }
+
+    public function generateCustomerReport(Request $request){
+        $from = Carbon::parse($request->input('from'))->format('Y-m-d');
+        $to = Carbon::parse($request->input('to'))->format('Y-m-d');
+
+        $individual = 0; $partnership = 0; $organization = 0;
+        $leads = $this->lead->getCustomersWithinRange($from, $to);
+        foreach($leads as $lead){
+            switch ($lead->customer_type){
+                case 1:
+                    $individual += $this->lead->getCustomerValuation($lead->id);
+                    break;
+                case 2:
+                    $partnership += $this->lead->getCustomerValuation($lead->id);
+                    break;
+                case 3:
+                    $organization += $this->lead->getCustomerValuation($lead->id);
+                    break;
+            }
+        }
+
+        return view("reports.report-customer",
+            [
+                'search'=>1,
+                'from'=>$from,
+                'to'=>$to,
+                'individualValue'=>$individual,
+                'partnershipValue'=>$partnership,
+                'organizationValue'=>$organization,
+                'leads'=>$leads
+            ]);
     }
 }

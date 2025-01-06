@@ -246,7 +246,7 @@
                             <button type="button" data-bs-target="#verifyPayment" data-bs-toggle="modal" class="btn btn-success w-md waves-effect waves-light">Post <i class="bx bx-check-double"></i> </button>
                         @endif
                         <button class="btn btn-primary" onclick="generatePDF()"><i class="bx bx-printer mr-2"></i> Print Receipt</button>
-                        <a href="{{route('send-receipt-as-email', ['ref'=>$receipt->trans_ref])}}" class="btn btn-custom"><i class="bx bx-envelope mr-2"></i> Email Receipt</a>
+                        <!-- <a href="{route('send-receipt-as-email', ['ref'=>$receipt->trans_ref])}}" class="btn btn-custom"><i class="bx bx-envelope mr-2"></i> Email Receipt</a> -->
                     </div>
                 </div>
             </div>

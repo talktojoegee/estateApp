@@ -9,6 +9,14 @@
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .odd{
+            background: #01204D !important;
+        }
+        .table-head{
+            background: #FF0000 !important;
+        }
+    </style>
 @endsection
 @section('breadcrumb-action-btn')
  Chart of Accounts
@@ -28,12 +36,12 @@
                         class="bx bx-list-plus"></i></a>
                 @endcan
 
-                <div class="card-body accordion-block">
+                <div class="card-body ">
                     <div class="col-xs-12 col-sm-12 mb-4 ">
                         @if(count($charts) > 0)
                             <table id="complex-header" class="table table-striped text-white table-bordered nowrap dataTable" id="chartOfAccountsTable" role="grid" aria-describedby="complex-header_info" style="width: 100%; margin:0px auto;">
                             <thead>
-                            <tr role="row">
+                            <tr role="row" class="table-head">
                                 <th class="sorting_asc text-left" tabindex="0" style="width: 50px;">S/No.</th>
                                 <th class="sorting_asc text-left" tabindex="0" style="width: 50px;">ACCOUNT CODE</th>
                                 <th class="sorting_asc text-left" tabindex="0" style="width: 150px;">ACCOUNT NAME</th>

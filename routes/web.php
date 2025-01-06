@@ -135,8 +135,22 @@ Route::group(['prefix'=>'/tasks', 'middleware'=>'auth'], function(){
     Route::post('/mark-as', [App\Http\Controllers\Portal\TaskController::class, 'markAs'])->name('mark-as');
 });
 
-Route::group(['prefix'=>'/report', 'middleware'=>'auth'], function(){
+Route::group(['prefix'=>'/general/reports', 'middleware'=>'auth'], function(){
     Route::get('/generate/sales', [\App\Http\Controllers\Portal\ReportsController::class, 'showSalesReport'])->name('sales-report');
+    Route::get('/generate-sales-report', [\App\Http\Controllers\Portal\ReportsController::class, 'generateSalesReport'])->name('generate-sales-report');
+
+
+    Route::get('/general/payroll-report', [\App\Http\Controllers\Portal\ReportsController::class, 'showPayrollReport'])->name('general-payroll-report');
+    Route::get('/payroll-general-report', [\App\Http\Controllers\Portal\ReportsController::class, 'generatePayrollReport'])->name('generate-general-payroll-report');
+
+    Route::get('/general/property', [\App\Http\Controllers\Portal\ReportsController::class, 'showPropertyReport'])->name('general-property-report');
+    Route::get('/property-general-report', [\App\Http\Controllers\Portal\ReportsController::class, 'generateGeneralPropertyReport'])->name('generate-general-property-report');
+
+    Route::get('/general/inventory', [\App\Http\Controllers\Portal\ReportsController::class, 'showInventoryReport'])->name('general-inventory-report');
+
+
+    Route::get('/customer', [\App\Http\Controllers\Portal\ReportsController::class, 'showCustomerReport'])->name('general-customer-report');
+    Route::get('/generate-customer-report', [\App\Http\Controllers\Portal\ReportsController::class, 'generateCustomerReport'])->name('generate-customer-report');
 });
 
 

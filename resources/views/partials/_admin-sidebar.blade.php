@@ -349,10 +349,10 @@
             </a>
             <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{ route("sales-report") }}" key="t-reports">Sales</a></li>
-                <li><a href="#" key="t-reports">Payroll</a></li>
-                <li><a href="#" key="t-reports">Property</a></li>
-                <li><a href="#" key="t-reports">Inventory</a></li>
-                <li><a href="#" key="t-reports">Customer</a></li>
+                {{--<li><a href="route('general-payroll-report')}}" key="t-reports">Payroll</a></li>--}}
+                <li><a href="{{route('general-property-report')}}" key="t-reports">Property</a></li>
+                {{--<li><a href="route('general-inventory-report')}}" key="t-reports">Inventory</a></li>--}}
+                <li><a href="{{route('general-customer-report')}}" key="t-reports">Customer</a></li>
             </ul>
         </li>
 
