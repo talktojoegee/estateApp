@@ -8,6 +8,7 @@
     <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/css/parsley.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <style>
         .text-danger{
             color: #ff0000 !important;
@@ -34,15 +35,15 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="modal-header">
-                            <h6 class="text-uppercase modal-title"> Period</h6>
+                            <h6 class="text-info text-uppercase modal-title"> Period</h6>
                         </div>
                         <form action="{{ route('schedule-follow-up-preview') }}" method="get">
                             @csrf
                             <div class="row mt-4">
                                 <div class="col-md-12">
-                                    <div class="form-group">
+                                    <div class="form-group col-6">
                                         <label for="" class="form-label">Month & Year</label>
-                                        <input type="month" name="period" class="form-control" placeholder="Month">
+                                        <input type="month" id="" name="period" class="form-control col-md-3  col-3" placeholder="Month">
                                         @error('period') <i class="text-danger">{{$message}}</i> @enderror
                                     </div>
                                 </div>
@@ -158,8 +159,18 @@
 @endsection
 
 @section('extra-scripts')
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function(){
+            $( "#datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'MM yy',
+                onClose: function(dateText, inst) {
+                    $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                }
+            });
             $('#selectAll').click(function(event) {
                 if(this.checked) {
                     $(':checkbox').each(function() {

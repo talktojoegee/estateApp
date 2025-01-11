@@ -237,7 +237,7 @@
                 <li><a href="{{route('chart-of-accounts')}}" key="t-account">Chart of Accounts</a></li>
                 @can('can-use-jv')<li><a href="{{route('journal-voucher')}}" key="t-account">Journal Voucher</a></li>@endcan
                 <li><a href="{{route('trial-balance')}}" key="t-account">Trial Balance</a></li>
-                <li><a href="{{route('balance-sheet')}}" key="t-account">Statement of Fin. Pos.</a></li>
+                <li><a href="{{route('balance-sheet')}}" key="t-account">Statement of Financial Position</a></li>
                 <li><a href="{{route('profit-or-loss')}}" key="t-account">Income Statement</a></li>
             </ul>
             @endcan
