@@ -71,7 +71,7 @@
                                 <div class="avatar-md profile-user-wid mb-4 align-content-center" style="width: 120px; height: 120px;" >
                                     <img style="width: 120px; height: 120px;" src=" {{url('storage/'.$client->avatar)}}" alt="" class="img-thumbnail rounded-circle">
                                 </div>
-                                <h5 class="font-size-15">{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</h5>
+                                <h5 class="font-size-15">{{$client->first_name ?? '' }} {{$client->middle_name ?? '' }} {{$client->last_name ?? '' }}</h5>
                             </div>
                             <div class="col-md-12 col-sm-12" style="display: none;">
                                 <div class="btn-group">
@@ -101,7 +101,7 @@
                                     <tbody>
                                     <tr>
                                         <th scope="row">Full Name :</th>
-                                        <td>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }} <span style="cursor: pointer;" data-bs-target="#editClientModal" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> </span> </td>
+                                        <td>{{$client->first_name ?? '' }} {{$client->middle_name ?? '' }} {{$client->last_name ?? '' }} <span style="cursor: pointer;" data-bs-target="#editClientModal" data-bs-toggle="modal"> <i class="bx bx-pencil text-warning"></i> </span> </td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Mobile :</th>
@@ -747,7 +747,7 @@
                         <div class="modal-header">
                             <div class="modal-title text-uppercase">New Attachments</div>
                         </div>
-                        <p class="card-title-desc mt-3">Upload documents for <code>{{$client->first_name ?? '' }} {{ $client->last_name ?? '' }}</code>  </p>
+                        <p class="card-title-desc mt-3">Upload documents for <code>{{$client->first_name ?? '' }} {{ $client->middle_name ?? '' }} {{ $client->last_name ?? '' }}</code>  </p>
 
                         <form action="{{route('upload-files')}}" autocomplete="off" method="post" enctype="multipart/form-data">
                             @csrf
@@ -911,7 +911,7 @@
                             </tr>
                             <tr>
                                 <th scope="row">Uploaded By: </th>
-                                <td>{{ $file->getUploadedBy->first_name ?? '' }} {{ $file->getUploadedBy->last_name ?? '' }}</td>
+                                <td>{{ $file->getUploadedBy->first_name ?? '' }} {{ $client->getUploadedBy->middle_name ?? '' }} {{ $file->getUploadedBy->last_name ?? '' }}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Date: </th>

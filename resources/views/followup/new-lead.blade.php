@@ -10,6 +10,12 @@
 @section('extra-styles')
 
     <link href="/css/parsley.css" rel="stylesheet" type="text/css" />
+    <style>
+        .text-danger{
+            color: #ff0000 !important;
+        }
+    </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -79,7 +85,7 @@
 
                                            <div class="form-group mt-1">
                                                <label for="">Date <span class="text-danger">*</span></label>
-                                               <input type="date" value="{{ old('date') }}" data-parsley-required-message="Enter a valid date"    name="date"  class="form-control">
+                                               <input type="text" placeholder="Date" id="datepicker" value="{{ old('date') }}" data-parsley-required-message="Enter a valid date"    name="date"  class="form-control">
                                                @error('date') <i class="text-danger">{{$message}}</i>@enderror
                                            </div>
                                        </div>
@@ -92,13 +98,20 @@
                                            </div>
 
                                            <div class="form-group mt-1">
+                                               <label for="">Middle Name </label>
+                                               <input type="text" name="middleName" data-parsley-required-message="Enter middle name"    value="{{old('middleName')}}" placeholder="Middle Name" class="form-control">
+                                               @error('middleName') <i class="text-danger">{{$message}}</i>@enderror
+                                           </div>
+                                       </div>
+                                       <div class="col-md-6 individual">
+                                           <div class="form-group mt-1">
                                                <label for="">Last Name <span class="text-danger">*</span></label>
                                                <input type="text" name="lastName" data-parsley-required-message="Enter last name"    value="{{old('lastName')}}" placeholder="Last Name" class="form-control">
                                                @error('lastName') <i class="text-danger">{{$message}}</i>@enderror
                                            </div>
                                        </div>
                                    </div>
-                                    <div class="row individual">
+                                    <div class="row individual mt-3">
                                         <div class="col-md-6">
                                             <div class="form-group mt-1">
                                                 <label for="">Phone Number <span class="text-danger">*</span></label>
@@ -322,10 +335,11 @@
 @endsection
 
 @section('extra-scripts')
-
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script src="/js/parsley.js"></script>
     <script>
         $(document).ready(function(){
+            $( "#datepicker" ).datepicker({ dateFormat: 'dd-mm-yy' });
             $('.individual').show();
             $('.organization').hide();
             $('.partnership').hide();

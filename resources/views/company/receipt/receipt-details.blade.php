@@ -150,7 +150,7 @@
                         <td><strong>Payment Method: </strong>
                             @switch($receipt->payment_method)
                                 @case(1)
-                                    Case
+                                    Cash
                                 @break
                                 @case(2)
                                 Cheque

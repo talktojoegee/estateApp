@@ -14,6 +14,7 @@
             color: #ff0000 !important;
         }
     </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -124,7 +125,7 @@
                                                  <div class="col-md-6 col-sm-12 col-lg-6">
                                                      <div class="form-group mt-1">
                                                          <label for=""> Date of Birth <span class="text-danger">*</span></label>
-                                                         <input type="date" value="{{date('Y-m-d', strtotime(now()))}}" name="dob" required placeholder="Date of Birth" data-parsley-required-message="Enter date of birth" class="form-control">
+                                                         <input type="text" id="datepicker" value="{{date('Y-m-d', strtotime(now()))}}" name="dob" required placeholder="Date of Birth" data-parsley-required-message="Enter date of birth" class="form-control">
                                                          @error('dob') <i class="text-danger">{{$message}}</i>@enderror
                                                      </div>
                                                  </div>
@@ -157,20 +158,23 @@
                                                          @error('maritalStatus') <i class="text-danger">{{$message}}</i>@enderror
                                                      </div>
                                                  </div>
-                                                 <div class="col-md-12 col-sm-12 col-lg-12 mb-3">
-                                                     <div class="form-check form-switch mt-3">
-                                                         <input class="form-check-input" type="checkbox" id="genderSwitchCheck" name="gender" checked="">
-                                                         <label class="form-check-label" for="genderSwitchCheck">Male?</label>
+                                                 <div class="col-md-4 col-sm-4 col-lg-4 mb-3 mt-3">
+                                                     <div class="form-group">
+                                                         <label for="">Gender <span class="text-danger">*</span>  </label>
+                                                         <select name="gender" id="" class="form-control">
+                                                             <option value="1">Male</option>
+                                                             <option value="2">Female</option>
+                                                         </select>
                                                      </div>
                                                  </div>
-                                                 <div class="col-md-6 col-sm-12 col-lg-6">
+                                                 <div class="col-md-4 col-sm-12 col-lg-4 mt-3">
                                                      <div class="form-group mt-1">
                                                          <label for="">Start Date <span class="text-danger">*</span></label>
-                                                         <input type="date" value="{{date('Y-m-d', strtotime(now()))}}" name="dob" required placeholder="Start Date" data-parsley-required-message="Enter start date" class="form-control">
+                                                         <input type="text" id="datepicker2" placeholder="Start Date" value="{{date('Y-m-d', strtotime(now()))}}" name="startDate" required placeholder="Start Date" data-parsley-required-message="Enter start date" class="form-control">
                                                          @error('startDate') <i class="text-danger">{{$message}}</i>@enderror
                                                      </div>
                                                  </div>
-                                                 <div class="col-md-6 col-sm-12 col-lg-6">
+                                                 <div class="col-md-4 col-sm-12 col-lg-4 mt-3">
                                                      <div class="form-group mt-1">
                                                          <label for="">Religion <span class="text-danger">*</span></label>
                                                          <input type="text" value="{{old('religion')}}"  data-parsley-required-message="Enter Religion" required="" name="religion" placeholder="Enter Religion" class="form-control">
@@ -427,8 +431,11 @@
     <script src="/assets/js/pages/form-advanced.init.js"></script>
     <script src="/assets/js/axios.min.js"></script>
     <script src="/js/parsley.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function(){
+            $( "#datepicker" ).datepicker({ dateFormat: 'dd-mm-yy' });
+            $( "#datepicker2" ).datepicker({ dateFormat: 'dd-mm-yy' });
             $('#addNewUser').parsley().on('field:validated', function() {
                 var ok = $('.parsley-error').length === 0;
                 $('.bs-callout-info').toggleClass('hidden', !ok);

@@ -25,7 +25,7 @@
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
                             <h5 class="modal-header mb-3 text-info text-uppercase">Accounting Period</h5>
-                            <p>Enter date to generate income statement accounting report.</p>
+                            <p>Choose dates to generate income statement accounting report.</p>
                             @if (session()->has('success'))
                                 <div class="alert alert-success background-success">
 

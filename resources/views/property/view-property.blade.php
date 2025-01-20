@@ -32,15 +32,24 @@
     @endif
 
 
-    @include('property.partial._add-menu')
-    <div class="row viewPropertyWindow">
-        <div class="col-md-8 col-sm-8">
+    <div class="row">
+        <div class="col-md-12 mb-2 d-flex justify-content-end">
+            <div class="btn-group">
+                <a href="{{url()->previous()}}" class="btn btn-secondary">Go Back <i class="bx bx-left-arrow"></i> </a>
+                <a href="javascript:void(0);" onclick="generatePDF()" class="btn btn-warning ">Print <i class="bx bx-printer"></i> </a>
+                <a href="{{ route('manage-properties', 'all') }}" class="btn btn-primary ">All Properties <i class="bx bxs-building-house"></i> </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="printView" class="row viewPropertyWindow">
+        <div id="col-8" class="col-md-8 col-sm-12">
             <div class="card p-3">
                 <h5 class="modal-header text-info">
                     {{$property->property_name ?? '' }}
                 </h5>
                 <div class="card-body">
-                    <div class="d-flex justify-content-end mb-2">
+                    <div id="editHandle" class="d-flex justify-content-end mb-2">
                         <span class="btn btn-primary" id="editProperty"><i class="bx bx-pencil"></i> </span>
                     </div>
                     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
@@ -73,7 +82,10 @@
                         <table class="table mb-0 table-striped">
                             <tbody>
                             <tr>
-                                <th scope="row" >Estate: &nbsp; &nbsp; <span class="text-info">{{$property->getEstate->e_name ?? '' }} </span></th>
+                                <th scope="row" >Estate: &nbsp; &nbsp;
+                                    <span class="text-info">
+                                        <a target="_blank" href="{{ route('show-estate-view', $property->getEstate->e_slug) }}">{{$property->getEstate->e_name ?? '' }}</a>
+                                    </span></th>
                                 <th scope="row">Property Type: &nbsp; &nbsp; <span class="text-info">{{$property->getBuildingType->bt_name ?? '' }}</span></th>
                             </tr>
                             <tr>
@@ -165,35 +177,41 @@
                                  <th scope="row" >Date Added: &nbsp; &nbsp; <span class="text-info"> {{ date('d M, Y h:ia', strtotime($property->created_at)) }}  </span></th>
                             </tr>
                             <tr>
+                                <th scope="row" > Added By: &nbsp; &nbsp; <span class="text-info"> {{$property->getAddedBy->title ?? '' }} {{$property->getAddedBy->first_name ?? '' }} {{$property->getAddedBy->last_name ?? '' }} {{$property->getAddedBy->other_names ?? '' }} </span></th>
                                 <th scope="row" colspan="2" >Payment Plan: &nbsp; &nbsp; <span class="text-info"> {{ $property->getPaymentPlan->pp_name ?? '' }} <br> <small>({{ $property->getPaymentPlan->pp_description ?? '-' }})</small>  </span></th>
                             </tr>
 
                             </tbody>
                         </table>
                     </div>
-                    <h6 class="modal-header p-4 text-uppercase">Other Details</h6>
-                    <div class="table-responsive">
-                        <table class="table mb-0 table-striped">
-                            <tbody>
-                            <tr>
-                                <th scope="row" > Added By: &nbsp; &nbsp; <span class="text-info"> {{$property->getAddedBy->title ?? '' }} {{$property->getAddedBy->first_name ?? '' }} {{$property->getAddedBy->last_name ?? '' }} {{$property->getAddedBy->other_names ?? '' }} </span></th>
+                    @if(!is_null($property->sold_to))
+                        <h6 class="modal-header p-4 text-uppercase text-info">Sale Details</h6>
+                        <div class="table-responsive">
+                            <table class="table mb-0 table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" > Name: &nbsp; &nbsp;
+                                            <span class="text-info"><a target="_blank" href="{{ route('lead-profile', $property->getSoldTo->slug)}}">{{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }} </a></span></th>
+                                        <th scope="row" >Date: &nbsp; &nbsp;
+                                            <span class="text-info">{{ !is_null($property->date_sold) ? date('d M, Y h:ia', strtotime($property->date_sold)) : '-' }}</span>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" > Email: &nbsp; &nbsp;
+                                            <span class="text-info">{{$property->getSoldTo->email ?? '' }} </span></th>
+                                        <th scope="row" >Mobile No.: &nbsp; &nbsp;
+                                            <span class="text-info">{{$property->getSoldTo->mobile_no ?? '' }}</span>
+                                        </th>
+                                    </tr>
 
-                            </tr>
-                            <tr>
-                                <th scope="row" > Sold To: &nbsp; &nbsp; <span class="text-info">  {{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }} </span></th>
-                                <th scope="row" >Date Sold: &nbsp; &nbsp;
-                                    <span class="text-info">{{ !is_null($property->date_sold) ? date('d M, Y h:ia', strtotime($property->date_sold)) : '-' }}</span>
-                                </th>
-
-                            </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
+        <div id="col-4" class="col-md-4 col-sm-12">
             <div class="card">
                 <div class="card-body">
                     <div class="modal-header text-uppercase ">Features</div>
@@ -377,6 +395,7 @@
             </div>
         </div>
     </div>
+
     <div class="row editPropertyWindow">
         <div class="col-md-12 col-xl-12 col-sm-12">
             <div class="card">
@@ -813,10 +832,13 @@
 @endsection
 
 @section('extra-scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.0/html2pdf.bundle.min.js"></script>
     <script src="/assets/libs/select2/js/select2.min.js"></script>
     <script src="/assets/js/pages/form-advanced.init.js"></script>
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="/js/parsley.js"></script>
+
+
     <script>
         $(document).ready(function(){
             $('#addPropertyForm').parsley().on('field:validated', function() {
@@ -847,6 +869,31 @@
                 $('.viewPropertyWindow').show();
             });
         });
+        function generatePDF(){
+            let element = document.getElementById('printView');
+            let col8 = document.getElementById('col-8');
+            let col4 = document.getElementById('col-4');
+            let editHandle = document.getElementById('editHandle');
+            col8.classList.remove('col-md-8');
+            col4.classList.remove('col-md-4');
+            col8.classList.add('col-md-12');
+            col4.classList.add('col-md-12');
+            editHandle.style.display = 'none';
+
+            html2pdf(element,{
+                margin:       10,
+                filename:     "Property_{{$property->property_name}}"+".pdf",
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, logging: true, dpi: 192, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            });
+
+            col8.classList.add('col-md-8');
+            col4.classList.add('col-md-4');
+            col8.classList.remove('col-md-12');
+            col4.classList.remove('col-md-12');
+            editHandle.style.display = 'block';
+        }
     </script>
 
 

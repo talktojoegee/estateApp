@@ -68,7 +68,7 @@ class ChartOfAccount extends Model
         $account->account_type = $request->account_type;
         $account->bank = $request->bank;
         $account->glcode = $request->glcode;
-        $account->parent_account = $request->parent_account;
+        $account->parent_account = 119;//$request->parent_account;
         $account->type = $request->type;
         $account->save();
     }

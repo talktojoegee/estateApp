@@ -77,13 +77,13 @@ class AccountingController extends Controller
             "account_type"=>"required",
             "type"=>"required",
             "bank"=>"required",
-            "parent_account"=>"required"
+            //"parent_account"=>"required"
         ],[
-            'glcode.required'=>'Enter a unique account code',
+            'glcode.required'=>'Enter a unique account number',
             'account_name.required'=>'Enter a unique account name',
             'account_type.required'=>'What form of account is this?',
             'type.required'=>'Select whether this is a general or detail account',
-            'parent_account.required'=>'Kindly select parent account',
+            //'parent_account.required'=>'Kindly select parent account',
         ]);
         $this->chartofaccounts->setNewChartOfAccount($request);
         session()->flash("success", "Action successful");
@@ -201,7 +201,7 @@ class AccountingController extends Controller
         if(!empty($receipt)){
             return view('accounting.receipt.view',['receipt'=>$receipt]);
         }else{
-            session()->flash("error", "<strong>Ooops!</strong> No record found.");
+            session()->flash("error", "<strong>Whoops!</strong> No record found.");
             return back();
         }
     }
@@ -474,8 +474,11 @@ class AccountingController extends Controller
             'end_date'=>'required|date|after_or_equal:start_date'
         ]);
         $this->current = Carbon::now();
-        $start_date = $request->start_date;
-        $end_date = $request->end_date;
+        $start_date = Carbon::parse($request->input('start_date'))->format('Y-m-d');
+        $end_date = Carbon::parse($request->input('end_date'))->format('Y-m-d');
+
+        /*$start_date = $request->start_date;
+        $end_date = $request->end_date;*/
         $firstGl = $this->generalledger->orderBy('id', 'ASC')->first();
         if(!empty($firstGl)){
             $bfDr = $this->generalledger->getDrBalanceBroughtForward($firstGl->created_at, $this->current->parse($start_date)->subDays(1));
@@ -497,31 +500,53 @@ class AccountingController extends Controller
 
     public function balanceSheet(Request $request){
         $this->validate($request, [
-            'date'=>'required|date'
+            'date'=>'required|date|before_or_equal:today', //end date
+            'start_date'=>'required|date|before_or_equal:today',
+        ],[
+            "date.before_or_equal"=>"The date must not be in the future.",
+            "date.date"=>"Enter a valid date",
+            "date.required"=>"The end date field is required",
+
+            "start_date.before_or_equal"=>"The date must be today or a future date.",
+            "start_date.date"=>"Enter a valid date",
+            "start_date.required"=>"The end date field is required",
         ]);
         //return dd($request->all());
+        $startDate = $request->start_date;
+        $endDate = $request->date;
+        //return dd($request->all());
+        $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d');
+        $date = Carbon::parse($request->input('date'))->format('Y-m-d');
 
         $this->current = Carbon::now();
-        $date = $request->date;
-        $firstGl = $this->generalledger->getFirstGlTransaction();
-        if(!empty($firstGl)){
-            $bfDr = $this->generalledger->getDrBalanceBroughtForward($firstGl->created_at, $this->current->parse($date)->subDays(1));
-            $bfCr = $this->generalledger->getCrBalanceBroughtForward($firstGl->created_at, $this->current->parse($date)->subDays(1));
-            $reports = $this->generalledger->getBalanceSheetReports($date);
-            $revenue = $this->generalledger->getRevenue($date);
-            $expense = $this->generalledger->getExpenses($date);
+        //$date = $request->date;
+        //$firstGl = $this->generalledger->getFirstGlTransaction();
+        //if(!empty($firstGl)){
+            $bfDr = $this->generalledger->getDrBalanceBroughtForward($startDate, $this->current->parse($date)->subDays(1));
+            //$bfDr = $this->generalledger->getDrBalanceBroughtForward($firstGl->created_at, $this->current->parse($date)->subDays(1));
+            $bfCr = $this->generalledger->getCrBalanceBroughtForward($startDate, $this->current->parse($date)->subDays(1));
+
+
+            $reports = $this->generalledger->getBalanceSheetReports($startDate, $date);
+            //$reports = $this->generalledger->getBalanceSheetReports($date);
+            $revenue = $this->generalledger->getRevenue($startDate,$date);
+            //$revenue = $this->generalledger->getRevenue($date);
+            $expense = $this->generalledger->getExpenses($startDate,$date);
+            //$expense = $this->generalledger->getExpenses($date);
             session()->flash("success", "Action successful.");
             return view('accounting.reports.balance-sheet', [
                 'reports'=> $reports, 'status'=>1,
-                'bfDr'=>$bfDr, 'bfCr'=>$bfCr,
+                'bfDr'=>$bfDr,
+                'bfCr'=>$bfCr,
                 'date'=>$date,
+                'start'=>$startDate,
                 'revenue'=>$revenue,
                 'expense'=>$expense
             ]);
-        }else{
+       /* }else{
             session()->flash("error", "Whoops! There have been no financial transaction since inception.");
             return back();
-        }
+        }*/
     }
 
 
@@ -535,8 +560,9 @@ class AccountingController extends Controller
             'end_date'=>'required|date|after_or_equal:start_date'
         ]);
         $this->current = Carbon::now();
-        $start_date = $request->start_date;
-        $end_date = $request->end_date;
+        $start_date = Carbon::parse($request->input('start_date'))->format('Y-m-d');
+        $end_date = Carbon::parse($request->input('end_date'))->format('Y-m-d');
+
         $firstGl = $this->generalledger->getFirstGlTransaction();
         if(!empty($firstGl)){
             $bfDr = $this->generalledger->getDrBalanceBroughtForward($firstGl->created_at, $this->current->parse($start_date)->subDays(1));

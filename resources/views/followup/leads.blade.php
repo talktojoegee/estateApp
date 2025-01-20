@@ -144,7 +144,7 @@
                                                 <td>{{date('M d, Y', strtotime($lead->entry_date))}}</td>
                                                 <td>
                                                     @if($lead->customer_type != 3)
-                                                    <a href="{{route('lead-profile', $lead->slug)}}">{{$lead->first_name ?? '' }} {{$lead->last_name ?? '' }}</a>
+                                                    <a href="{{route('lead-profile', $lead->slug)}}">{{$lead->first_name ?? '' }} {{$lead->middle_name ?? '' }} {{$lead->last_name ?? '' }}</a>
 
                                                     @else
                                                         <a href="{{route('lead-profile', $lead->slug)}}">{{$lead->company_name ?? '' }}</a>

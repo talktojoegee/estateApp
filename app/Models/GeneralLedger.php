@@ -47,36 +47,36 @@ class GeneralLedger extends Model
             ->groupBy('c.account_name')
             ->get();
     }
-    public function getBalanceSheetReports($date){
-        $firstGl = $this->getFirstGlTransaction();
+    public function getBalanceSheetReports($startDate, $date){
+        //$firstGl = $this->getFirstGlTransaction();
         return DB::table('general_ledgers as g')
             ->join('chart_of_accounts as c', 'c.glcode', '=', 'g.glcode')
             ->select(DB::raw('sum(g.dr_amount) AS sumDebit'),DB::raw('sum(g.cr_amount) AS sumCredit'),
                 'c.account_name', 'g.glcode', 'c.glcode', 'c.account_type', 'c.type')
             //->where('c.account_type', 1)
             ->where('c.type', 1)
-            ->whereBetween('g.created_at', [$firstGl->created_at, $date])
+            ->whereBetween('g.created_at', [$startDate, $date])
             ->orderBy('c.account_type', 'ASC')
             ->groupBy('c.account_name')
             ->get();
     }
 
-    public function getRevenue($date){
-        $firstGl = $this->getFirstGlTransaction();
+    public function getRevenue($startDate,$date){
+        //$firstGl = $this->getFirstGlTransaction();
         return DB::table('general_ledgers as g')
             ->join('chart_of_accounts as c', 'c.glcode', '=', 'g.glcode')
             ->where('c.type', 'Detail')
             ->whereIn('c.account_type', [4])
-            ->whereBetween('g.created_at', [$firstGl->created_at,$date])
+            ->whereBetween('g.created_at', [$startDate,$date])
             ->get();
     }
-    public function getExpenses($date){
-        $firstGl = $this->getFirstGlTransaction();
+    public function getExpenses($startDate,$date){
+        //$firstGl = $this->getFirstGlTransaction();
         return DB::table('general_ledgers as g')
             ->join('chart_of_accounts as c', 'c.glcode', '=', 'g.glcode')
             ->where('c.type', 'Detail')
             ->whereIn('c.account_type', [5])
-            ->whereBetween('g.created_at', [$firstGl->created_at,$date])
+            ->whereBetween('g.created_at', [$startDate,$date])
             ->get();
     }
 

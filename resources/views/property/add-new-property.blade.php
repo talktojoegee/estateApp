@@ -217,7 +217,7 @@
                                         <option disabled selected>-- Select account -- </option>
                                         <option value="0">Default Account</option>
                                         @foreach($accounts as $account)
-                                            <option value="{{$account->glcode}}">{{ $account->account_name ?? '' }}</option>
+                                            <option value="{{$account->glcode}}">{{$account->glcode ?? '' }} - {{ $account->account_name ?? '' }}</option>
                                         @endforeach
 
                                     </select>

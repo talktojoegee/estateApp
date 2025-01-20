@@ -47,9 +47,9 @@
                                 </a>
                                 @endcan
                                 @can('can-revoke-permission')
-                                <a href="javascript:void(0);" data-bs-target="#grantPermissionModa" data-bs-toggle="modal" class="btn btn-danger btn-sm btn-icon-text">
+                                <!-- <a href="javascript:void(0);" data-bs-target="#grantPermissionModa" data-bs-toggle="modal" class="btn btn-danger btn-sm btn-icon-text">
                                     <i class="bx bx-lock"></i>  Revoke Access
-                                </a>
+                                </a> -->
                                 @endcan
                                 <a href="javascript:void(0);" data-bs-target="#permissionModal" data-bs-toggle="modal" class="btn btn-secondary btn-sm btn-icon-text">
                                     <i class="bx bx-lock-alt"></i>  Access Level

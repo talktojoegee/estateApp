@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Traits\SMSServiceTrait;
 use App\Http\Traits\UtilityTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -40,12 +41,14 @@ class Lead extends Model
         return $this->hasMany(LeadNote::class, 'lead_id')->orderBy('id', 'DESC');
     }
     public function addLead(Request $request):Lead{
+        $date = Carbon::parse($request->input('date'))->format('Y-m-d');
         $lead = new Lead();
-        $lead->entry_date = $request->date ??  now();
+        $lead->entry_date = $date ??  now();
         $lead->added_by = Auth::user()->id;
         $lead->org_id = Auth::user()->org_id;
-        $lead->first_name = $request->firstName;
-        $lead->last_name = $request->lastName;
+        $lead->first_name = $request->firstName ?? '';
+        $lead->last_name = $request->lastName ?? '';
+        $lead->middle_name = $request->middleName ?? '';
         $lead->email = $request->email;
         $lead->phone = $this->appendCountryCode($request->mobileNo);
         $lead->dob = $request->birthDate;

@@ -25,7 +25,7 @@
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
                             <h5 class="modal-header text-info text-uppercase mb-4 text-uppercase">Accounting Period</h5>
-                            <p>Enter date to generate Statement of Financial Position up to that time.</p>
+                            <p>Choose dates to generate Statement of Financial Position.</p>
                             @if (session()->has('success'))
                                 <div class="alert alert-success background-success">
 
@@ -43,18 +43,26 @@
                             <div class=" ">
                                     <form action="{{route('balance-sheet')}}" method="post">
                                         @csrf
-                                    <div class="form-group">
-                                        <div class="input-group input-group-button">
+                                        <div class="form-group">
+                                            <div class="input-group input-group-button">
                                                 <button class=" btn btn-primary" id="basic-addon9">
-                                                    Date
+                                                    From
                                                 </button>
-                                            <input type="text" autocomplete="off" id="datepicker"  class="form-control" name="date" placeholder="Date">
-                                            <span class="input-group-addon btn btn-primary" id="basic-addon9">
+                                                <input type="text" autocomplete="off" id="datepicker" placeholder="From" class="form-control" name="start_date" placeholder="Start Date">
+                                                <button class=" btn btn-primary" id="basic-addon9">
+                                                    To
+                                                </button>
+                                                <input type="text" autocomplete="off" id="datepicker2" placeholder="To" class="form-control" name="date" placeholder="End Date">
+                                                <span class="input-group-addon btn btn-primary" id="basic-addon9">
                                                     <button class="btn btn-primary btn-mini" type="submit">Submit</button>
                                                 </span>
+                                                @error('start_date') <i class="text-danger">{{$message}}</i> @enderror
+                                                <br>
+                                                @error('date') <i class="text-danger">{{$message}}</i> @enderror
+
+                                            </div>
+                                            <br>
                                         </div>
-                                        <br>
-                                    </div>
                                     </form>
                                 </div>
 
@@ -94,7 +102,7 @@
                 <div class="row invoive-info">
                     <div class="col-md-4 col-xs-12 invoice-client-info">
                         <h6 class="text-muted">Account Period:</h6>
-                        <h6 class="m-0 text-muted"><strong class="label label-info">Date:</strong> {{date('d F, Y', strtotime($date))}} </h6>
+                        <h6 class="m-0 text-muted"><strong class="label label-info">From:</strong> {{date('d F, Y', strtotime($start))}} <strong class="label label-danger">To:</strong> {{date('d F, Y', strtotime($date))}}</h6>
                     </div>
                     <div class="col-md-4 col-sm-6">
                         <h6 class="text-muted">Statement of Financial Position</h6>
@@ -229,7 +237,8 @@
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function(){
-            $( "#datepicker" ).datepicker();
+            $( "#datepicker" ).datepicker({ dateFormat: 'dd-mm-yy' });
+            $( "#datepicker2" ).datepicker({ dateFormat: 'dd-mm-yy' });
             $(document).on('click', '.approve', function(event){
                 event.preventDefault();
                 $('#applicant').text($(this).data('applicant'));

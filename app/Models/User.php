@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -144,6 +145,8 @@ class User extends Authenticatable
     }
     public function createUser(Request $request, $password){
         //$password = Str::random(8);
+        $startDate = Carbon::parse($request->input('startDate'))->format('Y-m-d');
+        $dob = Carbon::parse($request->input('dob'))->format('Y-m-d');
         $user = new User();
         $user->title = $request->title ?? null;
         $user->first_name = $request->firstName;
@@ -154,15 +157,20 @@ class User extends Authenticatable
         $user->marital_status = $request->maritalStatus;
         $user->role = $request->role ?? null;
         //$user->pastor = isset($request->pastor) ? 1 : 0;
-        $user->gender = isset($request->gender) ? 1 : 0;
+        $user->gender = $request->gender ?? 0;
+        //$user->gender = isset($request->gender) ? 1 : 0;
         $user->email = $request->email;
         $user->occupation = $request->occupation ?? null;
         $user->branch = $request->branch ?? null;
         $user->country_id = $request->nationality ?? null;
+
         $user->birth_date = $request->dob ?? null;
-        $user->birth_year = date('Y', strtotime($request->dob)) ?? null;
-        $user->birth_month = date('m', strtotime($request->dob)) ?? null;
-        $user->birth_day = date('d', strtotime($request->dob)) ?? null;
+        $user->birth_year = date('Y', strtotime($dob)) ?? null;
+        $user->birth_month = date('m', strtotime($dob)) ?? null;
+        $user->birth_day = date('d', strtotime($dob)) ?? null;
+
+        $user->start_date =  $startDate ?? null;
+
         $user->password = bcrypt($password);
         $user->is_admin = $request->userType;
         $user->address_1 = $request->presentAddress ?? null;
