@@ -112,6 +112,10 @@
                                         <td>{{$client->email ?? '' }}</td>
                                     </tr>
                                     <tr>
+                                        <th scope="row">Customer ID :</th>
+                                        <td> <code>CS{{$client->id ?? '' }}</code></td>
+                                    </tr>
+                                    <tr>
                                         <th scope="row">Occupation :</th>
                                         <td>{{$client->occupation ?? '' }}</td>
                                     </tr>
@@ -190,6 +194,10 @@
                                     <tr>
                                         <th scope="row">E-mail :</th>
                                         <td>{{$client->company_email ?? '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Customer ID :</th>
+                                        <td> <code>CS{{$client->id ?? '' }}</code></td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Address :</th>
