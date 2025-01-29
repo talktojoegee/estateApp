@@ -22,9 +22,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xl-12 col-md-12">
-                <div class="card">
 
-                    <div class="card-body">
                         @if(session()->has('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <i class="mdi mdi-check-all me-2"></i>
@@ -41,9 +39,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
-                        @include('followup.partial._top-navigation')
-                    </div>
-                </div>
+
+
                 <div class="row" >
                     <div class="col-xl-4 col-sm-6" >
                         <div class="card" >
@@ -129,6 +126,7 @@
                                             <th class="">#</th>
                                             <th class="wd-15p">Date</th>
                                             <th class="wd-15p">Name</th>
+                                            <th class="wd-15p">Customer ID</th>
                                             <th class="wd-15p">Mobile No.</th>
                                             <th class="wd-15p"># of Properties</th>
                                             <th class="wd-15p" style="text-align: right;">Valuation({{env('APP_CURRENCY')}})</th>
@@ -152,6 +150,7 @@
                                                     @endif
 
                                                 </td>
+                                                <td style="text-align: center;"> <code>CS{{$lead->id}}</code> </td>
                                                 <td>
                                                     @if($lead->customer_type != 3)
                                                         {{$lead->phone ?? '' }}

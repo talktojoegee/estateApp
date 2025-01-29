@@ -340,6 +340,7 @@
     <script>
         $(document).ready(function(){
             $( "#datepicker" ).datepicker({ dateFormat: 'dd-mm-yy' });
+
             $('.individual').show();
             $('.organization').hide();
             $('.partnership').hide();
@@ -365,12 +366,7 @@
 
                 }
             });
-
-
-
-
             let kinCount = 1;
-
             $('#addKin').click(function () {
                 kinCount++;
                 const kinTemplate = `
@@ -442,21 +438,9 @@
                 });
                 kinCount = $('.next-of-kin-section').length;
             }
-/*
-            $('#dynamicForm').on('submit', function (e) {
-                e.preventDefault();
-                alert('Form submitted successfully!');
-            });*/
 
 
-          /*  $('#leadForm').parsley().on('field:validated', function() {
-                var ok = $('.parsley-error').length === 0;
-                $('.bs-callout-info').toggleClass('hidden', !ok);
-                $('.bs-callout-warning').toggleClass('hidden', ok);
-            })
-                .on('form:submit', function() {
-                    return true;
-                });*/
+
         })
 
 

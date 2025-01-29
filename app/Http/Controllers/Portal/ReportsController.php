@@ -559,13 +559,27 @@ class ReportsController extends Controller
         foreach ($paymentDefinitions as $id => $name) {
             $selects[] = DB::raw("MAX(CASE WHEN payment_definition_id = {$id} THEN amount END) as `{$name}`");
         }
+        $payrollMonth = 9;// request('payroll_month'); // Get user input for payroll month
+        $payrollYear = 2024;// request('payroll_year');   // Get user input for payroll year
+
+        $salaries = DB::table('salaries')
+            ->join('users', 'salaries.employee_id', '=', 'users.id')
+            ->join('payment_definitions', 'salaries.payment_definition_id', '=', 'payment_definitions.id')
+        /*    ->select(
+                'users.id',
+                DB::raw('SUM(salaries.amount) as total_salary')
+            )*/
+            ->where('salaries.payroll_month', $payrollMonth)
+            ->where('salaries.payroll_year', $payrollYear)
+            ->groupBy('users.id')
+            ->get();
 
         $payroll = DB::table('salaries')
             ->select($selects)
             ->groupBy('employee_id')
             ->get();
 
-        return $payroll;
+        return  $salaries;
 
         /*$columns = PaymentDefinition::all();
         $pdIds = PaymentDefinition::pluck('id');

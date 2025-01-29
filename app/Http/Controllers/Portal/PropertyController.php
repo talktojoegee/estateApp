@@ -14,6 +14,9 @@ use App\Models\Estate;
 use App\Models\FileModel;
 use App\Models\InvoiceMaster;
 use App\Models\Lead;
+use App\Models\LeadPartner;
+use App\Models\LeadSource;
+use App\Models\LeadStatus;
 use App\Models\PaymentPlan;
 use App\Models\Property;
 use App\Models\PropertyAllocation;
@@ -47,6 +50,10 @@ class PropertyController extends Controller
         $this->propertyallocation = new PropertyAllocation();
         $this->propertyreservation = new PropertyReservation();
         $this->file = new FileModel();
+        $this->leadsource = new LeadSource();
+        $this->customer = new Lead();
+        $this->leadstatus = new LeadStatus();
+        $this->salescontroller = new SalesnMarketingController();
 
     }
 
@@ -61,9 +68,13 @@ class PropertyController extends Controller
                     'bqOptions'=>BqOption::getBQOptions(),
                     'constructionStages'=>ConstructionStage::getConstructionStages(),
                     'titles'=>PropertyTitle::getPropertyTitles(),
-                    'paymentPlans'=>PaymentPlan::getPaymentPlans()
+                    'paymentPlans'=>PaymentPlan::getPaymentPlans(),
+                    'sources'=>$this->leadsource->getLeadSources(),
+                    'customers'=>$this->customer->getAllOrgLeads(),
+                    'statuses'=>$this->leadstatus->getLeadStatuses(),
                 ]);
             case 'POST':
+                //return dd($request->all());
                 $this->validatePropertySubmission($request);
                 $property = $this->property->addProperty($request);
                 $estate = Estate::getEstateById($request->estate);
@@ -72,14 +83,70 @@ class PropertyController extends Controller
                     $property->property_code = $code;
                     $property->save();
                 }
-
                 $this->propertygallery->uploadPropertyGalleryImages($request, $property->id);
+                //act on customer details
+                $propertyStatus = $request->propertyStatus; // 1=Unsold, 2=sold
+                $soldTo = $request->soldTo; // 1=Existing, 2=New
+                if($propertyStatus == 2){ //new customer
+                    $customer = $soldTo == 2 ? $this->__createLead($request) : Lead::find($request->soldToCustomer);
+                    $property->sold_to = $customer->id;
+                    $property->status = 2;
+                    $property->date_sold = now();
+                    $property->save();
+                    $service = "Invoice generated for  ".$property->property_name." for house number: $property->house_no";
+                    $invoice = $this->invoicemaster->generateInvoice($property->id, $property->sold_to, rand(99,9999),3,
+                        now(),date('Y-m-d', strtotime(now(). ' + 30 day')),
+                        $property->price,$property->price, $request->price,1, $service, 1,
+                        $request->price);
+                    $this->receipt->createNewReceipt(rand(99,9999), $invoice, $property->price, 0,1, now());
+                }
+
+
                 session()->flash("success", "Action successful.");
                 return back();
             default:
                 abort(404);
         }
     }
+
+    private function __createLead(Request $request){
+        $this->validate($request,[
+            'customerType'=>"required"
+        ],[
+            "customerType.required"=>"Select customer type"
+        ]);
+
+        if($request->customerType == 1){ //individual
+            $this->__validateIndividualCustomerType($request);
+            return $this->lead->addLead($request);
+        }
+
+        if($request->customerType == 2){ //partnership
+            $this->__validatePartnershipCustomerType($request);
+            $lead = null;
+            foreach($request->partnerFullName as $key => $value){
+                if($key == 0){ //save first contact in leads table as the main person
+                    $lead = $this->lead->microAddLead($request->date, $request->customerType, $request->partnerFullName[$key], $request->partnerEmail[$key],
+                        $request->partnerMobileNo[$key], $request->partnerAddress[$key], $request->partnerKinFullName[$key], $request->partnerKinMobile[$key], $request->partnerKinEmail[$key], $request->partnerKinRelationship[$key]);
+
+                }else{
+                    LeadPartner::addPartner($lead->id,$request->partnerFullName[$key], $request->partnerEmail[$key], $request->partnerMobileNo[$key], $request->partnerAddress[$key],
+                        $request->partnerKinFullName[$key], $request->partnerKinMobile[$key], $request->partnerKinEmail[$key], $request->partnerKinRelationship[$key]);
+                }
+
+
+
+            }
+            return $lead;
+        }
+        if($request->customerType == 3){
+            $this->__validateOrganizationType($request);
+           return  $this->lead->registerOrg($request->date, $request->customerType, $request->organizationName, $request->organizationEmail,
+                $request->organizationMobileNo, $request->organizationAddress, $request->resourcePersonFullName, $request->resourcePersonMobileNo, $request->resourcePersonEmail, null);
+
+        }
+    }
+
     public function propertyReservation(Request $request){
         switch ($request->method()){
             case 'GET':
@@ -248,8 +315,13 @@ class PropertyController extends Controller
             'price'=>'required', //this too should be used for listing
             'gallery'=>'required|array',
             'gallery.*'=>'required|image|mimes:jpeg,png,jpg',
+            'propertyStatus'=>'required',
+            'soldTo'=>'required',
+            //'soldToCustomer'=>'required',
         ],
             [
+            "propertyStatus.required"=>"This information is required",
+            "soldTo.required"=>"This information is required",
             "estate.required"=>"Select the estate to which this property belongs to",
             "paymentPlan.required"=>"Select payment plan",
             "street.required"=>"Enter street",
@@ -264,6 +336,77 @@ class PropertyController extends Controller
             "propertyName.required"=>"What name would you give to this property?",
             "gallery.required"=>"Upload at least one image",
             "gallery.*"=>"Upload at least one image",
+        ]);
+    }
+
+    private function __validateIndividualCustomerType(Request $request){
+        $this->validate($request,[
+            'date'=>'required|date',
+            'firstName'=>'required',
+            'lastName'=>'required',
+            'email'=>'required|email',
+            'mobileNo'=>'required',
+            'source'=>'required',
+            'status'=>'required',
+            'gender'=>'required',
+            'customerType'=>'required',
+        ],[
+            "date.required"=>"Enter date",
+            "date.date"=>"Enter a valid date",
+            "firstName.required"=>"Enter client first name",
+            "lastName.required"=>"Enter client last name",
+            "email.required"=>"Enter client email address",
+            "email.email"=>"Enter a valid email address",
+            "mobileNo.required"=>"Enter client mobile phone number",
+            "source.required"=>"How did this person get to hear about us? Select one of the options below",
+            "status.required"=>"On what stage is this person? Kindly select...",
+            "customerType.required"=>"Indicate the type of customer",
+        ]);
+    }
+    private function __validatePartnershipCustomerType(Request $request){
+        $this->validate($request,[
+            'date'=>'required|date',
+            'partnerFullName'=>'required|array',
+            'partnerFullName.*'=>'required',
+
+            'partnerKinFullName'=>'required|array',
+            'partnerKinFullName.*'=>'required',
+
+            'partnerEmail'=>'required|array',
+            'partnerEmail.*'=>'required',
+
+            'partnerKinMobile'=>'required|array',
+            'partnerKinMobile.*'=>'required',
+
+            'partnerMobileNo'=>'required|array',
+            'partnerMobileNo.*'=>'required',
+
+            'partnerAddress'=>'required|array',
+            'partnerAddress.*'=>'required',
+
+            'partnerKinEmail'=>'required|array',
+            'partnerKinEmail.*'=>'required',
+
+            'partnerKinRelationship'=>'required|array',
+            'partnerKinRelationship.*'=>'required',
+        ],
+            [
+                'date.required'=>'Choose entry date',
+                'partnerFullName.required'=>'Enter full name',
+                'partnerEmail.required'=>'Enter email address',
+                'partnerMobileNo.required'=>'Enter mobile number',
+                'partnerAddress.required'=>'Enter address',
+            ]);
+    }
+    private function __validateOrganizationType(Request $request){
+        $this->validate($request, [
+            "organizationName"=>"required",
+            "organizationEmail"=>"required",
+            "organizationMobileNo"=>"required",
+            "organizationAddress"=>"required",
+            "resourcePersonFullName"=>"required",
+            "resourcePersonMobileNo"=>"required",
+            "resourcePersonEmail"=>"required",
         ]);
     }
 
