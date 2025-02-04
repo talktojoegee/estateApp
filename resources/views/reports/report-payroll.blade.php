@@ -32,8 +32,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h4 class="card-title text-uppercase text-info modal-title"> {{ date('F, Y', strtotime($period)) }} Payroll Report</h4>
-                                <p>Showing payroll report for <code>{{date('F, Y', strtotime($period))}}</code>. Total amount in payment <span class="text-info">{{env('APP_CURRENCY')}}{{number_format($total,2)}}</span></p>
-                                <p>All values are in the Nigerian naira({{env('APP_CURRENCY')}})</p>
+                                <p>Showing payroll report for <code>{{date('F, Y', strtotime($period))}}</code>. Total amount in payment <span class="text-info">{{config('app.APP_CURRENCY')}}{{number_format($total,2)}}</span></p>
+                                <p>All values are in the Nigerian naira({{config('app.APP_CURRENCY')}})</p>
                                 <form action="{{route('update-imported-properties')}}" method="POST">
                                     @csrf
                                     <div class="table-responsive mt-3">
