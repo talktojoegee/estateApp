@@ -551,10 +551,18 @@ class ReportsController extends Controller
         ],[
             'from.required'=>'Choose payroll period',
         ]);
+        $payrollMonth = date('m', strtotime($request->payrollPeriod));
+        $payrollYear = date('Y', strtotime($request->payrollPeriod));
         $paymentDefinitions = PaymentDefinition::pluck('payment_name', 'id')->toArray();
-        $salaryUserIds = Salary::distinct()->pluck('employee_id')->toArray();
+        $salaryUserIds = Salary::distinct()
+            ->where('payroll_month', $payrollMonth)
+            ->where('payroll_year', $payrollYear)
+            ->pluck('employee_id')
+            ->toArray();
         $users = User::whereIn('id', $salaryUserIds)->get();
         $salaries = Salary::whereIn('payment_definition_id', array_keys($paymentDefinitions))
+            ->where('payroll_month', $payrollMonth)
+            ->where('payroll_year', $payrollYear)
             ->get()
             ->groupBy('employee_id');
         $tableData = [];
