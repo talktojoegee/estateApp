@@ -78,9 +78,9 @@
                     <div class="col-xl-3 col-lg-6 col-sm-6 ">
                         <div class="card">
                             <div class="card-body text-center">
-                                <h6 class="mb-0 text-info">Reserved</h6>
+                                <h6 class="mb-0 text-info">Partly Paid</h6>
                                 <h5 class="mb-1 text-info mt-2 number-font">
-                                    <span class="counter">{{ number_format($reservedCounter ) }}</span>
+                                    <span class="counter">{{ number_format($partlyCounter ) }}</span>
                                 </h5>
                                 <!-- <p class="mb-0 text-muted">
                                 <span class="mb-0 fs-13 ms-1">

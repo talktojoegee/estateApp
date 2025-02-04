@@ -299,34 +299,34 @@ class PropertyController extends Controller
         $properties = [];
         $title = null;
         $propertyIds = InvoiceMaster::where('status', 2)->pluck('property_id')->toArray();
-        $reservedProperties = $this->property->getPropertyList($propertyIds);
+        $partly = $this->property->getPropertyList($propertyIds);
         switch ($type){
             case 'all':
                 $properties = $this->property->getAllProperties([0,1,2,3]);
                 $title = 'All';
-                $reservedCounter = $reservedProperties->count();
+                $partlyPaid = $partly->count();
             break;
             case 'sold':
                 $properties = $this->property->getAllProperties([2]);
                 $title = 'Sold';
-                $reservedCounter = $reservedProperties->count();
+                $partlyPaid = $partly->count();
             break;
             case 'available':
                 $properties = $this->property->getAllProperties([0]);
                 $title = 'Available';
-                $reservedCounter = $reservedProperties->count();
+                $partlyPaid = $partly->count();
             break;
             case 'reserved':
                 $propertyIds = InvoiceMaster::where('status', 2)->pluck('property_id')->toArray();
                 $properties = $this->property->getPropertyList($propertyIds);
                 //$properties = $this->property->getAllProperties([3]);
                 $title = 'Reserved';
-                $reservedCounter = $reservedProperties->count();
+                $partlyPaid = $partly->count();
                 break;
             case 'rented':
                 $properties = $this->property->getAllProperties([1]);
                 $title = 'Rented';
-                $reservedCounter = $reservedProperties->count();
+                $partlyPaid = $partly->count();
             break;
             default:
                 abort(404);
@@ -334,7 +334,7 @@ class PropertyController extends Controller
         return view('property.index',[
             'properties'=>$properties,
             'title'=>$title,
-            'reservedCounter'=>$reservedCounter
+            'partlyCounter'=>$partlyPaid
         ]);
     }
 
