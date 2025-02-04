@@ -18,6 +18,17 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
     'paystack_public_key'=>env('PAYSTACK_PUBLIC_KEY',''),
     'paystack_secret_key'=>env('PAYSTACK_SECRET_KEY',''),
+    'ORG_NAME'=>env('ORG_NAME','EFAB Properties'),
+    'ORG_EMAIL'=>env('ORG_EMAIL','info@efabproperties.com'),
+    'ORG_PHONE'=>env('ORG_PHONE','+2349088559026, +2348131293215'),
+    'ORG_ADDRESS'=>env('ORG_ADDRESS',"23 Lord Lugard St., Asokoro 900247, Abuja, <br/> Federal Capital Territory, Abuja, Nigeria."),
+    'ORG_WEBSITE'=>env('ORG_WEBSITE','www.efabproperties.com'),
+    'APP_CURRENCY'=>env('APP_CURRENCY','₦'),
+
+
+
+
+
 
     /*
     |--------------------------------------------------------------------------

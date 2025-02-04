@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+//define('STDIN',fopen("php://stdin","r"));
 //use Artisan;
 /*
 |--------------------------------------------------------------------------

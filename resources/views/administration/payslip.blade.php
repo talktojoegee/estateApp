@@ -41,10 +41,10 @@
                                     <div class="mb-4 text-center"   >
                                         <img src="/assets/drive/logo/logo-dark.png" alt="logo" height="60">
                                         <address class="mt-2 mt-sm-0 text-left">
-                                            <strong>Mobile No.:</strong> {{env('ORG_PHONE')}}<br>
-                                            <strong>Email:</strong> <a href="mailto:{{env('ORG_EMAIL')}}">{{env('ORG_EMAIL')}}</a><br>
-                                            <strong>Address: </strong>{!! env('ORG_ADDRESS') !!} <br>
-                                            <strong>Website: </strong><a target="_blank" href="http://www.{{env('ORG_WEBSITE')}}">{{env('ORG_WEBSITE')}}</a>
+                                            <strong>Mobile No.:</strong> {{config('app.ORG_PHONE')}}<br>
+                                            <strong>Email:</strong> <a href="mailto:{{config('app.ORG_EMAIL')}}">{{config('app.ORG_EMAIL')}}</a><br>
+                                            <strong>Address: </strong>{!! config('app.ORG_ADDRESS') !!} <br>
+                                            <strong>Website: </strong><a target="_blank" href="http://www.{{config('app.ORG_WEBSITE')}}">{{config('app.ORG_WEBSITE')}}</a>
                                         </address>
                                         <h6 class="text-uppercase" style="color: black !important;">Payslip for the month of <span class="text-danger">{{ DateTime::createFromFormat('!m', $month)->format('F') }}, {{ $year }}</span></h6>
                                     </div>
@@ -82,12 +82,12 @@
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
                                                         <td>{{ $record->getPaymentDefinition->payment_name ?? '' }}</td>
-                                                        <td style="text-align: right;">{{env('APP_CURRENCY')}}{{ number_format($record->amount ?? 0,2) }}</td>
+                                                        <td style="text-align: right;">{{config('app.APP_CURRENCY')}}{{ number_format($record->amount ?? 0,2) }}</td>
                                                     </tr>
                                                 @endforeach
                                                 <tr>
                                                     <td colspan="3" class="text-end">
-                                                       <strong>Total: </strong> {{env('APP_CURRENCY')}}{{ number_format($earnings->sum('amount'),2) }}
+                                                       <strong>Total: </strong> {{config('app.APP_CURRENCY')}}{{ number_format($earnings->sum('amount'),2) }}
                                                     </td>
                                                 </tr>
 
@@ -116,12 +116,12 @@
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
                                                         <td>{{ $rec->getPaymentDefinition->payment_name ?? '' }}</td>
-                                                        <td style="text-align: right;">{{env('APP_CURRENCY')}}{{ number_format($rec->amount ?? 0,2) }}</td>
+                                                        <td style="text-align: right;">{{env('app.APP_CURRENCY')}}{{ number_format($rec->amount ?? 0,2) }}</td>
                                                     </tr>
                                                 @endforeach
                                                 <tr>
                                                     <td colspan="3" class="text-end">
-                                                        <strong>Total: </strong> {{env('APP_CURRENCY')}}{{ number_format($deductions->sum('amount'),2) }}
+                                                        <strong>Total: </strong> {{env('app.APP_CURRENCY')}}{{ number_format($deductions->sum('amount'),2) }}
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -134,9 +134,9 @@
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <tr>
-                                                    <td><strong>Gross Pay: </strong>{{ env('APP_CURRENCY') }}{{number_format($records->sum('amount'),2)}}</td>
-                                                    <td><strong>Deductions: </strong>{{ env('APP_CURRENCY') }}{{number_format($deductions->sum('amount'),2)}}</td>
-                                                    <td><strong>Net Pay: </strong>{{ env('APP_CURRENCY') }}{{number_format(($records->sum('amount') - $deductions->sum('amount')),2)}}</td>
+                                                    <td><strong>Gross Pay: </strong>{{ config('app.APP_CURRENCY') }}{{number_format($records->sum('amount'),2)}}</td>
+                                                    <td><strong>Deductions: </strong>{{ config('app.APP_CURRENCY') }}{{number_format($deductions->sum('amount'),2)}}</td>
+                                                    <td><strong>Net Pay: </strong>{{ config('app.APP_CURRENCY') }}{{number_format(($records->sum('amount') - $deductions->sum('amount')),2)}}</td>
                                                 </tr>
                                             </table>
                                         </div>
