@@ -128,7 +128,7 @@
                                             <th class="wd-15p">Name</th>
                                             <th class="wd-15p">Customer ID</th>
                                             <th class="wd-15p">Mobile No.</th>
-                                            <th class="wd-15p"># of Properties</th>
+                                            <th class="wd-15p">Number of Properties</th>
                                             <th class="wd-15p" style="text-align: right;">Valuation({{env('APP_CURRENCY')}})</th>
                                             <th class="wd-15p">Type</th>
                                             <th class="wd-15p">Action</th>
@@ -158,7 +158,7 @@
                                                         {{$lead->company_mobile_no ?? '' }}
                                                     @endif
                                                 </td>
-                                                <td>{{ number_format($lead->getNumberOfProperties($lead->id) ?? 0) ?? '' }}</td>
+                                                <td style="text-align: right;">{{ number_format($lead->getNumberOfProperties($lead->id) ?? 0) ?? '' }}</td>
                                                 <td style="text-align: right;">{{ number_format($lead->getCustomerValuation($lead->id) ?? 0,2) }}</td>
                                                 <td>
                                                     @if($lead->customer_type == 1)

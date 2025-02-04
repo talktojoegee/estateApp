@@ -7,6 +7,7 @@ use App\Models\BuildingType;
 use App\Models\BulkCashbookImportDetail;
 use App\Models\ConstructionStage;
 use App\Models\Estate;
+use App\Models\Lead;
 use App\Models\PropertyBulkImportDetail;
 use App\Models\PropertyTitle;
 use App\Models\TransactionCategory;
@@ -73,6 +74,20 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
                 $enSuite = 2;
                 break;
         }
+        $customerId = null;
+        if(!is_null($row[23])){
+            //extract first CS89384
+            $val = substr($row[23],2);
+            if(ctype_digit($val)){
+                $lead = Lead::find($val);
+                if(!empty($lead)){
+                    $customerId = $lead->id;
+                }
+            }else{
+               $record = $this->__saveNewLead($row[23]);
+                $customerId = $record->id;
+            }
+        }
         $propertyCondition = 1;
         switch ($row[18]){
             case 'Good':
@@ -116,7 +131,8 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
         'land_size' => $row[20] ?? null,
         'gl_id' => 1,
         'description' => $row[22] ?? null,
-        'occupied_by'=>null,
+        'customer' => $row[23] ?? null,
+        'occupied_by'=>$customerId, //sold to this customer
 
         'kitchen' => 1,
         'borehole' => 1,
@@ -146,5 +162,39 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
         'anteroom' => 1,
         'slug' => Str::slug($row[0] ?? 'Unknown_'.$randNum).'-'.substr(sha1(time()),32,40),
         ]);
+    }
+
+
+
+    private function __saveNewLead($name){
+        $lead = new Lead();
+        $lead->entry_date =  now();
+        $lead->added_by = Auth::user()->id;
+        $lead->org_id = Auth::user()->org_id;
+        $lead->first_name = $name ?? '';
+        $lead->last_name = $request->lastName ?? '';
+        $lead->middle_name = null;
+        $lead->email = 'placeholder@gmail.com';
+        $lead->phone = '+234';
+        $lead->dob = null;
+        $lead->source_id = null;
+        $lead->status = null;
+        $lead->gender = 1;
+        $lead->street =  null;
+        $lead->city = null;
+        $lead->state = null;
+        $lead->code = null;
+        $lead->occupation = null;
+        $lead->entry_month = date('m',strtotime(now()));
+        $lead->entry_year = date('Y',strtotime(now()));
+        $lead->slug = Str::slug($name).'-'.Str::random(8);
+        //Next of kin
+        $lead->next_full_name = null;
+        $lead->next_primary_phone = null;
+        $lead->next_alt_phone = null;
+        $lead->next_email = null;
+        $lead->next_relationship = null;
+        $lead->save();
+        return $lead;
     }
 }

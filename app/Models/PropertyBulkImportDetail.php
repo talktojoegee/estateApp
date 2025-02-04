@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -69,6 +70,9 @@ class PropertyBulkImportDetail extends Model
         'gate_house',
         'gen_house',
         'slug',
+        'customer',
+        //'customer_id',
+        //'customer_name',
     ];
 
     public function getPropertyType(){
@@ -130,5 +134,8 @@ class PropertyBulkImportDetail extends Model
     public function getPropertyDetailByMasterId($masterId){
         return PropertyBulkImportDetail::where('master_id',$masterId)->get();
     }
+
+
+
 
 }
