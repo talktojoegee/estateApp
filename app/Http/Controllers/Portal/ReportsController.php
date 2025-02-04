@@ -551,68 +551,44 @@ class ReportsController extends Controller
         ],[
             'from.required'=>'Choose payroll period',
         ]);
-        $paymentDefinitions = DB::table('payment_definitions')->pluck('payment_name', 'id');
-
-        $selects = ['employee_id'];  // Start with employee_id in the select clause
-
-        // Add dynamic CASE statements for each payment definition
-        foreach ($paymentDefinitions as $id => $name) {
-            $selects[] = DB::raw("MAX(CASE WHEN payment_definition_id = {$id} THEN amount END) as `{$name}`");
-        }
-        $payrollMonth = 9;// request('payroll_month'); // Get user input for payroll month
-        $payrollYear = 2024;// request('payroll_year');   // Get user input for payroll year
-
-        $salaries = DB::table('salaries')
-            ->join('users', 'salaries.employee_id', '=', 'users.id')
-            ->join('payment_definitions', 'salaries.payment_definition_id', '=', 'payment_definitions.id')
-        /*    ->select(
-                'users.id',
-                DB::raw('SUM(salaries.amount) as total_salary')
-            )*/
-            ->where('salaries.payroll_month', $payrollMonth)
-            ->where('salaries.payroll_year', $payrollYear)
-            ->groupBy('users.id')
-            ->get();
-
-        $payroll = DB::table('salaries')
-            ->select($selects)
-            ->groupBy('employee_id')
-            ->get();
-
-        return  $salaries;
-
-        /*$columns = PaymentDefinition::all();
-        $pdIds = PaymentDefinition::pluck('id');
-        $salaries = Salary::all()->groupBy('employee_id')*/;
-        //return dd($columns);
-        //DB::table('payment_definitions')->pluck('payment_name');
-       /* $employees = User::with(['payments.paymentDefinition'])
+        $paymentDefinitions = PaymentDefinition::pluck('payment_name', 'id')->toArray();
+        $salaryUserIds = Salary::distinct()->pluck('employee_id')->toArray();
+        $users = User::whereIn('id', $salaryUserIds)->get();
+        $salaries = Salary::whereIn('payment_definition_id', array_keys($paymentDefinitions))
             ->get()
-            ->map(function ($employee) use ($columns) {
-                // Create an array with payment amounts keyed by payment_name
-                $employeePayments = $employee->payments->pluck('amount', 'paymentDefinition.payment_name')->toArray();
+            ->groupBy('employee_id');
+        $tableData = [];
+        $total = 0;
+        foreach ($users as $user) {
+            $row = [
+                'name' => "{$user->title} {$user->first_name} {$user->last_name} {$user->other_names}",
+            ];
+            $deduction = 0;
+            $income = 0;
+            foreach ($paymentDefinitions as $paymentId => $paymentName) {
+                $salary = $salaries[$user->id]->firstWhere('payment_definition_id', $paymentId) ?? null;
+                $row[$paymentName] = $salary ? $salary->amount : 0;
 
-                // Ensure all column names exist, even if the employee has no value
-                foreach ($columns as $column) {
-                    $employeePayments[$column] = $employeePayments[$column] ?? 0;
+                if($salary){
+                    if($salary->payment_type == 1){ //income
+                        $income +=  $salary ? $salary->amount : 0;
+                    }else{
+                        $deduction += $salary ? $salary->amount : 0;
+                    }
                 }
 
-                return [
-                    'name' => $employee->name,
-                    'payments' => $employeePayments,
-                ];
-            });*/
-        //return dd($employees);
-        //$employees = PaymentDefinition::select(['name', ...$columns])->get();
-        //return gettype($columns);
+            }
+            $row['Total'] = ($income - $deduction);
+            $total += ($income - $deduction);
+            $tableData[] = $row;
+        }
         return view("reports.report-payroll",
             [
                 'search'=>1,
                 'period'=>$request->payrollPeriod,
-                'records'=>[],
-                'columns'=>$columns,
-                'salaries'=>$salaries,
-                'pdIds'=>$pdIds
+                'headers' => array_values($paymentDefinitions),
+                'tableData' => $tableData,
+                'total'=>$total,
             ]);
     }
 

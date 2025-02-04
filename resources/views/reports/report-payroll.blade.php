@@ -31,36 +31,33 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <h4 class="card-title text-uppercase text-info modal-title"> {{ date('F, Y', strtotime($period)) }} Payroll Report</h4>
+                                <p>Showing payroll report for <code>{{date('F, Y', strtotime($period))}}</code>. Total amount in payment <span class="text-info">{{env('APP_CURRENCY')}}{{number_format($total,2)}}</span></p>
+                                <p>All values are in the Nigerian naira({{env('APP_CURRENCY')}})</p>
                                 <form action="{{route('update-imported-properties')}}" method="POST">
                                     @csrf
                                     <div class="table-responsive mt-3">
                                         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                                             <thead>
                                             <tr>
-                                                <th class="">#</th>
+                                                <th>#</th>
                                                 <th class="wd-15p">Name</th>
-                                                @foreach($columns as  $col)
-                                                    <th class="wd-15p">{{ $col->payment_name ?? '' }}</th>
+                                                @foreach($headers as $header)
+                                                    <th style="text-align: right !important;">{{ $header }}</th>
                                                 @endforeach
+                                                <th style="text-align: right !important;">Total</th>
 
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach($salaries as $key => $sal)
+                                            @foreach($tableData as $key => $row)
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
-                                                    <td>{{$sal->getEmployee->title ?? '' }} {{$sal->getEmployee->first_name ?? '' }} {{$sal->getEmployee->last_name ?? '' }} {{$sal->getEmployee->other_names ?? '' }}</td>
-                                                    @foreach($columns as $column)
-                                                        @if($column->id == $sal->payment_definition_id)
-                                                            <td>
-                                                                <input type="text" value="{{ $sal->amount ?? 0 }}" class="form-control">
-                                                            </td>
-                                                        @else
-                                                            <td>
-                                                                <input type="text" value="0" class="form-control">
-                                                            </td>
-                                                        @endif
+                                                    <td>{{ $row['name'] }}</td>
+                                                    @foreach($headers as $header)
+                                                        <td style="text-align: right !important;">{{ number_format($row[$header], 2) }}</td>
                                                     @endforeach
+                                                    <td style="text-align: right !important;"><strong>{{ number_format($row['Total'],2) }}</strong></td>
                                                 </tr>
                                             @endforeach
 
