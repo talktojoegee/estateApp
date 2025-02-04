@@ -26,6 +26,7 @@
                    @can('can-add-property') <li><a href="{{route('add-new-property')}}" key="t-properties"> New</a></li> @endcan
                        @can('access-all-properties') <li><a href="{{route('manage-properties', 'sold')}}" key="t-properties">Sold</a></li>
                     <li><a href="{{route('manage-properties', 'rented')}}" key="t-properties">Rented</a></li>
+                       @can('access-all-properties')<li><a href="{{route('manage-properties', 'reserved')}}" key="t-reservations">Reserved</a></li>@endcan
                     <li><a href="{{route('manage-properties', 'available')}}" key="t-properties">Available</a></li>
                     <li><a href="{{route('manage-properties','all')}}" key="t-properties">All Properties</a></li> @endcan
                 </ul>

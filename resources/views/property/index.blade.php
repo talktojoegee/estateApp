@@ -37,6 +37,7 @@
     <div class="row">
         <div class="col-md-12">
                 <div class="row">
+                    @if($title == 'Available'  || $title == 'All')
                     <div class="col-xl-3 col-lg-6 col-sm-6 ">
                         <div class="card">
                             <div class="card-body text-center">
@@ -44,14 +45,11 @@
                                 <h5 class="mb-1 text-warning mt-2 number-font">
                                     <span class="counter">{{ number_format($properties->where('status',0)->count() ) }}</span>
                                 </h5>
-                                <p class="mb-0 text-muted">
-                                <span class="mb-0 fs-13 ms-1">
-                                     {{ $properties->count() > 0 ?  floor( ($properties->where('status',0)->count()/$properties->count() )*100 ) : 0 }}%
-                                </span> of {{number_format($properties->count() )}}
-                                </p>
                             </div>
                         </div>
                     </div>
+                    @endif
+                    @if($title == 'Rented'  || $title == 'All')
                     <div class="col-xl-3 col-lg-6 col-sm-6 ">
                         <div class="card">
                             <div class="card-body text-center">
@@ -59,14 +57,11 @@
                                 <h5 class="mb-1 text-primary mt-2 number-font">
                                     <span class="counter">{{ number_format($properties->where('status',1)->count() ) }}</span>
                                 </h5>
-                                <p class="mb-0 text-muted">
-                                <span class="mb-0 fs-13 ms-1">
-                                     {{ $properties->count() > 0 ?  floor( ($properties->where('status',1)->count()/$properties->count() )*100 ) : 0 }}%
-                                </span> of {{number_format($properties->count() )}}
-                                </p>
                             </div>
                         </div>
                     </div>
+                    @endif
+                    @if($title == 'Sold'  || $title == 'All')
                     <div class="col-xl-3 col-lg-6 col-sm-6 ">
                         <div class="card">
                             <div class="card-body text-center">
@@ -74,31 +69,30 @@
                                 <h5 class="mb-1 text-success mt-2 number-font">
                                     <span class="counter">{{ number_format($properties->where('status',2)->count() ) }}</span>
                                 </h5>
-                                <p class="mb-0 text-muted">
-                                <span class="mb-0 fs-13 ms-1">
-                                     {{ $properties->count() > 0 ?  floor( ($properties->where('status',2)->count()/$properties->count() )*100 ) : 0 }}%
-                                </span> of {{number_format($properties->count() )}}
-                                </p>
                             </div>
                         </div>
 
                     </div>
+                    @endif
+                    @if($title == 'Reserved' || $title == 'All')
                     <div class="col-xl-3 col-lg-6 col-sm-6 ">
                         <div class="card">
                             <div class="card-body text-center">
                                 <h6 class="mb-0 text-info">Reserved</h6>
                                 <h5 class="mb-1 text-info mt-2 number-font">
-                                    <span class="counter">{{ number_format($properties->where('status',3)->count() ) }}</span>
+                                    <span class="counter">{{ number_format($reservedCounter ) }}</span>
                                 </h5>
-                                <p class="mb-0 text-muted">
+                                <!-- <p class="mb-0 text-muted">
                                 <span class="mb-0 fs-13 ms-1">
-                                     {{ $properties->count() > 0 ?  floor( ($properties->where('status',3)->count()/$properties->count() )*100 ) : 0 }}%
-                                </span> of {{number_format($properties->count() )}}
-                                </p>
+                                      $properties->count() > 0 ?  floor( ($properties->count()/$properties->count() )*100 ) : 0 }}%
+                                </span> of number_format($properties->count() )}}
+                                </p> -->
                             </div>
                         </div>
 
                     </div>
+                    @endif
+
                 </div>
 
         </div>

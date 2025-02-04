@@ -77,12 +77,12 @@
                                                     <span class="text-danger" style="color: #ff0000 !important;">Declined</span>
                                                     @break
                                                     @case(3)
-                                                    <span class="" style="color: orange !important;">Revoked</span>
+                                                    <span class="text-info">Archive</span>
                                                     @break
                                                 @endswitch
                                             </td>
                                             <td>
-                                                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#viewRequest_{{$request->id}}" class="btn btn-primary">View</a>
+                                                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#viewRequest_{{$request->id}}" class="btn btn-sm btn-primary">View</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -168,6 +168,9 @@
                                                 @case(2)
                                                 <span class="text-secondary">Declined</span>
                                                 @break
+                                                @case(3)
+                                                <span class="text-info">Archived</span>
+                                                @break
                                             @endswitch
                                         </td>
                                     </tr>
@@ -192,6 +195,11 @@
                                 <div class="btn-group">
                                     <a href="{{route('action-reservation',['type'=>'approve','id'=>$ref->id])}}" class="btn btn-success  waves-effect waves-light">Approve <i class="bx bx-check-double"></i> </a>
                                     <a href="{{route('action-reservation',['type'=>'decline','id'=>$ref->id])}}" class="btn btn-danger  waves-effect waves-light">Decline <i class="bx bx-x-circle"></i> </a>
+                                </div>
+                            @endif
+                            @if($ref->status == 1)
+                                <div class="btn-group">
+                                    <a href="{{route('action-reservation',['type'=>'undo','id'=>$ref->id])}}" class="btn btn-danger  waves-effect waves-light">Archive Request <i class="bx bx-x-circle"></i> </a>
                                 </div>
                             @endif
                         </div>

@@ -238,6 +238,17 @@ class PropertyController extends Controller
             return back();
         }
         $intAction = $type == 'approve' ? 1 : 2;
+        switch ($type){
+            case 'approve':
+                $intAction = 1;
+                break;
+            case 'decline':
+                $intAction = 2;
+                break;
+            case 'undo':
+                $intAction = 3;
+                break;
+        }
         $reservation->status = $intAction;
         $reservation->date_actioned = now();
         $reservation->actioned_by = $authUser->id;
@@ -249,8 +260,26 @@ class PropertyController extends Controller
                 $property->save();
             }
         }
+        if($action == 'undo'){
+            if(!empty($property)){
+                $property->status = 0; //make it available again
+                $property->save();
+            }
+        }
+        $act = null;
+        switch ($type){
+            case 'approve':
+                $act = ' approved';
+                break;
+            case 'decline':
+                $act = ' declined';
+                break;
+            case 'undo':
+                $act = ' archived';
+                break;
+        }
 
-        $act = $action == 'approve' ? 'approved' : 'declined';
+        //$act = $action == 'approve' ? 'approved' : 'declined';
         $log = $authUser->first_name." ".$authUser->last_name." ".$act." property reservation request for(".$property->property_code.")";
         ActivityLog::registerActivity($authUser->org_id, null, $authUser->id, null, 'Property Reservation Request', $log);
         session()->flash("success", "Action successful.");
@@ -269,33 +298,43 @@ class PropertyController extends Controller
     public function showManagePropertiesView($type){
         $properties = [];
         $title = null;
+        $propertyIds = InvoiceMaster::where('status', 2)->pluck('property_id')->toArray();
+        $reservedProperties = $this->property->getPropertyList($propertyIds);
         switch ($type){
             case 'all':
                 $properties = $this->property->getAllProperties([0,1,2,3]);
                 $title = 'All';
+                $reservedCounter = $reservedProperties->count();
             break;
             case 'sold':
                 $properties = $this->property->getAllProperties([2]);
                 $title = 'Sold';
+                $reservedCounter = $reservedProperties->count();
             break;
             case 'available':
                 $properties = $this->property->getAllProperties([0]);
                 $title = 'Available';
+                $reservedCounter = $reservedProperties->count();
             break;
             case 'reserved':
-                $properties = $this->property->getAllProperties([3]);
+                $propertyIds = InvoiceMaster::where('status', 2)->pluck('property_id')->toArray();
+                $properties = $this->property->getPropertyList($propertyIds);
+                //$properties = $this->property->getAllProperties([3]);
                 $title = 'Reserved';
+                $reservedCounter = $reservedProperties->count();
                 break;
             case 'rented':
                 $properties = $this->property->getAllProperties([1]);
                 $title = 'Rented';
+                $reservedCounter = $reservedProperties->count();
             break;
             default:
                 abort(404);
         }
         return view('property.index',[
             'properties'=>$properties,
-            'title'=>$title
+            'title'=>$title,
+            'reservedCounter'=>$reservedCounter
         ]);
     }
 
