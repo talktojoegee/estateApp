@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Your effective tool for property management and other key assignments" name="description" />
     <meta content="{{config('app.name')}}" name="PoweredBy" />
-    <link rel="shortcut icon" href="/assets/drive/logo/logo.png">
+    <link rel="shortcut icon" href="/assets/drive/logo/favicon.png">
     <link href="{{asset('css/parsley.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{asset('assets/css/bootstrap.min.css')}}" id="bootstrap-style" rel="stylesheet" type="text/css" />
     <link href="{{asset('assets/css/icons.min.css')}}" rel="stylesheet" type="text/css" />
