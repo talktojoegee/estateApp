@@ -86,6 +86,10 @@ class ChartOfAccount extends Model
         return ChartOfAccount::where('glcode', $glCode)->first();
     }
 
+    public function getParentAccountByGlCode($glCode){
+        return ChartOfAccount::where('parent_account', $glCode)->first();
+    }
+
     public function getAllDetailChartOfAccounts(){
         return ChartOfAccount::where('type',1)->orderBy('glcode','ASC')->get();
     }
