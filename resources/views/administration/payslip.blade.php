@@ -52,7 +52,7 @@
                                 <hr>
                                 <div class="row"   >
                                     <div class="col-sm-6 "   >
-                                        <img src="{{url('storage/'.$user->image)}}" alt="logo" height="60">
+                                        <img src="{{url('storage/'.$user->image)}}" alt="logo" height="120">
                                         <address class="mt-2 mt-sm-0">
                                             <strong>Name: </strong>{{$user->title ?? ''  }} {{$user->first_name ?? ''  }} {{$user->last_name ?? ''  }} {{$user->other_names ?? ''  }}<br>
                                             <strong>Department: </strong> {{$user->getUserChurchBranch->cb_name ?? '' }} <br>
