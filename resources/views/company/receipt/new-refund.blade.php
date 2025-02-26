@@ -18,7 +18,7 @@
         <div class="col-md-12 col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="modal-header mb-3 text-info">New Refund Request</h5>
+                    <h6 class="modal-header mb-3 text-white text-uppercase">New Refund Request</h6>
                     @if(session()->has('success'))
                         <div class="alert alert-success alert" role="alert">
                             {!! session()->get('success') !!}

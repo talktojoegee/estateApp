@@ -74,7 +74,7 @@ class Estate extends Model
         $record->e_city = $request->city ?? '';
         $record->e_mobile_no = $request->mobile_no ?? '';
         $record->e_address = $request->address ?? '';
-        $record->e_slug = substr(sha1(time()),29,40);
+        //$record->e_slug = substr(sha1(time()),29,40);
         $record->e_info = $request->info ?? '';
         $record->e_ref_code = strtoupper($request->referenceCode) ;
         //$record->e_added_by = Auth::user()->id;

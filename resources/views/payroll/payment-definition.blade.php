@@ -41,6 +41,7 @@
     @include('payroll.partial._menu')
     <div class="row">
         <div class="col-md-12 col-xl-12 col-sm-12">
+            <div class="modal-header text-uppercase">Payment Definition</div>
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive mt-3">

@@ -1,25 +1,12 @@
 @include('partials._header')
-@php
-    $ground = '/assets/drive/wallpapers/'.Auth::user()->getUsersWallpaper->filename ?? null;
-@endphp
-<body data-sidebar="dark" style="background-size:cover; background-image: url('{{$ground}}') !important;  ">
-<style>
-    .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6{
-        color: {{Auth::user()->getUsersWallpaper->caption_color ?? '#ffffff'}} !important;
-        /*color: #ccc !important;*/
-    }
-    #sidebar-menu ul li a i, body[data-sidebar=dark] #sidebar-menu ul li a{
-        color: {{Auth::user()->getUsersWallpaper->text_color ?? '#ffffff'}} !important;
-    }
-    body[data-sidebar=dark] .menu-title{
-        color: {{Auth::user()->getUsersWallpaper->text_color ?? '#ffffff'}} !important;
-    }
-</style>
+
+<body data-sidebar="dark" >
+
 
 <div >
     <div id="layout-wrapper" >
         @include('partials._admin-top-bar')
-        <div class="vertical-menu" style="background: transparent !important;">
+        <div class="vertical-menu" style="background: #01204D !important;">
             <div data-simplebar class="h-100">
                 @include('partials._admin-sidebar')
             </div>

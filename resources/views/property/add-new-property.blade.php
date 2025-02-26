@@ -45,12 +45,14 @@
     @include('property.partial._add-menu')
     <div class="row">
         <div class="col-md-12 col-xl-12 col-sm-12">
+            <div class="modal-header text-uppercase mb-3">Quick Setup</div>
             <div class="card">
                 <div class="card-body">
                     <form action="{{ route('add-new-property') }}" data-parsley-validate="" method="post" autocomplete="off" id="addPropertyForm" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="row mb-3">
+
                                 <div class="col-md-4 col-sm-4 col-lg-4">
                                     <div class="form-group">
                                         <label for="">Select Property Status <span class="text-danger">*</span></label>

@@ -60,6 +60,7 @@
     @endif
     <div class="row">
         <div class="col-md-12 col-xl-12 col-sm-12">
+            <div class="modal-header text-uppercase">Approve Payroll Routine</div>
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive mt-3">

@@ -46,49 +46,49 @@
                     </div>
                 @endif
 
-                    <div class="row">
-                        <div class="col-xl-6 col-sm-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row mb-1">
-                                        <div class="col">
-                                            <p class="mb-1">Estimated Value</p>
-                                            <h5 class="mb-0 text-info number-font">{{env('APP_CURRENCY')}}{{ number_format( $record->getProperties->sum('price'),2 ) }}</h5>
-                                        </div>
-                                        <div class="col-auto mb-0">
-                                            <div class="dash-icon text-secondary1">
-                                                <i class="bx bx-analyse"></i>
-                                            </div>
+                <div class="row">
+                    <div class="col-xl-6 col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mb-1">
+                                    <div class="col">
+                                        <p class="mb-1">Estimated Value</p>
+                                        <h5 class="mb-0 text-info number-font">{{env('APP_CURRENCY')}}{{ number_format( $record->getProperties->sum('price'),2 ) }}</h5>
+                                    </div>
+                                    <div class="col-auto mb-0">
+                                        <div class="dash-icon text-secondary1">
+                                            <i class="bx bx-analyse"></i>
                                         </div>
                                     </div>
-                                    <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Valuation</span></span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-6 col-sm-6" >
-                            <div class="card" >
-                                <div class="card-body" >
-                                    <div class="row mb-1" >
-                                        <div class="col" >
-                                            <p class="mb-1">Total Inflow</p>
-                                            <h5 class="mb-0 text-info number-font">{{env('APP_CURRENCY')}} {{number_format($receipts->sum('total'),2)}}</h5>
-                                        </div>
-                                        <div class="col-auto mb-0" >
-                                            <div class="dash-icon text-orange" >
-                                                <i class="bx bxs-book-open"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Overall Inflow</span></span>
-                                </div>
+                                <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Valuation</span></span>
                             </div>
                         </div>
                     </div>
 
+                    <div class="col-xl-6 col-sm-6" >
+                        <div class="card" >
+                            <div class="card-body" >
+                                <div class="row mb-1" >
+                                    <div class="col" >
+                                        <p class="mb-1">Total Inflow</p>
+                                        <h5 class="mb-0 text-info number-font">{{env('APP_CURRENCY')}} {{number_format($receipts->sum('total'),2)}}</h5>
+                                    </div>
+                                    <div class="col-auto mb-0" >
+                                        <div class="dash-icon text-orange" >
+                                            <i class="bx bxs-book-open"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Overall Inflow</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-end">
-                       @can('can-edit-estate-info') <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-warning"> Edit Details <i class="bx bxs-pencil"></i> </a> @endcan
+                        @can('can-edit-estate-info') <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-warning"> Edit Details <i class="bx bxs-pencil"></i> </a> @endcan
                         <a href="{{route('estates')}}"   class=" ml-2 btn btn-secondary"> Go Back <i class="bx bx-arrow-back"></i> </a>
                     </div>
                 </div>
@@ -132,7 +132,7 @@
                                             <div class="col-md-8 col-sm-8" >
                                                 <div class="car p-3" >
                                                     <div class="card-body" >
-                                                        <h6 class="mt-4 text-uppercase text-info modal-header p-4">Detail</h6>
+                                                        <h6 class="mt-4 text-uppercase text-white modal-header p-4">Detail</h6>
                                                         <div class="table-responsive" >
                                                             <table class="table mb-0 table-striped">
                                                                 <tbody>
@@ -167,7 +167,7 @@
                                                 </div>
                                                 <div class="car p-3" >
                                                     <div class="card-body" >
-                                                        <h6 class="mt-4 text-uppercase text-info modal-header p-4">Account Setup Details</h6>
+                                                        <h6 class="mt-4 text-uppercase text-white modal-header p-4">Account Setup Details</h6>
                                                         <div class="table-responsive" >
                                                             <table class="table mb-0 table-striped">
                                                                 <tbody>
@@ -216,7 +216,7 @@
                                             <div class="col-md-4 col-sm-4" >
                                                 <div class="car p-3" >
                                                     <div class="card-body" >
-                                                        <h6 class="mt-4 text-info text-uppercase modal-header p-4">Other Info.</h6>
+                                                        <h6 class="mt-4 text-white text-uppercase modal-header p-4">Other Info.</h6>
                                                         <div class="table-responsive" >
                                                             <table class="table mb-0 table-striped">
                                                                 <tbody>
@@ -244,7 +244,8 @@
                                     <div class="tab-pane" id="profile1" role="tabpanel">
                                         <div class="row">
                                             <div class="col-md-12 col-sm-12 col-xl-12">
-                                                <p>There are <code>{{number_format($record->getProperties->count())}}</code> properties in this <span class="text-info">{{$record->e_name ?? ''}}</span></p>
+                                                <div class="modal-header text-uppercase text-white">Properties</div>
+                                                <p class="mt-3">There are <code>{{number_format($record->getProperties->count())}}</code> properties in this <span class="text-info">{{$record->e_name ?? ''}}</span></p>
                                                 <div class="table-responsive">
                                                     <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                                                         <thead>
@@ -308,7 +309,8 @@
                                         </div>
                                     </div>
                                     <div class="tab-pane" id="messages1" role="tabpanel" >
-                                        <p>{{$record->e_name ?? '' }} has a total of <code>{{number_format(count($customers))}}</code> customers.</p>
+                                        <div class="modal-header text-uppercase text-white">Customers</div>
+                                        <p class="mt-3">{{$record->e_name ?? '' }} has a total of <code>{{number_format(count($customers))}}</code> customers.</p>
                                         <div class="table-responsive mt-3">
                                             <table id="datatable2" class="table table-bordered dt-responsive  nowrap w-100">
                                                 <thead>
@@ -351,7 +353,8 @@
                                         </div>
                                     </div>
                                     <div class="tab-pane" id="settings1" role="tabpanel" >
-                                        <p>A total of <code>{{number_format(count($receipts))}}</code> receipts issued. Turning into <span class="text-info">{{env('APP_CURRENCY')}}{{number_format($receipts->sum('total'),2)}}</span> in revenue.</p>
+                                        <div class="modal-header text-uppercase text-white">Sales</div>
+                                        <p class="mt-3">A total of <code>{{number_format(count($receipts))}}</code> receipts issued. Turning into <span class="text-info">{{env('APP_CURRENCY')}}{{number_format($receipts->sum('total'),2)}}</span> in revenue.</p>
                                         <div class="table-responsive">
 
                                             <table id="datatable1" class="table table-striped table-bordered nowrap dataTable" role="grid" aria-describedby="focus-key_info" style="position: relative;">
@@ -422,12 +425,13 @@
         <div class="modal-dialog modal-lg w-100" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h6 class="modal-title text-uppercase" style="text-align: center;" id="myModalLabel2">Add New Estate</h6>
+                    <h6 class="modal-title text-uppercase text-white" style="text-align: center;" id="myModalLabel2">Edit Estate Details</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
-                    <form autocomplete="off" action="{{route('estates')}}" id="createIncomeForm" data-parsley-validate="" method="put" enctype="multipart/form-data">
+                    <form autocomplete="off" action="{{route('estates')}}" id="createIncomeForm" data-parsley-validate="" method="post" enctype="multipart/form-data">
+                        @method('PUT')
                         @csrf
                         <div class="row mb-3">
                             <div class="form-group mt-3 col-md-12">
@@ -438,7 +442,7 @@
                             </div>
                             <div class="form-group mt-3 col-md-6 ">
                                 <label for="">Country <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
-                                <select name="state" id="country"  class="form-control select2">
+                                <select name="country" id="country"  class="form-control select2">
                                     <option value="161" {{$record->e_country_id == 161 ? 'selected' : null }}>Nigeria</option>
                                     @foreach($countries as $country)
                                         @if($country->id != 161)

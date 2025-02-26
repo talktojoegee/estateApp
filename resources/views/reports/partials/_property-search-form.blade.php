@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-body">
             <div class="modal-header">
-                <h6 class="text-uppercase text-info modal-title"> Property Report</h6>
+                <h6 class="text-uppercase text-white modal-title"> Property Report</h6>
             </div>
             <form action="{{ route('generate-general-property-report') }}" method="get">
                 @csrf

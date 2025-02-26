@@ -115,7 +115,11 @@
                     @endif
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
-                            <p>List of all refunds</p>
+                            <div class="modal-header text-uppercase mb-4">
+                                All Refunds
+                            </div>
+
+                            <p class="mt-3">List of all refunds</p>
                             <div class="table-responsive">
 
                                 <table id="datatable" class="table table-striped table-bordered nowrap dataTable" role="grid" aria-describedby="focus-key_info" style="position: relative;">

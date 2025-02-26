@@ -34,6 +34,7 @@
     @include('payroll.partial._salary-menu')
     <div class="row">
         <div class="col-md-12 col-xl-12 col-sm-12">
+            <div class="modal-header text-uppercase">Setup Salary Structure</div>
             <div class="card">
                 <div class="card-body">
                     <form action="{{ route('setup-salary-structure') }}" data-parsley-validate="" method="post" autocomplete="off" id="addPropertyForm" enctype="multipart/form-data">

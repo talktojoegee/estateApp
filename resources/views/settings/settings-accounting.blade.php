@@ -52,7 +52,7 @@
                     <div class="col-xl-12 col-md-12 col-sm-12">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="modal-header text-info">Accounting Settings</h5>
+                                <h6 class="modal-header text-white text-uppercase">Accounting Settings</h6>
 
                                 <p class="p-4">
                                 <div class="table-responsive mt-3">

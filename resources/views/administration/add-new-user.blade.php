@@ -58,7 +58,7 @@
                             <div class="col-md-12 col-lx-12">
                                 <p><strong>NOTE:</strong> All fields marked with asterisk <span class="text-danger">(*)</span> are required</p>
                                 <div class="modal-header mb-3" >
-                                    <h6 class="modal-title text-uppercase text-info" id="myModalLabel2">Add New Employee</h6>
+                                    <h6 class="modal-title text-uppercase text-white" id="myModalLabel2">Add New Employee</h6>
                                 </div>
                                 <form autocomplete="off" action="{{route('add-new-user')}}" enctype="multipart/form-data" method="post" id="addNewUser" data-parsley-validate="">
                                     @csrf
@@ -69,7 +69,7 @@
                                              <div class="row">
                                                  <div class="row">
                                                      <div class="col-md-12">
-                                                         <h6 class="text-uppercase modal-header text-primary">Personal Info</h6>
+                                                         <h6 class="text-uppercase modal-header text-white">Personal Info</h6>
                                                      </div>
                                                  </div>
                                                  <div class="row mb-4">
@@ -242,7 +242,7 @@
                                                  </div>
                                                  <div class="row mt-3">
                                                      <div class="col-md-12">
-                                                         <h6 class="text-uppercase modal-header text-primary">Next of Kin</h6>
+                                                         <h6 class="text-uppercase modal-header text-white">Next of Kin</h6>
                                                      </div>
                                                  </div>
                                                  <div class="col-md-6 col-sm-12 col-lg-6">
@@ -336,7 +336,7 @@
                                                  </div>
                                                  <div class="row mt-3">
                                                      <div class="col-md-12">
-                                                         <h6 class="text-uppercase modal-header text-primary">Bank Details</h6>
+                                                         <h6 class="text-uppercase modal-header text-white">Bank Details</h6>
                                                      </div>
                                                  </div>
                                                  <div class="col-md-6 col-sm-12 col-lg-6">

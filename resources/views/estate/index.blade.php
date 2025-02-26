@@ -47,26 +47,26 @@
                         </div>
                     </div>
                 @endif
-                    <div class="row">
-                        <div class="col-xl-6 col-sm-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row mb-1">
-                                        <div class="col">
-                                            <p class="mb-1">Estates</p>
-                                            <h5 class="mb-0 text-info number-font">{{ number_format( $estates->count() ) }}</h5>
-                                        </div>
-                                        <div class="col-auto mb-0">
-                                            <div class="dash-icon text-secondary1">
-                                                <i class="bx bxs-building-house"></i>
-                                            </div>
+                <div class="row">
+                    <div class="col-xl-6 col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mb-1">
+                                    <div class="col">
+                                        <p class="mb-1">Estates</p>
+                                        <h5 class="mb-0 text-info number-font">{{ number_format( $estates->count() ) }}</h5>
+                                    </div>
+                                    <div class="col-auto mb-0">
+                                        <div class="dash-icon text-secondary1">
+                                            <i class="bx bxs-building-house"></i>
                                         </div>
                                     </div>
-                                    <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Estates</span></span>
                                 </div>
+                                <span class="fs-12 text-muted"> <span class="text-muted fs-12 ml-0 mt-1">Total Estates</span></span>
                             </div>
                         </div>
                     </div>
+                </div>
                 <div class="row">
                     <div class="col-md-12">
                         <button type="button" id="addNewEstate" data-bs-toggle="modal" data-bs-target="#addNew"  class="btn btn-primary"> Add New <i class="bx bxs-add-to-queue"></i> </button>
@@ -74,6 +74,7 @@
                 </div>
 
                 <div class="row mt-3">
+                    <div class="modal-header text-uppercase text-white">Estates</div>
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
@@ -107,7 +108,6 @@
                                                             <i class="bx bx-dots-vertical dropdown-toggle text-warning" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item" href="{{route('show-estate-view', $estate->e_slug)}}" > <i class="bx bxs-book-open text-info"></i> View</a>
-                                                                <a class="dropdown-item" href="#" > <i class="bx bx-pencil text-warning"></i> Edit</a>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -130,7 +130,7 @@
         <div class="modal-dialog modal-lg w-100" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h6 class="modal-title text-uppercase" style="text-align: center;" id="myModalLabel2">Add New Estate</h6>
+                    <h6 class="modal-title text-white text-uppercase" style="text-align: center;" id="myModalLabel2">Add New Estate</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 

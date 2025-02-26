@@ -43,7 +43,7 @@
         <div class="col-md-6  col-xl-6  col-sm-6 ">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="modal-header text-info">Payroll Month/Year</h5>
+                    <h6 class="modal-header text-uppercase text-white">Payroll Month/Year</h6>
                     <div class="pt-4">
                         <p><strong class="text-danger">Note: </strong> Current Payroll Month/Year: @if(!empty($record))<code>{{ DateTime::createFromFormat('!m', $record->payroll_month)->format('F') }}, {{ $record->payroll_year }}</code> @else  <small style="color: #ff0000;">Set current payroll month & year</small> @endif</p>
                         <form action="{{ route('payroll-month-year') }}" method="post">

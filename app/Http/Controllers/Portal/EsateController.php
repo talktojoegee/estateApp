@@ -50,16 +50,16 @@ class EsateController extends Controller
                     'amenities.*'=>'required'
                 ],
                     [
-                    "name.required"=>"Enter estate name",
-                    "country.required"=>"Choose country from the list",
-                    "address.required"=>"Where is this estate located?",
-                    "state.required"=>"In which state is it located?",
-                    "city.required"=>"Enter city name",
-                    "referenceCode.required"=>"Enter a unique reference code",
-                    "amenities.required"=>"At least one estate amenity is required",
-                    "amenities.*"=>"At least one estate amenity is required",
-                    "amenities.array"=>"At least one estate amenity is required",
-                ]);
+                        "name.required"=>"Enter estate name",
+                        "country.required"=>"Choose country from the list",
+                        "address.required"=>"Where is this estate located?",
+                        "state.required"=>"In which state is it located?",
+                        "city.required"=>"Enter city name",
+                        "referenceCode.required"=>"Enter a unique reference code",
+                        "amenities.required"=>"At least one estate amenity is required",
+                        "amenities.*"=>"At least one estate amenity is required",
+                        "amenities.array"=>"At least one estate amenity is required",
+                    ]);
                 $code = Estate::getEstateByRefCode($request->referenceCode);
                 if(!empty($code)){
                     session()->flash("error", "Whoops! This estate reference code is already in use.");
@@ -83,32 +83,38 @@ class EsateController extends Controller
             case 'PUT':
                 $this->validate($request,
                     [
-                    'estate'=>'required',
-                    'name'=>'required',
-                    'address'=>'required',
-                    'country'=>'required',
-                    'city'=>'required',
-                    'referenceCode'=>'required',
-                    'amenities'=>'required|array',
-                    'amenities.*'=>'required'
-                ],
+                        'estate'=>'required',
+                        'name'=>'required',
+                        'address'=>'required',
+                        //'country'=>'required',
+                        'city'=>'required',
+                        'referenceCode'=>'required',
+                        'amenities'=>'required|array',
+                        'amenities.*'=>'required'
+                    ],
                     [
-                    "name.required"=>"Enter estate name",
-                    "country.required"=>"Choose country from the list",
-                    "address.required"=>"Where is this estate located?",
-                    "state.required"=>"In which state is it located?",
-                    "city.required"=>"Enter city name",
-                    "referenceCode.required"=>"Enter a unique reference code",
-                    "amenities.required"=>"At least one estate amenity is required",
-                    "amenities.*"=>"At least one estate amenity is required",
-                    "amenities.array"=>"At least one estate amenity is required",
-                ]);
-                $code = Estate::getEstateByRefCode($request->referenceCode);
-                if(!empty($code)){
-                    session()->flash("error", "Whoops! This estate reference code is already in use.");
+                        "name.required"=>"Enter estate name",
+                        "country.required"=>"Choose country from the list",
+                        "address.required"=>"Where is this estate located?",
+                        "state.required"=>"In which state is it located?",
+                        "city.required"=>"Enter city name",
+                        "referenceCode.required"=>"Enter a unique reference code",
+                        "amenities.required"=>"At least one estate amenity is required",
+                        "amenities.*"=>"At least one estate amenity is required",
+                        "amenities.array"=>"At least one estate amenity is required",
+                    ]);
+
+                /* $code = Estate::getEstateByRefCode($request->referenceCode);
+                 if(!empty($code)){
+                     session()->flash("error", "Whoops! This estate reference code is already in use.");
+                     return back();
+                 }*/
+
+                $estate = Estate::getEstateById($request->estate);
+                if(empty($estate)){
+                    session()->flash("error", "Whoops! No record found");
                     return back();
                 }
-
                 $estate = $this->estate->updateEstate($request);
                 if(empty($estate)){
                     session()->flash("error", "Whoops! Something went wrong.");
@@ -152,7 +158,7 @@ class EsateController extends Controller
                 'countries'=>$this->country->getCountries(),
                 'states'=>$this->state->getStatesByCountryId(161),
                 'amenities'=>$this->estateamenity->getAllEstateAmenities(),
-                ]);
+            ]);
         }else{
             session()->flash("error", "Whoops! No record found.");
             return back();
@@ -172,7 +178,7 @@ class EsateController extends Controller
             //'price'=>$property->price,
             'paymentPlanName'=>$property->getPaymentPlan->pp_name ?? '',
             'paymentPlanDesc'=>$property->getPaymentPlan->pp_description ?? '',
-            ],200);
+        ],200);
     }
 
 

@@ -111,13 +111,14 @@
                         </div>
                     </div>
                 <div class="row mt-3">
+                    <div class="modal-header text-uppercase mb-4">
+                        Follow-up Schedule
+                    </div>
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="modal-header mb-4">
-                                        Follow-up Schedule
-                                    </div>
+
                                     <div class="table-responsive mt-3">
                                         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                                             <thead>

@@ -105,6 +105,9 @@
 
         <div class="row">
             <div class="col-xl-12 col-md-12">
+                <div class="modal-header text-uppercase mb-4">
+                    {{$title ?? '' }}
+                </div>
                 <div class="card">
                     <div class="card-body">
                         @if(session()->has('success'))

@@ -561,7 +561,7 @@ Route::group(['domain'=>'{account}.'.env('APP_URL')],function(){
 
 
 Route::group(['prefix'=>'estates', 'middleware'=>'auth'],function(){
-   Route::match(['GET', 'POST'], '/', [App\Http\Controllers\Portal\EsateController::class, 'showEstates'])->name('estates');
+    Route::match(['GET', 'POST', 'PUT'], '/', [App\Http\Controllers\Portal\EsateController::class, 'showEstates'])->name('estates');
    Route::match(['GET'], '/view/{slug}', [App\Http\Controllers\Portal\EsateController::class, 'showEstateView'])->name('show-estate-view');
    Route::post('/estate-101', [App\Http\Controllers\Portal\EsateController::class, 'EstateById'])->name('estate-info');
 });

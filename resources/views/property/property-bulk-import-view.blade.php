@@ -42,9 +42,9 @@
 
                 <div class="row mt-3">
                     <div class="col-xl-12 col-md-12">
+                        <div class="modal-header text-uppercase"> Review Bulk Import</div>
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title mb-4 text-info"> Imported Properties</h4>
                                 <p class="text-muted mb-4">You'll find below information related to the person that carried out this action among other things.</p>
                                 <div class="row">
                                     <div class="col-md-6 col-lg-6">
@@ -123,7 +123,7 @@
                             <div class="col-xl-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="card-title">  Review Bulk Import</h4>
+
                                         <p>Kindly review this bulk action before posting. </p>
                                         <div class="table-responsive mt-3">
                                             <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">

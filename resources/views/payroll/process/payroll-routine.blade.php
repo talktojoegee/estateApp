@@ -52,7 +52,7 @@
         <div class="col-md-6  col-xl-6  col-sm-6 ">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="modal-header text-info">Payroll Month/Year</h5>
+                    <h6 class="modal-header text-white text-uppercase">Payroll Month/Year</h6>
                     <div class="pt-4">
                         <h5 class="text-info text-center">Current Payroll Month/Year is <span style="color: #ff0000;">@if(!empty($record) ){{  DateTime::createFromFormat('!m', $record->payroll_month)->format('F') }}, {{ $record->payroll_year }} @else '-' @endif </span></h5>
                         <div class="text-center mt-3">

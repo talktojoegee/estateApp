@@ -14,7 +14,7 @@
             background: #01204D !important;
         }
         .table-head{
-            background: #FF0000 !important;
+            background: #74788D !important;
         }
     </style>
 @endsection
@@ -27,7 +27,7 @@
     <div class="row ">
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
-                <h5 class="modal-header text-info text-uppercase">Chart of Accounts</h5></div>
+                <h5 class="modal-header text-white text-uppercase">Chart of Accounts</h5></div>
             <div class="card-header mb-4">
                 <a href="{{ url()->previous() }}" class="btn btn-secondary "> <i
                         class="bx bx bxs-left-arrow"></i> Go back</a>

@@ -52,6 +52,7 @@
     @include('property.partial._manage-menu')
     <div class="row">
         <div class="col-md-12">
+            <div class="modal-header text-uppercase">Manage Property Allocation</div>
             <div class="card p-3">
                 <div class="card-body">
                     <div class="table-responsive">
@@ -118,7 +119,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2"> {{ $alloc->status == 0 ? 'Approve Allocation' : 'Allocation Details' }}</h6>
+                    <h6 class="modal-title text-white text-uppercase" style="text-align: center;" id="myModalLabel2"> {{ $alloc->status == 0 ? 'Approve Allocation' : 'Allocation Details' }}</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -218,7 +219,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h6 class="modal-title text-danger text-uppercase" style="text-align: center;" id="myModalLabel2"> {{ $alloc->status == 0 ? 'Decline Allocation' : 'Allocation Details' }}</h6>
+                    <h6 class="modal-title text-white text-uppercase" style="text-align: center;" id="myModalLabel2"> {{ $alloc->status == 0 ? 'Decline Allocation' : 'Allocation Details' }}</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 

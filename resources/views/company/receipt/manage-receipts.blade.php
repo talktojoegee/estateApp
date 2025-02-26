@@ -101,6 +101,9 @@
 
     <div class="row">
         <div class="col-md-12 col-lg-12">
+            <div class="modal-header text-uppercase mb-4">
+                Manage Receipts
+            </div>
             <div class="card">
                 <div class="card-body">
                     @if(session()->has('success'))

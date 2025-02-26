@@ -26,7 +26,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="modal-header text-info text-uppercase mb-4">Journal Voucher</h5>
+                    <h6 class="modal-header text-white text-uppercase mb-4">Journal Voucher</h6>
                     @if(session()->has('success'))
                         <div class="alert alert-success border-success" style="padding:5px;">
 

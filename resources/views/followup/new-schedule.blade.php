@@ -35,7 +35,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="modal-header">
-                            <h6 class="text-info text-uppercase modal-title"> Period</h6>
+                            <h6 class="text-white text-uppercase modal-title"> Period</h6>
                         </div>
                         <form action="{{ route('schedule-follow-up-preview') }}" method="get">
                             @csrf

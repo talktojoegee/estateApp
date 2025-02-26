@@ -61,8 +61,8 @@
                                     <div class="col-md-6 col-lg-6 ">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="modal-header mb-3">
-                                                    <h6 class="text-uppercase text-info modal-title">  Import Properties</h6>
+                                                <div class="modal-header text-uppercase mb-3">
+                                                     Import Properties
                                                 </div>
                                                 <form action="{{ route('show-bulk-property-import-form') }}" method="post" enctype="multipart/form-data">
                                                     @csrf

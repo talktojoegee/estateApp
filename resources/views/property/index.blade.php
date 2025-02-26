@@ -100,7 +100,9 @@
     @include('property.partial._manage-menu')
     <div class="row">
         <div class="col-md-12">
+            <div class="modal-header text-uppercase mb-3">{{$title ?? ''}} Properties</div>
             <div class="card p-3">
+
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">

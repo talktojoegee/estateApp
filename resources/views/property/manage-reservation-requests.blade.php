@@ -27,6 +27,7 @@
 
     <div class="row">
         <div class="col-md-12 col-lg-12">
+            <div class="modal-header text-uppercase">Manage Reservation Requests</div>
             <div class="card">
                 <div class="card-body">
                     @if(session()->has('success'))
@@ -41,6 +42,7 @@
                     @endif
                     <div class="row">
                         <div class="col-md-12 col-lg-12 col-sm-12">
+
                             <p>List of all reservation requests</p>
                             <div class="table-responsive">
 

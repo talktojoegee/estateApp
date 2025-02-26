@@ -113,6 +113,9 @@
             </div>
         <div class="row">
             <div class="col-xl-12 col-md-12">
+                <div class="modal-header text-uppercase mb-4">
+                    Manage Team
+                </div>
                 <div class="card">
                     <div class="card-header">
                         <a href="{{route('add-new-pastor')}}"  class="btn btn-primary  mb-3">Add New Employee <i class="bx bxs-plus-circle"></i> </a>

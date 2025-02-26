@@ -52,7 +52,7 @@
                     <div class="col-xl-12 col-md-12 col-sm-12">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="modal-header text-info">SMS Settings</h5>
+                                <h6 class="modal-header text-white text-uppercase">SMS Settings</h6>
                                 <div class="pt-4">
                                     <p><strong class="text-danger">Note: </strong> These messages will be sent automatically for the various scheduled operations.</p>
                                     <form action="{{ route('sms-settings') }}" method="post">

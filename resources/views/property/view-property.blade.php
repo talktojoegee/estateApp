@@ -44,10 +44,11 @@
 
     <div id="printView" class="row viewPropertyWindow">
         <div id="col-8" class="col-md-8 col-sm-12">
+            <h5 class="modal-header text-uppercase">
+                {{$property->property_name ?? '' }}
+            </h5>
             <div class="card p-3">
-                <h5 class="modal-header text-info">
-                    {{$property->property_name ?? '' }}
-                </h5>
+
                 <div class="card-body">
                     <div id="editHandle" class="d-flex justify-content-end mb-2">
                         <span class="btn btn-primary" id="editProperty"><i class="bx bx-pencil"></i> </span>
@@ -75,9 +76,9 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <h6 class="mt-4 text-uppercase modal-header p-4  mb-3 text-info">Details</h6>
+                    <h6 class="mt-4 text-uppercase modal-header p-4  mb-3 ">Details</h6>
                     <div class="p-3">{!! $property->description ?? '' !!}</div>
-                    <h6 class="mt-4 text-uppercase modal-header p-4 text-info">Summary</h6>
+                    <h6 class="mt-4 text-uppercase modal-header p-4 ">Summary</h6>
                     <div class="table-responsive">
                         <table class="table mb-0 table-striped">
                             <tbody>
@@ -185,7 +186,7 @@
                         </table>
                     </div>
                     @if(!is_null($property->sold_to))
-                        <h6 class="modal-header p-4 text-uppercase text-info">Sale Details</h6>
+                        <h6 class="modal-header p-4 text-uppercase ">Sale Details</h6>
                         <div class="table-responsive">
                             <table class="table mb-0 table-striped">
                                 <tbody>

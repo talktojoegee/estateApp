@@ -117,6 +117,7 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-md-12">
+                        <div class="modal-header text-uppercase text-white">Customers</div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive mt-3">
