@@ -96,7 +96,7 @@
             <div class="card rounded">
                 <div class="">
                     <div class="modal-header">
-                        <h6 class="tx-11 text-info fw-bolder text-uppercase">Personal Info</h6>
+                        <h6 class="tx-11 text-white fw-bolder text-uppercase">Personal Info</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -180,12 +180,12 @@
                                 <span class="d-none d-sm-block">Settings</span>
                             </a>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <!-- <li class="nav-item" role="presentation">
                             <a class="nav-link" data-bs-toggle="tab" href="#wallpaper" role="tab" aria-selected="false" tabindex="-1">
                                 <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
                                 <span class="d-none d-sm-block">Wallpapers</span>
                             </a>
-                        </li>
+                        </li> -->
                         @endif
 
                         <li class="nav-item" role="presentation">
@@ -396,7 +396,7 @@
                                 <div class="col-md-6 col-lg-6 col-6">
                                     <div class="">
                                         <div class="modal-header">
-                                            <h6 class="tx-11 text-info fw-bolder text-uppercase">Next of Kin</h6>
+                                            <h6 class="tx-11 text-white fw-bolder text-uppercase">Next of Kin</h6>
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -438,7 +438,7 @@
                                 <div class="col-md-6 col-lg-6 col-6">
                                     <div class="">
                                         <div class="modal-header">
-                                            <h6 class="tx-11 text-info fw-bolder text-uppercase">Bank Details</h6>
+                                            <h6 class="tx-11 text-white fw-bolder text-uppercase">Bank Details</h6>
                                         </div>
                                     </div>
                                     <div class="card-body">
