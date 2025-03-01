@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-body">
             <div class="modal-header">
-                <h6 class="text-uppercase modal-title text-info"> Payroll Period</h6>
+                <h6 class="text-uppercase modal-title text-white"> Payroll Period</h6>
             </div>
             <form action="{{ route('payslip-report') }}" method="get">
                 @csrf
