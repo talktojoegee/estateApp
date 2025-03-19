@@ -319,7 +319,7 @@
                                                     <th class="wd-15p">Date</th>
                                                     <th class="wd-15p">Name</th>
                                                     <th class="wd-15p">Phone No.</th>
-                                                    <th class="wd-15p"># of Properties</th>
+                                                    <th class="wd-15p">No. of Properties</th>
                                                     <th class="wd-15p" style="text-align: right;">Valuation({{env('APP_CURRENCY')}})</th>
                                                     <th class="wd-15p">Source</th>
                                                     <th class="wd-15p">Action</th>

@@ -73,6 +73,28 @@ class Property extends Model
             'gate_house',
             'gen_house',
             'slug',
+//
+            'purchase_status',
+            'provisional_letter',
+            'allocation_letter',
+            'second_allotee',
+            'third_allotee',
+            'fourth_allotee',
+            'fifth_allotee',
+            'rent_amount',
+            'customer_id',
+            'customer_name',
+            'customer_phone',
+            'customer_gender',
+            'occupation',
+            'customer_address',
+            'customer_email',
+            'location',
+            'availability',
+            'bank_details',
+            'account_number',
+            'mode_of_payment',
+            'block',
         ];
 
     public function addProperty(Request $request){

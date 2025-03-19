@@ -128,7 +128,7 @@
                                         <td>{{env('APP_CURRENCY')}}{{ number_format($client->getCustomerValuation($client->id) ?? 0,2) ?? '' }}</td>
                                     </tr>
                                     <tr>
-                                        <th scope="row"># of Properties :</th>
+                                        <th scope="row">No. of Properties :</th>
                                         <td>{{ number_format($client->getNumberOfProperties($client->id) ?? 0) ?? '' }}</td>
                                     </tr>
                                     <tr>
@@ -208,7 +208,7 @@
                                         <td>{{env('APP_CURRENCY')}}{{ number_format($client->getCustomerValuation($client->id) ?? 0,2) ?? '' }}</td>
                                     </tr>
                                     <tr>
-                                        <th scope="row"># of Properties :</th>
+                                        <th scope="row">No. of Properties :</th>
                                         <td>{{ number_format($client->getNumberOfProperties($client->id) ?? 0) ?? '' }}</td>
                                     </tr>
                                     <tr>
@@ -411,7 +411,7 @@
                                                <a href="{{ route('upload-customer-documents', $client->slug) }}" class="btn btn-primary" > <i class="bx bx-plus-circle"></i> New File(s)</a>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 col-lg-12">
+                                        <div class="col-md-12 col-lg-12 mt-3">
                                             <div class="card">
                                                 <div class="modal-header">
                                                     <div class="modal-title text-uppercase">Browse <code>{{ $client->first_name ?? ''  }} {{ $client->last_name ?? ''  }}</code> documents </div>
@@ -529,7 +529,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" >
-                    <h6 class="modal-title text-info text-uppercase" id="myModalLabel2">Edit Customer Profile</h6>
+                    <h6 class="modal-title text-white text-uppercase" id="myModalLabel2">Edit Customer Profile</h6>
                     <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -564,7 +564,7 @@
                         </div>
                         <div class="form-group mt-1">
                             <label for="">Email Address <span class="text-danger">*</span></label>
-                            <input type="email" name="email" readonly value="{{$client->email ?? '' }}" placeholder="Email Address" class="form-control">
+                            <input type="email" name="email"  value="{{$client->email ?? 'placeholder@gmail.com' }}" placeholder="Email Address" class="form-control">
                             @error('email') <i class="text-danger">{{$message}}</i>@enderror
                         </div>
                         <div class="form-group mt-1">

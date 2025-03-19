@@ -272,10 +272,10 @@
                 <span key="t-payroll-process"> Payroll Process </span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{route('salary-structures')}}" key="t-payroll-process">Salary Structures</a></li>
+                <li><a href="{{route('salary-structures')}}" key="t-payroll-process">Employee Salary Structures</a></li>
                 <li><a href="{{ route('payroll-routine') }}" key="t-payroll-process">Payroll Routine</a></li>
                 <li><a href="{{ route('approve-payroll-routine') }}" key="t-payroll-process">Approve Routine</a></li>
-                <li><a href="{{ route('payroll-report') }}" key="t-payroll-process">Payroll Reports</a></li>
+                <li><a href="{{ route('general-payroll-report') }}" key="t-payroll-process">Payroll Report</a></li>
             </ul>
         </li>
         @endcan

@@ -27,6 +27,7 @@ use App\Models\PropertyReservation;
 use App\Models\PropertyTitle;
 use App\Models\Receipt;
 use App\Models\State;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -540,8 +541,16 @@ class PropertyController extends Controller
             session()->flash("error", "Whoops! No record found");
             return back();
         }
+        $list = PropertyBulkImportDetail::where('master_id', $record->id)
+            ->where('action_status', '!=', 1)->paginate(100);
+        $totalRecord = PropertyBulkImportDetail::where('master_id', $record->id)
+            ->get();
         return view("property.property-bulk-import-view",[
             "record"=>$record,
+            "total"=>$totalRecord->count(),
+            "totalApproved"=>$totalRecord->where('action_status', 1)->count(),
+            "totalDeclined"=>$totalRecord->where('action_status', 2)->count(),
+            "list"=>$list,
             'estates'=>$this->estate->getAllEstates(),
             'buildingTypes'=>BuildingType::getBuildingTypes(),
             'bqOptions'=>BqOption::getBQOptions(),
@@ -589,6 +598,52 @@ class PropertyController extends Controller
         return back();
     }
 
+        public function bulkAction(Request $request)
+        {
+            $this->validate($request,[
+                "selected_ids"=>"required",
+                "action"=>"required"
+            ],[
+                "action.required"=>"",
+                "selected_ids.required"=>"Select at least one item.",
+            ]);
+            $selectedIds = $request->input('selected_ids', []);
+            $action = $request->input('action');
+
+            if (empty($selectedIds)) {
+                return back()->with('error', 'No records selected.');
+            }
+
+            if ($action == 'approve') {
+                foreach($selectedIds as $id){
+                    $record = PropertyBulkImportDetail::find($id);
+                    if(!empty($record)){
+                        $record->action_status = 1; //approved
+                        $record->actioned_by = Auth::user()->id;
+                        $record->date_actioned = now();
+                        $record->save();
+                        $this->__saveAndPostItem($record);
+                    }
+                }
+                return back()->with('success', 'Selected records approved.');
+            }
+
+            if ($action == 'decline') {
+                foreach($selectedIds as $id){
+                    $record = PropertyBulkImportDetail::find($id);
+                    if(!empty($record)){
+                        $record->action_status = 2; //declined
+                        $record->actioned_by = Auth::user()->id;
+                        $record->date_actioned = now();
+                        $record->save();
+                        $this->__saveAndPostItem($record);
+                    }
+                }
+                return back()->with('success', 'Selected records declined.');
+            }
+
+            return back()->with('error', 'Invalid action.');
+        }
 
     public function actionPropertyRecord($recordId, $action){
         $record = $this->propertyimportdetail->getPropertyDetailById($recordId);
@@ -640,7 +695,26 @@ class PropertyController extends Controller
                     'occupied_by' => request('occupied_by') == 0 ? null : request('occupied_by'),
                     'added_by' => Auth::user()->id ?? null,
                     'sold_to' => request('occupied_by') == 0 ? null : request('occupied_by'),
-                    'slug'=>Str::slug(request('property_name').'-'.substr(sha1( (time() + rand(99,9999)) ),32,40))
+                    'slug'=>Str::slug(request('property_name').'-'.substr(sha1( (time() + rand(99,9999)) ),32,40)),
+                    'block'=>request('block'),
+                    'location'=>request('location'),
+                    'availability'=>request('availability'),
+                    'bank_details'=>request('bank_details'),
+                    'account_number'=>request('account_number'),
+                    'mode_of_payment'=>request('mode_of_payment'),
+                    'purchase_status'=>request('purchase_status'),
+                    'provisional_letter'=>request('provisional_letter'),
+                    'allocation_letter'=>request('allocation_letter'),
+                    'second_allotee'=>request('second_allotee'),
+                    'third_allotee'=>request('third_allotee'),
+                    'fourth_allotee'=>request('fourth_allotee'),
+                    'fifth_allotee'=>request('fifth_allotee'),
+                    'customer_name'=>request('customer_name'),
+                    'customer_phone'=>request('customer_phone'),
+                    'customer_gender'=>request('customer_gender'),
+                    'occupation'=>request('occupation'),
+                    'customer_address'=>request('customer_address'),
+                    'customer_email'=>request('customer_email'),
                 ];
                 $item->update($data);
                 session()->flash("success", "Success! Changes saved.");
@@ -693,7 +767,29 @@ class PropertyController extends Controller
             'occupied_by' => $item->occupied_by == 0 ? null : $item->occupied_by,
             'added_by' => Auth::user()->id ?? null,
             'sold_to' => $item->occupied_by == 0 ? null : $item->occupied_by,
-            'slug'=>Str::slug($item->property_name).'-'.substr(sha1( (time() + rand(99,9999)) ),32,40)
+            'slug'=>Str::slug($item->property_name).'-'.substr(sha1( (time() + rand(99,9999)) ),32,40),
+            //new fields
+            'purchase_status'=>$item->purchase_status,
+            'provisional_letter'=>$item->provisional_letter,
+            'allocation_letter'=>$item->allocation_letter,
+            'second_allotee'=>$item->second_allotee,
+            'third_allotee'=>$item->third_allotee,
+            'fourth_allotee'=>$item->fourth_allotee,
+            'fifth_allotee'=>$item->fifth_allotee,
+            'rent_amount'=>$item->rent_amount,
+            'customer_id'=>$item->customer_id,
+            'customer_name'=>$item->customer_name,
+            'customer_phone'=>$item->customer_phone,
+            'customer_gender'=>$item->customer_gender,
+            'occupation'=>$item->occupation,
+            'customer_address'=>$item->customer_address,
+            'customer_email'=>$item->customer_email,
+            'location'=>$item->location,
+            'availability'=>$item->availability,
+            'bank_details'=>$item->bank_details,
+            'account_number'=>$item->account_number,
+            'mode_of_payment'=>$item->mode_of_payment,
+            'block'=>$item->block,
         ];
         $property = Property::create($data);
         $estate = Estate::getEstateById($item->estate_id);
@@ -709,18 +805,76 @@ class PropertyController extends Controller
             $invoiceStatus = 0;
             if($item->amount_paid >= $item->price){
                 $invoiceStatus = 1;
+                //update property status
+                $property->status = 2; //sold
+                $property->save();
             }
             $invoice = $this->invoicemaster->generateInvoice($property->id, $item->occupied_by, rand(99,9999),3,
                 now(),date('Y-m-d', strtotime(now(). ' + 30 day')),
                 $item->price,$item->price, $item->amount_paid,$invoiceStatus, $service, 1,
                 $item->amount_paid);
             //Generate receipt now
-            //$this->receipt->createNewReceipt($counter, $invoice, $amount, $charge, $method, $paymentDate)
             $this->receipt->createNewReceipt(rand(99,9999), $invoice, $item->amount_paid, 0,1, now());
 
         }
-        //return true;
+
+        //register customer
+        $customerId = null;
+        if(!empty($item->customer_id) ){
+            //if(!is_null($item->customer_id)){
+                //extract first CS89384
+                $val = substr($item->customer_id,2);
+                if(ctype_digit($val)){
+                    $lead = Lead::find($val);
+                    if(!empty($lead)){
+                        $customerId = $lead->id;
+                        $property->occupied_by = $customerId;
+                        $property->sold_to = $customerId;
+                        $property->date_sold = now();
+                        $property->save();
+                    }
+                }
+            //}
+        }
+        if(!empty($item->customer_name)){
+           $newCustomer =  $this->addCustomer($item->customer_name, $item->customer_phone, $item->customer_gender,
+                $item->occupation, $item->customer_address, $item->customer_email);
+            //$customerId = $lead->id;
+            $property->occupied_by = $newCustomer->id;
+            $property->sold_to = $newCustomer->id;
+            $property->date_sold = now();
+            $property->save();
+
+        }
+
+
+
+        if(!empty($item->second_allotee)){ //second allotee
+          $secondAllotee =   $this->addCustomer($item->second_allotee, '234', rand(0,1),
+                null, null, 'placeholder@efab.com');
+         PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $secondAllotee->id, 2,1);
+        }
+        if(!empty($item->third_allotee)){ //third_allotee
+           $thirdAllotee =  $this->addCustomer($item->third_allotee, '234', rand(1,2),
+                null, null, 'placeholder@efab.com');
+            PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $thirdAllotee->id, 3,1);
+
+        }
+
+        if(!empty($item->fourth_allotee)){ //fourth_allotee
+            $fourthAllotee = $this->addCustomer($item->third_allotee, '234', rand(0,1),
+                null, null, 'placeholder@efab.com');
+            PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $fourthAllotee->id, 4,1);
+
+        }
+        if(!empty($item->fifth_allotee)){ //fifth_allotee
+           $fifthAllotee =  $this->addCustomer($item->third_allotee, '234', rand(0,1),
+                null, null, 'placeholder@efab.com');
+            PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $fifthAllotee->id, 5,1);
+
+        }
     }
+
     private function __saveItemOnly($item){
 
 
@@ -980,6 +1134,50 @@ class PropertyController extends Controller
             "properties"=>$properties,
             "customers"=>$customers,
         ]);
+    }
+
+
+    private function addCustomer($name, $mobileNo, $gender,
+                                 $occupation = 'N/A',
+                                 $address = 'N/A',
+                                 $email = 'placeholder@efab.com'){
+        $date = Carbon::parse(now())->format('Y-m-d');
+        $lead = new Lead();
+        $lead->entry_date = $date ??  now();
+        $lead->added_by = Auth::user()->id;
+        $lead->org_id = Auth::user()->org_id;
+        $lead->first_name = $name ?? '';
+        $lead->last_name =  '';
+        $lead->middle_name =  '';
+        $lead->email = $email;
+        $lead->phone = $mobileNo;
+        $lead->dob = null;
+        $lead->source_id = 1;
+        $lead->status = 1;
+        $lead->gender = $gender ?? 1;
+        $lead->street = $address;
+        $lead->city = null;
+        $lead->state =  null;
+        $lead->code = null;
+        $lead->occupation = $occupation ?? null;
+        $lead->entry_month = date('m',strtotime(now()));
+        $lead->entry_year = date('Y',strtotime(now()));
+        $lead->slug = Str::slug($name).'-'.Str::random(8);
+
+        //Next of kin
+        /*$lead->next_full_name = $request->fullName ?? null;
+        $lead->next_primary_phone = $this->appendCountryCode($request->primaryPhoneNo) ?? null;
+        $lead->next_alt_phone = $this->appendCountryCode($request->altPhoneNo) ?? null;
+        $lead->next_email = $request->nextEmail ?? null;
+        $lead->next_relationship = $request->relationship ?? null;*/
+
+        $lead->save();
+        return $lead;
+
+    }
+
+    private function handlePropertyAllocation(){
+        $allocation = new PropertyAllocation();
     }
 
 }

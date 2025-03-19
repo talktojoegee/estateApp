@@ -101,7 +101,7 @@
                                             <th class="wd-15p">Date</th>
                                             <th class="wd-15p">Name</th>
                                             <th class="wd-15p">Mobile No.</th>
-                                            <th class="wd-15p"># of Properties</th>
+                                            <th class="wd-15p">No. of Properties</th>
                                             <th class="wd-15p" style="text-align: right;">Valuation({{env('APP_CURRENCY')}})</th>
                                             <th class="wd-15p">Type</th>
                                             <th class="wd-15p">Action</th>

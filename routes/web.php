@@ -587,6 +587,7 @@ Route::group(['prefix'=>'property','middleware'=>'auth'],function(){
 
 
     Route::get('/action-property-entry/{recordId}/{action}', [App\Http\Controllers\Portal\PropertyController::class, 'actionPropertyRecord'])->name('action-property-record');
+    Route::post('/bulk-action', [App\Http\Controllers\Portal\PropertyController::class, 'bulkAction'])->name('bulk-action');
     Route::get('/discard-property-record/{batchCode}', [App\Http\Controllers\Portal\PropertyController::class, 'discardPropertyRecord'])->name('discard-property-record');
     Route::get('/post-property-record/{batchCode}', [App\Http\Controllers\Portal\PropertyController::class, 'postPropertyRecord'])->name('post-property-record');
 });

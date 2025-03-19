@@ -16,6 +16,6 @@ class BuildingType extends Model
     }
 
     public static function getBuildingTypeByName($name){
-        return BuildingType::where('bt_name', $name)->first();
+        return BuildingType::whereRaw('LOWER(bt_name) = LOWER(?)', [$name])->first();
     }
 }

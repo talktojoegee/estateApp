@@ -50,6 +50,18 @@ class PropertyAllocation extends Model
         $allocation->save();
     }
 
+    public static function addPropertyAllocation($estateId, $propertyId, $customerId, $level, $status){
+        $allocation = new PropertyAllocation();
+        $allocation->estate_id = $estateId;
+        $allocation->property_id = $propertyId;
+        $allocation->customer_id = $customerId;
+        $allocation->level = $level;
+        $allocation->allocated_by = Auth::user()->id;
+        $allocation->allocated_at = now();
+        $allocation->status = $status;
+        $allocation->save();
+    }
+
     public function checkExistingAllocation($estateId, $property, $level){
         return PropertyAllocation::where('estate_id', $estateId)->where('property_id', $property)
             ->where('level', $level)->first();

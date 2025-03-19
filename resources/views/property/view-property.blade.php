@@ -181,6 +181,13 @@
                                 <th scope="row" > Added By: &nbsp; &nbsp; <span class="text-info"> {{$property->getAddedBy->title ?? '' }} {{$property->getAddedBy->first_name ?? '' }} {{$property->getAddedBy->last_name ?? '' }} {{$property->getAddedBy->other_names ?? '' }} </span></th>
                                 <th scope="row" colspan="2" >Payment Plan: &nbsp; &nbsp; <span class="text-info"> {{ $property->getPaymentPlan->pp_name ?? '' }} <br> <small>({{ $property->getPaymentPlan->pp_description ?? '-' }})</small>  </span></th>
                             </tr>
+                            <tr>
+                                <th scope="row" > Block: &nbsp; &nbsp;
+                                    <span class="text-info">{{$property->block ?? '' }} </span></th>
+                                <th scope="row" >Location: &nbsp; &nbsp;
+                                    <span class="text-info">{{$property->location ?? '' }}</span>
+                                </th>
+                            </tr>
 
                             </tbody>
                         </table>
@@ -202,6 +209,28 @@
                                             <span class="text-info">{{$property->getSoldTo->email ?? '' }} </span></th>
                                         <th scope="row" >Mobile No.: &nbsp; &nbsp;
                                             <span class="text-info">{{$property->getSoldTo->mobile_no ?? '' }}</span>
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th scope="row" > Availability: &nbsp; &nbsp;
+                                            <span class="text-info">{{$property->availability ?? '' }} </span></th>
+                                        <th scope="row" >Bank Details: &nbsp; &nbsp;
+                                            <span class="text-info">{{$property->bank_details ?? '' }}</span>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" > Account Number: &nbsp; &nbsp;
+                                            <span class="text-info">{{$property->account_number ?? '' }} </span></th>
+                                        <th scope="row" >Mode of Payment: &nbsp; &nbsp;
+                                            <span class="text-info">{{$property->mode_of_payment ?? '' }}</span>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" > Provisional Letter: &nbsp; &nbsp;
+                                            <span class="text-info">{{$property->provisional_letter ?? '' }} </span></th>
+                                        <th scope="row" >Allocation Letter: &nbsp; &nbsp;
+                                            <span class="text-info">{{$property->allocation_letter ?? '' }}</span>
                                         </th>
                                     </tr>
 

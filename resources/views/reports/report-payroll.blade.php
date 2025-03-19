@@ -6,7 +6,24 @@
     Payroll Report
 @endsection
 @section('extra-styles')
-
+    <style>
+        .red-highlight{
+            background: #FBCCCC !important;
+        }
+        .blue-highlight{
+            background: #01204D !important;
+        }
+        .dark-green-highlight{
+            background: #002E1F !important;
+        }
+        .dark-red-highlight{
+            background: #280003 !important;
+        }
+        th{
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+    </style>
 @endsection
 @section('breadcrumb-action-btn')
 
@@ -32,37 +49,62 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h4 class="card-title text-uppercase text-info modal-title"> {{ date('F, Y', strtotime($period)) }} Payroll Report</h4>
-                                <p>Showing payroll report for <code>{{date('F, Y', strtotime($period))}}</code>. Total amount in payment <span class="text-info">{{config('app.APP_CURRENCY')}}{{number_format($total,2)}}</span></p>
+                                <p>Showing payroll report for <code>{{date('F, Y', strtotime($period))}}</code>. </p>
                                 <p>All values are in the Nigerian naira({{config('app.APP_CURRENCY')}})</p>
                                 <form action="{{route('update-imported-properties')}}" method="POST">
                                     @csrf
                                     <div class="table-responsive mt-3">
-                                        <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+                                        <table class="table table-bordered dt-responsive  nowrap w-100">
                                             <thead>
                                             <tr>
-                                                <th>#</th>
-                                                <th class="wd-15p">Name</th>
-                                                @foreach($headers as $header)
-                                                    <th style="text-align: right !important;">{{ $header }}</th>
+                                                <th>Employee Name</th>
+                                                <th>Designation</th>
+                                                @foreach($incomeHeaders as $income)
+                                                    <th >{{ $income }}</th>
                                                 @endforeach
-                                                <th style="text-align: right !important;">Total</th>
-
+                                                <th class="dark-green-highlight text-white">Gross Salary</th>
+                                                @foreach($deductionHeaders as $deduction)
+                                                    <th>{{ $deduction }}</th>
+                                                @endforeach
+                                                <th class="dark-red-highlight text-white">Total Deduction</th>
+                                                <th>Net Pay</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach($tableData as $key => $row)
+                                            @foreach($tableData as $row)
                                                 <tr>
-                                                    <td>{{ $key + 1 }}</td>
                                                     <td>{{ $row['name'] }}</td>
-                                                    @foreach($headers as $header)
-                                                        <td style="text-align: right !important;">{{ number_format($row[$header], 2) }}</td>
+                                                    <td>{{ $row['design'] }}</td>
+                                                    @foreach($incomeHeaders as $income)
+                                                        <td class="text-right" style="text-align: right;">{{ number_format($row['income'][$income] ?? 0, 2) }}</td>
                                                     @endforeach
-                                                    <td style="text-align: right !important;"><strong>{{ number_format($row['Total'],2) }}</strong></td>
+                                                    <td class="dark-green-highlight text-white" style="text-align: right;">{{ number_format($row['total_income'], 2) }}</td>
+                                                    @foreach($deductionHeaders as $deduction)
+                                                        <td class="" style="text-align: right;">{{ number_format($row['deductions'][$deduction] ?? 0, 2) }}</td>
+                                                    @endforeach
+                                                    <td class="dark-red-highlight text-white" style="text-align: right;">{{ number_format($row['total_deduction'], 2) }}</td>
+                                                    <td style="text-align: right;">{{ number_format($row['net_pay'], 2) }}</td>
                                                 </tr>
                                             @endforeach
-
                                             </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <th colspan="2">Totals</th>
+                                                @foreach($incomeHeaders as $income)
+                                                    <th></th>
+                                                @endforeach
+                                                <th class="dark-green-highlight text-white" style="text-align: right;">{{ number_format($totalIncome, 2) }}</th>
+                                                @foreach($deductionHeaders as $deduction)
+                                                    <th></th>
+                                                @endforeach
+                                                <th class="dark-red-highlight text-white" style="text-align: right;">{{ number_format($totalDeduction, 2) }}</th>
+                                                <th style="text-align: right;">{{ number_format($totalNet, 2) }}</th>
+                                            </tr>
+                                            </tfoot>
                                         </table>
+
+
+
                                     </div>
                                 </form>
                             </div>

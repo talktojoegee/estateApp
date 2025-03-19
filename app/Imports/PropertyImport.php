@@ -26,6 +26,39 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
         $this->masterId = $masterId;
         $this->header = $header;
     }
+    /*
+     * 0 = PROPERTY SPECIFICATION
+     * 1 = PROPERTY TYPE
+     * 2 = PLOT NUMBER
+     * 3 = HOUSE NUMBER
+     * 4 = SHOP NUMBER
+     * 5 = STREET NAME
+     * 6 = BLOCK
+     * 7 = ESTATE
+     * 8 = LOCATION
+     * 9 = AVAILABILITY
+     * 10 = BANK DETAILS
+     * 11 = ACCOUNT NUMBER
+     * 12 = MODE OF PAYMENT
+     * 13 = PROPERTY PRICE
+     * 14 = AMOUNT PAID
+     * 15 = BALANCE
+     * 16 = PURCHASE STATUS
+     * 17 = ALLOCATION LETTER
+     * 18 = 2ND ALLOTEE
+     * 19 = 3RD ALLOTEE
+     * 20 = 4TH ALLOTEE
+     * 21 = 5TH ALLOTEE
+     * 22 = RENT AMOUNT
+     * 23 = CUSTOMER ID
+     * 24 = CUSTOMERS NAME
+     * 25 = CUSTOMER'S
+     * 26 = PHONE NO.
+     * 27 = GENDER
+     * 28 = OCCUPATION
+     * 29 = CUSTOMER ADDRESS
+     * 30 = CUSTOMER'S EMAIL
+     */
 
 
     /**
@@ -56,8 +89,8 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
     {
         //return dd($row);
         $constructionStage = ConstructionStage::getConstructionStageByName($row[19]);
-        $estate = Estate::getEstateByName($row[1]);
-        $buildingType = BuildingType::getBuildingTypeByName($row[2]);
+        $estate = Estate::getEstateByName($row[7]); //estate
+        $buildingType = BuildingType::getBuildingTypeByName($row[1]); //property type
         $bq = BqOption::getBQOptionByName($row[11]);
         $propertyTitle = PropertyTitle::getPropertyTitleByName($row[21]);
         $enSuite = 1;
@@ -106,31 +139,55 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
         return new PropertyBulkImportDetail([
         'entry_date' => now(),
         'master_id' => $this->masterId,
-        'estate_id' => !empty($estate) ? $estate->e_id : 1,
+        'estate_id' => !empty($estate) ? $estate->e_id : 1, //estate
+        'location' => $row[8] ?? '', //location
+        'availability' => $row[9] ?? '', //availability
+        'bank_details' => $row[10] ?? '', //bank details
+        'account_number' => $row[11] ?? '', //account number
+        'mode_of_payment' => $row[12] ?? '', //mode_of_payment
         'added_by' => Auth::user()->id,
         'property_title' => !empty($propertyTitle) ? $propertyTitle->pt_id : 1,
         'property_name' => $row[0] ?? 'Unknown_'.$randNum,
-        'house_no' => $row[3] ?? null,
-        'street' => $row[4] ?? null,
-        'shop_no' => $row[5] ?? null,
-        'plot_no' => $row[6] ?? null,
+        'house_no' => $row[3] ?? null, //house number
+        'street' => $row[5] ?? null, //street name
+        'block' => $row[6] ?? null, //block
+        'shop_no' => $row[4] ?? null, //shop number
+        'plot_no' => $row[2] ?? null, //plot number
         'no_of_office_rooms' => $row[7] ?? null,
         'office_ensuite_toilet_bathroom' => $enSuite,
-        'no_of_shops' => $row[8] ?? null,
+        'no_of_shops' =>  null,
         'building_type' => !empty($buildingType) ? $buildingType->bt_id : 1,
-        'total_no_bedrooms' => $row[10] ?? 0,
-        'with_bq' => !empty($bq) ? $bq->bqo_id : 1,
-        'no_of_floors' => $row[12] ?? 0,
-        'no_of_toilets' => $row[13] ?? 0,
-        'no_of_car_parking' => $row[14] ?? 0,
-        'no_of_units' => $row[15] ?? 0,
-        'price' => !empty($row[16]) ? floatval(preg_replace('/[^\d.]/', '', $row[16])) : 0,
-        'amount_paid' => !empty($row[17]) ? floatval(preg_replace('/[^\d.]/', '', $row[17])) : 0,
+        'total_no_bedrooms' =>  0,
+        'with_bq' => 1,
+        'no_of_floors' =>  0,
+        'no_of_toilets' =>  0,
+        'no_of_car_parking' =>  0,
+        'no_of_units' =>  0,
+        'price' => !empty($row[13]) ? floatval(preg_replace('/[^\d.]/', '', $row[13])) : 0, //price
+        'amount_paid' => !empty($row[14]) ? floatval(preg_replace('/[^\d.]/', '', $row[14])) : 0, //amount paid
+        'balance' => !empty($row[15]) ? floatval(preg_replace('/[^\d.]/', '', $row[15])) : 0, //balance
+        'purchase_status' => $row[16] ?? '', //purchase_status
+        'provisional_letter' => $row[17] ?? '', //provisional letter
+        'allocation_letter' => $row[18] ?? '', //provisional letter
+        'second_allotee' => $row[19] ?? '', //2ND ALLOTEE
+        'third_allotee' => $row[20] ?? '', //3RD ALLOTEE
+        'fourth_allotee' => $row[21] ?? '', //4th ALLOTEE
+        'fifth_allotee' => $row[22] ?? '', //5th ALLOTEE
+        'rent_amount' => $row[23] ?? '', //rent_amount
+        'customer_id' => $row[24] ?? '', //customer_id
+        'customer_name' => $row[25] ?? '', //customer_name
+        'customer_phone' => $row[26] ?? '', //customer_phone
+        'customer_gender' => $row[27] ?? '', //customer_gender
+        'occupation' => $row[28] ?? '', //occupation
+        'customer_address' => $row[29] ?? '', //customer_address
+        'customer_email' => $row[30] ?? '', //customer_email
+
+
         'property_condition' => $propertyCondition,
         'construction_stage' => !empty($constructionStage) ? $constructionStage->cs_id : 1,
         'land_size' => $row[20] ?? null,
         'gl_id' => 1,
-        'description' => $row[22] ?? null,
+        'description' => $row[0] ?? null, //prop. specification
         'customer' => $row[23] ?? null,
         'occupied_by'=>$customerId, //sold to this customer
 

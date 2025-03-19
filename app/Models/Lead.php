@@ -163,7 +163,7 @@ class Lead extends Model
         $lead->source_id = $request->source;
         $lead->status = $request->status;
         $lead->gender = $request->gender;
-        $lead->street = $request->street ?? null;
+        $lead->street = $request->address ?? null;
         $lead->city = $request->city ?? null;
         $lead->state = $request->state ?? null;
         $lead->code = $request->code ?? null;

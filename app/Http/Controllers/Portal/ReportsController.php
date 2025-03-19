@@ -543,62 +543,159 @@ class ReportsController extends Controller
             ]);
     }
 
-
-
     public function generatePayrollReport(Request $request){
         $this->validate($request,[
             'payrollPeriod'=>'required',
         ],[
             'from.required'=>'Choose payroll period',
         ]);
+
         $payrollMonth = date('m', strtotime($request->payrollPeriod));
         $payrollYear = date('Y', strtotime($request->payrollPeriod));
+
+        // Fetch payment definitions (IDs mapped to names)
         $paymentDefinitions = PaymentDefinition::pluck('payment_name', 'id')->toArray();
+
+        // Get distinct employee IDs with salary records for the given payroll period
         $salaryUserIds = Salary::distinct()
             ->where('payroll_month', $payrollMonth)
             ->where('payroll_year', $payrollYear)
             ->pluck('employee_id')
             ->toArray();
+
+        // Fetch all users for the payroll period
         $users = User::whereIn('id', $salaryUserIds)->get();
+
+        // Fetch and group salary records by employee ID
         $salaries = Salary::whereIn('payment_definition_id', array_keys($paymentDefinitions))
             ->where('payroll_month', $payrollMonth)
             ->where('payroll_year', $payrollYear)
             ->get()
             ->groupBy('employee_id');
+
         $tableData = [];
-        $total = 0;
+        $totalIncome = 0;
+        $totalDeduction = 0;
+
         foreach ($users as $user) {
+            $design = $user->getUserChurchBranch->cb_name ?? '';
             $row = [
                 'name' => "{$user->title} {$user->first_name} {$user->last_name} {$user->other_names}",
+                'design' => "{$design}",
+                'income' => [],
+                'deductions' => [],
+                'total_income' => 0,
+                'total_deduction' => 0
             ];
-            $deduction = 0;
-            $income = 0;
+
+            // Loop through payment definitions and categorize as income or deduction
             foreach ($paymentDefinitions as $paymentId => $paymentName) {
                 $salary = $salaries[$user->id]->firstWhere('payment_definition_id', $paymentId) ?? null;
-                $row[$paymentName] = $salary ? $salary->amount : 0;
+                $amount = optional($salary)->amount ?? 0;
 
-                if($salary){
-                    if($salary->payment_type == 1){ //income
-                        $income +=  $salary ? $salary->amount : 0;
-                    }else{
-                        $deduction += $salary ? $salary->amount : 0;
+                if ($salary) {
+                    if ($salary->payment_type == 1) { // Income
+                        $row['income'][$paymentName] = $amount;
+                        $row['total_income'] += $amount;
+                    } else { // Deduction
+                        $row['deductions'][$paymentName] = $amount;
+                        $row['total_deduction'] += $amount;
                     }
                 }
-
             }
-            $row['Total'] = ($income - $deduction);
-            $total += ($income - $deduction);
+
+            // Compute net salary
+            $row['net_pay'] = $row['total_income'] - $row['total_deduction'];
+
+            // Add to totals
+            $totalIncome += $row['total_income'];
+            $totalDeduction += $row['total_deduction'];
+
             $tableData[] = $row;
         }
-        return view("reports.report-payroll",
-            [
-                'search'=>1,
-                'period'=>$request->payrollPeriod,
-                'headers' => array_values($paymentDefinitions),
-                'tableData' => $tableData,
-                'total'=>$total,
-            ]);
+
+        return view("reports.report-payroll", [
+            'search' => 1,
+            'period' => $request->payrollPeriod,
+
+            'incomeHeaders' => array_values(array_filter($paymentDefinitions, function ($id) use ($salaries) {
+                return $salaries->flatten()->where('payment_definition_id', $id)->first()?->payment_type == 1;
+            }, ARRAY_FILTER_USE_KEY)),
+
+            'deductionHeaders' => array_values(array_filter($paymentDefinitions, function ($id) use ($salaries) {
+                return $salaries->flatten()->where('payment_definition_id', $id)->first()?->payment_type == 2;
+            }, ARRAY_FILTER_USE_KEY)),
+
+            'tableData' => $tableData,
+            'totalIncome' => $totalIncome,
+            'totalDeduction' => $totalDeduction,
+            'totalNet' => $totalIncome - $totalDeduction
+        ]);
     }
+
+
+
+    /*
+
+        public function generatePayrollReport(Request $request){
+            $this->validate($request,[
+                'payrollPeriod'=>'required',
+            ],[
+                'from.required'=>'Choose payroll period',
+            ]);
+            $payrollMonth = date('m', strtotime($request->payrollPeriod));
+            $payrollYear = date('Y', strtotime($request->payrollPeriod));
+            $paymentDefinitions = PaymentDefinition::pluck('payment_name', 'id')->toArray();
+            $salaryUserIds = Salary::distinct()
+                ->where('payroll_month', $payrollMonth)
+                ->where('payroll_year', $payrollYear)
+                ->pluck('employee_id')
+                ->toArray();
+            $users = User::whereIn('id', $salaryUserIds)->get();
+            $salaries = Salary::whereIn('payment_definition_id', array_keys($paymentDefinitions))
+                ->where('payroll_month', $payrollMonth)
+                ->where('payroll_year', $payrollYear)
+                ->get()
+                ->groupBy('employee_id');
+            $tableData = [];
+            $total = 0;
+
+            foreach ($users as $user) {
+                $design = $user->getUserChurchBranch->cb_name  ?? '';
+                $row = [
+                    'name' => "{$user->title} {$user->first_name} {$user->last_name} {$user->other_names}",
+                    'design' => "{$design}",
+                ];
+                $deduction = 0;
+                $income = 0;
+
+                foreach ($paymentDefinitions as $paymentId => $paymentName) {
+                    $salary = $salaries[$user->id]->firstWhere('payment_definition_id', $paymentId) ?? null;
+                    $row[$paymentName] = $salary ? $salary->amount : 0;
+                    if($salary){
+                        if($salary->payment_type == 1){ //income
+                            $income +=  $salary ? $salary->amount : 0;
+                        }else{
+                            $deduction += $salary ? $salary->amount : 0;
+                        }
+                    }
+                    return dd($paymentName);
+
+                }
+                $row['Total'] = ($income - $deduction);
+                $total += ($income - $deduction);
+                $tableData[] = $row;
+            }
+            //return dd($row);
+            return view("reports.report-payroll",
+                [
+                    'search'=>1,
+                    'period'=>$request->payrollPeriod,
+                    'headers' => array_values($paymentDefinitions),
+                    'tableData' => $tableData,
+                    'total'=>$total,
+                ]);
+        }*/
 
 
 

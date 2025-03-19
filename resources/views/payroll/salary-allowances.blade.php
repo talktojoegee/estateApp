@@ -84,7 +84,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header" >
-                        <h6 class="modal-title text-info text-uppercase" style="text-align: center;" id="myModalLabel2">Edit Salary Allowance</h6>
+                        <h6 class="modal-title text-info text-uppercase text-white" style="text-align: center;" id="myModalLabel2">Edit Salary Allowance</h6>
                         <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -93,10 +93,6 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="col-md-12 col-sm-12 col-xs-12">
-                                    <div class="modal-header text-uppercase mb-3">Edit Salary Allowance
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                         <div class="form-group">

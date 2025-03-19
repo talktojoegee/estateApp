@@ -643,14 +643,14 @@ class SalesnMarketingController extends Controller
         $this->validate($request,[
             'firstName'=>'required',
             'lastName'=>'required',
-            'email'=>'required|email',
+            //'email'=>'required|email',
             'mobileNo'=>'required',
             'leadId'=>'required'
         ],[
             "firstName.required"=>"Enter client first name",
             "lastName.required"=>"Enter client last name",
-            "email.required"=>"Enter client email address",
-            "email.email"=>"Enter a valid email address",
+            //"email.required"=>"Enter client email address",
+            //"email.email"=>"Enter a valid email address",
             "mobileNo.required"=>"Enter client mobile phone number",
         ]);
         $this->lead->editLead($request);
