@@ -542,7 +542,7 @@ class PropertyController extends Controller
             return back();
         }
         $list = PropertyBulkImportDetail::where('master_id', $record->id)
-            ->where('action_status', '!=', 1)->paginate(100);
+            ->where('action_status', 0)->paginate(100);
         $totalRecord = PropertyBulkImportDetail::where('master_id', $record->id)
             ->get();
         return view("property.property-bulk-import-view",[
@@ -614,6 +614,9 @@ class PropertyController extends Controller
                 return back()->with('error', 'No records selected.');
             }
 
+            //return dd($request->all());
+
+
             if ($action == 'approve') {
                 foreach($selectedIds as $id){
                     $record = PropertyBulkImportDetail::find($id);
@@ -636,7 +639,7 @@ class PropertyController extends Controller
                         $record->actioned_by = Auth::user()->id;
                         $record->date_actioned = now();
                         $record->save();
-                        $this->__saveAndPostItem($record);
+                       // $this->__saveAndPostItem($record);
                     }
                 }
                 return back()->with('success', 'Selected records declined.');
@@ -726,7 +729,7 @@ class PropertyController extends Controller
 
     }
 
-    private function __saveAndPostItem($item){
+    private function __saveAndPostItem($item) : void{
 
         if($item->amount_paid > 0){
             $item->payment_status = 1;

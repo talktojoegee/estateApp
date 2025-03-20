@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Attendance;
 use App\Models\BulkMessage;
 use App\Models\Calendar;
@@ -582,6 +583,7 @@ class ReportsController extends Controller
             $row = [
                 'name' => "{$user->title} {$user->first_name} {$user->last_name} {$user->other_names}",
                 'design' => "{$design}",
+                'userId' => $user->id,
                 'income' => [],
                 'deductions' => [],
                 'total_income' => 0,
@@ -595,11 +597,33 @@ class ReportsController extends Controller
 
                 if ($salary) {
                     if ($salary->payment_type == 1) { // Income
-                        $row['income'][$paymentName] = $amount;
+                        $row['income'][$paymentName] = [
+                            'amount' => $amount ?? 0,
+                            'salaryId' => $salary->id,
+                            'paymentDefinition' => $paymentId,
+                        ];
                         $row['total_income'] += $amount;
                     } else { // Deduction
-                        $row['deductions'][$paymentName] = $amount;
+                        $row['deductions'][$paymentName] = [
+                            'amount' => $amount ?? 0,
+                            'salaryId' => $salary->id,
+                            'paymentDefinition' => $paymentId,
+                        ];
                         $row['total_deduction'] += $amount;
+                    }
+                    $row['batchCode'] = $salary->batch_code ?? '';
+                } else {
+                    if ($paymentId) {
+                        $row['income'][$paymentName] = [
+                            'amount' => 0,
+                            'salaryId' => null,
+                            'paymentDefinition' => $paymentId,
+                        ];
+                        $row['deductions'][$paymentName] = [
+                            'amount' => 0,
+                            'salaryId' => null,
+                            'paymentDefinition' => $paymentId,
+                        ];
                     }
                 }
             }
@@ -613,6 +637,7 @@ class ReportsController extends Controller
 
             $tableData[] = $row;
         }
+        //return dd($tableData);
 
         return view("reports.report-payroll", [
             'search' => 1,
@@ -800,5 +825,85 @@ class ReportsController extends Controller
                 'organizationValue'=>$organization,
                 'leads'=>$leads
             ]);
+    }
+
+    public function updateSalary(Request $request){
+        $this->validate($request,[
+            "salary"=>"required|array",
+            "salary.*"=>"required",
+            "salaryHandler"=>"required|array",
+            "salaryHandler.*"=>"required",
+            "user"=>"required|array",
+            "user.*"=>"required",
+            "paymentDefinition"=>"required|array",
+            "paymentDefinition.*"=>"required",
+            "batchCode"=>"required",
+        ],[
+            "salaryHandler.required"=>"",
+            "salaryHandler.array"=>"",
+            "salary.array"=>"",
+            "salary.required"=>"",
+            "user.array"=>"",
+            "user.required"=>"",
+            "paymentDefinition.array"=>"",
+            "paymentDefinition.required"=>"",
+            "batchCode.required"=>"",
+        ]);
+        $length = count($request->salaryHandler);
+        $salaryExist = Salary::where('batch_code', $request->batchCode)->first();
+        $salaryMonth = '';
+        $salaryYear = '';
+
+        if(!empty($salaryExist)){
+            for($i = 0; $i < $length; $i++){
+                if($request->salaryHandler[$i] > 0){
+                    $salary = Salary::find($request->salaryHandler[$i]);
+                    if(!empty($salary)){
+                        $salary->amount = $request->salary[$i];
+                        $salary->save();
+                        //
+                        $salaryMonth = $salary->payroll_month;
+                        $salaryYear = $salary->payroll_year;
+                    }
+
+                }else{
+                    if( $request->salary[$i] > 0 ){
+                        $userPayrollRecord = Salary::where('employee_id', $request->user[$i])
+                            ->where('payment_definition_id', $request->paymentDefinition[$i])
+                            ->where('batch_code', $request->batchCode)
+                            ->first();
+                        if(empty($userPayrollRecord)){
+                            $pd = PaymentDefinition::find($request->paymentDefinition[$i]);
+                            if(!empty($pd)){
+                                    Salary::create([
+                                        "paid_by"=>Auth::user()->id,
+                                        "employee_id"=>$request->user[$i],
+                                        "payment_definition_id"=>$request->paymentDefinition[$i],
+                                        "payroll_month"=>$salaryExist->payroll_month,
+                                        "payroll_year"=>$salaryExist->payroll_year,
+                                        "amount"=>$request->salary[$i],
+                                        "status"=>1,
+                                        "payment_type"=>$pd->payment_type,
+                                        "date_actioned"=>now(),
+                                        "actioned_by"=>Auth::user()->id,
+                                        "batch_code"=>$request->batchCode,
+                                    ]);
+
+                            }
+
+                        }
+                    }
+                }
+            }
+            $user = Auth::user();
+            $log = $user->first_name." ".$user->last_name." made changes to salaries({$salaryMonth}/{$salaryYear}})";
+            ActivityLog::registerActivity($user->org_id, null, $user->id, null, 'Salary update', $log);
+            session()->flash("success", "Changes saved");
+            return back();
+        }else{
+            session()->flash("error", "Whoops! Invalid parameter submitted");
+            return back();
+        }
+
     }
 }

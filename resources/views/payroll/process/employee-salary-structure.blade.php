@@ -97,8 +97,10 @@
                                                                     <td style="text-align: right;">{{number_format($allowance->amount, 2)}}</td>
                                                                     <td>
                                                                         <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal_{{$allowance->id}}" class="btn btn-danger btn-sm"><i class="bx bx-x"></i></button>
+
                                                                     </td>
                                                                 </tr>
+
                                                             @endforeach
                                                         <tr>
                                                             <td style="text-align: right;" colspan="2"><strong>Total:</strong></td>
@@ -138,6 +140,36 @@
             </div>
         </div>
     </div>
+
+    @if($user->salary_structure_setup == 1)
+        @if($user->salary_structure_category == 0 )<!-- personalized -->
+        @foreach($personalized as $key => $allowance)
+                <div class="modal fade" id="deleteModal_{{$allowance->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header" >
+                                <h6 class="modal-title text-uppercase" id="myModalLabel2">Delete Payment Definition?</h6>
+                                <button type="button" style="margin: 0px; padding: 0px;" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <form autocomplete="off" autcomplete="off" action="" method="post" id="addBranch" data-parsley-validate="">
+                                    @csrf
+
+                                    <hr>
+                                    <input type="hidden" name="roleId" value="">
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit" class="btn-primary btn">Save changes</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        @endforeach
+        @endif
+    @endif
 @endsection
 
 @section('extra-scripts')

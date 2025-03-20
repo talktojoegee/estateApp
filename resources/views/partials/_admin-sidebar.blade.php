@@ -266,6 +266,20 @@
         @endcan
         @can('access-payroll-process')
         <li class="menu-title">Payroll</li>
+            @can('access-payroll-settings')
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bx bxs-cog"></i>
+                        <span key="t-payroll"> Payroll Settings </span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{route('payment-definition')}}" key="t-payroll">Payment Definition</a></li>
+                        <li><a href="{{route('salary-structure')}}" key="t-payroll">Salary Structure</a></li>
+                        <li><a href="{{route('salary-allowances')}}" key="t-payroll">Salary Allowances</a></li>
+                        <li><a href="{{route('payroll-month-year')}}" key="t-payroll">Payroll Month/Year</a></li>
+                    </ul>
+                </li>
+            @endcan
         <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect">
                 <i class="bx bx-calculator"></i>
@@ -279,20 +293,7 @@
             </ul>
         </li>
         @endcan
-        @can('access-payroll-settings')
-        <li>
-            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="bx bxs-cog"></i>
-                <span key="t-payroll"> Payroll Settings </span>
-            </a>
-            <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{route('payment-definition')}}" key="t-payroll">Payment Definition</a></li>
-                <li><a href="{{route('salary-structure')}}" key="t-payroll">Salary Structure</a></li>
-                <li><a href="{{route('salary-allowances')}}" key="t-payroll">Salary Allowances</a></li>
-                <li><a href="{{route('payroll-month-year')}}" key="t-payroll">Payroll Month/Year</a></li>
-            </ul>
-        </li>
-        @endcan
+
         <li class="menu-title">Inventory</li>
         @can('access-payroll-settings')
             <li>

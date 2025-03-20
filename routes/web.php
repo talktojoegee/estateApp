@@ -143,6 +143,7 @@ Route::group(['prefix'=>'/general/reports', 'middleware'=>'auth'], function(){
 
     Route::get('/general/payroll-report', [\App\Http\Controllers\Portal\ReportsController::class, 'showPayrollReport'])->name('general-payroll-report');
     Route::get('/payroll-general-report', [\App\Http\Controllers\Portal\ReportsController::class, 'generatePayrollReport'])->name('generate-general-payroll-report');
+    Route::post('/update-salary', [\App\Http\Controllers\Portal\ReportsController::class, 'updateSalary'])->name('update-salary');
 
     Route::get('/general/property', [\App\Http\Controllers\Portal\ReportsController::class, 'showPropertyReport'])->name('general-property-report');
     Route::get('/property-general-report', [\App\Http\Controllers\Portal\ReportsController::class, 'generateGeneralPropertyReport'])->name('generate-general-property-report');

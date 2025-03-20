@@ -31,6 +31,7 @@ class Salary extends Model
         'date_actioned',
         'actioned_by',
         'batch_code',
+        'payment_type'
     ];
 
 

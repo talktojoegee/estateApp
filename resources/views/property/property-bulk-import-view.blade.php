@@ -103,10 +103,10 @@
                                                     <th scope="row" class="text-success">Number Approved :</th>
                                                     <td>{{ number_format($totalApproved ?? 0) }}</td>
                                                 </tr>
-                                                {{--<tr>
+                                                <tr>
                                                     <th scope="row" class="text-danger" style="color: #ff0000 !important;">Number Declined :</th>
                                                     <td>{{ number_format($totalDeclined ?? 0) }}</td>
-                                                </tr> --}}
+                                                </tr>
                                                 <tr>
                                                     <th scope="row">Narration :</th>
                                                     <td>{{ $record->narration ?? ''  }}</td>

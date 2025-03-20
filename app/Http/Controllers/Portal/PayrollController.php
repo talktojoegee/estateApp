@@ -426,6 +426,7 @@ class PayrollController extends Controller
                     $personalizedStructure = SalaryStructurePersonalized::getEmployeePersonalizedStructure($employee->id);
                     if(count($personalizedStructure) > 0){
                         foreach($personalizedStructure as $def){
+                            $pd = PaymentDefinition::find($def->payment_definition_id);
                             $data = [
                                 'paid_by'=>$authUser->id,
                                 'employee_id'=>$employee->id,
@@ -434,7 +435,8 @@ class PayrollController extends Controller
                                 'payroll_year'=>$activePeriod->payroll_year,
                                 'amount'=>$def->amount,
                                 'status'=>0,
-                                'batch_code'=>$batchCode
+                                'batch_code'=>$batchCode,
+                                'payment_type'=>!empty($pd) ? $pd->payment_type : 1
                             ];
                             Salary::create($data);
                         }
@@ -444,6 +446,7 @@ class PayrollController extends Controller
                     $allowances = $this->salaryallowance->getAllowancesBySalaryStructureId($employee->salary_structure_category);
                     if(count($allowances) > 0){
                         foreach($allowances as $allowance){
+                            $paymentDefinition = PaymentDefinition::find($allowance->payment_definition_id);
                             $data = [
                                 'paid_by'=>$authUser->id,
                                 'employee_id'=>$employee->id,
@@ -452,7 +455,8 @@ class PayrollController extends Controller
                                 'payroll_year'=>$activePeriod->payroll_year,
                                 'amount'=>$allowance->amount,
                                 'status'=>0,
-                                'batch_code'=>$batchCode
+                                'batch_code'=>$batchCode,
+                                'payment_type'=>!empty($paymentDefinition) ? $paymentDefinition->payment_type : 1,
                             ];
                             Salary::create($data);
                         }
