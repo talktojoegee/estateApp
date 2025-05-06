@@ -21,6 +21,9 @@ class FileModel extends Model
                 $dir = 'assets/drive/cloud/';
                 $attachment->move(public_path($dir), $filename);
                 $file = new FileModel();
+
+                $file->property_id = $request->property ?? null ;
+
                 $file->filename = $filename;
                 $file->name = $request->fileName;
                 $file->folder_id = $request->folder;

@@ -87,7 +87,9 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
     */
     public function model(array $row)
     {
-        //return dd($row);
+        if (collect($row)->filter()->isEmpty()) {
+            return null; // Skip row
+        }
         $constructionStage = ConstructionStage::getConstructionStageByName($row[19]);
         $estate = Estate::getEstateByName($row[7]); //estate
         $buildingType = BuildingType::getBuildingTypeByName($row[1]); //property type
@@ -137,55 +139,57 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
                 break;
         }
         return new PropertyBulkImportDetail([
-        'entry_date' => now(),
-        'master_id' => $this->masterId,
-        'estate_id' => !empty($estate) ? $estate->e_id : 1, //estate
-        'location' => $row[8] ?? '', //location
-        'availability' => $row[9] ?? '', //availability
-        'bank_details' => $row[10] ?? '', //bank details
-        'account_number' => $row[11] ?? '', //account number
-        'mode_of_payment' => $row[12] ?? '', //mode_of_payment
-        'added_by' => Auth::user()->id,
-        'property_title' => !empty($propertyTitle) ? $propertyTitle->pt_id : 1,
-        'property_name' => $row[0] ?? 'Unknown_'.$randNum,
-        'house_no' => $row[3] ?? null, //house number
-        'street' => $row[5] ?? null, //street name
-        'block' => $row[6] ?? null, //block
-        'shop_no' => $row[4] ?? null, //shop number
-        'plot_no' => $row[2] ?? null, //plot number
-        'no_of_office_rooms' => $row[7] ?? null,
-        'office_ensuite_toilet_bathroom' => $enSuite,
-        'no_of_shops' =>  null,
-        'building_type' => !empty($buildingType) ? $buildingType->bt_id : 1,
-        'total_no_bedrooms' =>  0,
-        'with_bq' => 1,
-        'no_of_floors' =>  0,
-        'no_of_toilets' =>  0,
-        'no_of_car_parking' =>  0,
-        'no_of_units' =>  0,
-        'price' => !empty($row[13]) ? floatval(preg_replace('/[^\d.]/', '', $row[13])) : 0, //price
-        'amount_paid' => !empty($row[14]) ? floatval(preg_replace('/[^\d.]/', '', $row[14])) : 0, //amount paid
-        'balance' => !empty($row[15]) ? floatval(preg_replace('/[^\d.]/', '', $row[15])) : 0, //balance
-        'purchase_status' => $row[16] ?? '', //purchase_status
-        'provisional_letter' => $row[17] ?? '', //provisional letter
-        'allocation_letter' => $row[18] ?? '', //provisional letter
-        'second_allotee' => $row[19] ?? '', //2ND ALLOTEE
-        'third_allotee' => $row[20] ?? '', //3RD ALLOTEE
-        'fourth_allotee' => $row[21] ?? '', //4th ALLOTEE
-        'fifth_allotee' => $row[22] ?? '', //5th ALLOTEE
-        'rent_amount' => $row[23] ?? '', //rent_amount
-        'customer_id' => $row[24] ?? '', //customer_id
-        'customer_name' => $row[25] ?? '', //customer_name
-        'customer_phone' => $row[26] ?? '', //customer_phone
-        'customer_gender' => $row[27] ?? '', //customer_gender
-        'occupation' => $row[28] ?? '', //occupation
-        'customer_address' => $row[29] ?? '', //customer_address
-        'customer_email' => $row[30] ?? '', //customer_email
+            'property_name' => $row[0] ?? 'Unknown_'.$randNum,
+            'building_type' => !empty($buildingType) ? $buildingType->bt_id : 1,
+            'plot_no' => $row[2] ?? null, //plot number
+            'house_no' => $row[3] ?? null, //house number
+            'shop_no' => $row[4] ?? null, //shop number
+            'street' => $row[5] ?? null, //street name
+            'block' => $row[6] ?? null, //block
+            'estate_id' => !empty($estate) ? $estate->e_id : 1, //estate
+            'location' => $row[8] ?? '', //location
+            'availability' => $row[9] ?? '', //availability
+            'bank_details' => $row[10] ?? '', //bank details
+            'account_number' => $row[11] ?? '', //account number
+            'mode_of_payment' => $row[12] ?? '', //mode_of_payment
+            'price' => !empty($row[13]) ? floatval(preg_replace('/[^\d.]/', '', $row[13])) : 0, //price
+            'amount_paid' => !empty($row[14]) ? floatval(preg_replace('/[^\d.]/', '', $row[14])) : 0, //amount paid
+            'balance' => !empty($row[15]) ? floatval(preg_replace('/[^\d.]/', '', $row[15])) : 0, //balance
+            'purchase_status' => $row[16] ?? '', //purchase_status
+            'provisional_letter' => $row[17] ?? '', //provisional letter
+            'allocation_letter' => $row[18] ?? '', //allocation letter
+            'second_allotee' => $row[19] ?? '', //2ND ALLOTEE
+            'third_allotee' => $row[20] ?? '', //3RD ALLOTEE
+            'fourth_allotee' => $row[21] ?? '', //4th ALLOTEE
+            'fifth_allotee' => $row[22] ?? '', //5th ALLOTEE
+            'rent_amount' => $row[23] ?? '', //rent_amount
+            'customer_id' => $row[24] ?? '', //customer_id
+            'customer_name' => $row[25] ?? '', //customer_name
+            'customer_phone' => $row[26] ?? '', //customer_phone
+            'customer_gender' => $row[27] ?? '', //customer_gender
+            'occupation' => $row[28] ?? '', //occupation
+            'customer_address' => $row[29] ?? '', //customer_address
+            'customer_email' => $row[30] ?? '', //customer_email
+
+            'no_of_office_rooms' => 0,
+            'entry_date' => now(),
+            'master_id' => $this->masterId,
+            'added_by' => Auth::user()->id,
+            'property_title' => !empty($propertyTitle) ? $propertyTitle->pt_id : 1,
+            'office_ensuite_toilet_bathroom' => $enSuite,
+            'no_of_shops' =>  null,
+            'total_no_bedrooms' =>  0,
+            'with_bq' => 1,
+            'no_of_floors' =>  0,
+            'no_of_toilets' =>  0,
+            'no_of_car_parking' =>  0,
+            'no_of_units' =>  0,
+
 
 
         'property_condition' => $propertyCondition,
         'construction_stage' => !empty($constructionStage) ? $constructionStage->cs_id : 1,
-        'land_size' => $row[20] ?? null,
+        'land_size' =>  null,
         'gl_id' => 1,
         'description' => $row[0] ?? null, //prop. specification
         'customer' => $row[23] ?? null,

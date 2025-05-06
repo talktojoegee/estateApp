@@ -76,7 +76,7 @@
     @case('jpeg')
     <div class="col-md-2">
         <a href="javascript:void(0);" style="cursor: pointer;"  data-toggle="tooltip" data-placement="top" title="{{$file->name ?? 'No name'}}" data-original-title="{{$file->name ?? 'No name'}}">
-            <img src="/assets/formats/jpg.png" height="64" width="64" alt="{{$file->name ?? 'No name'}}"><br>
+            <img src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}" height="64" width="64" alt="{{$file->name ?? 'No name'}}"><br>
             {{strlen($file->name ?? 'No name') > 10 ? substr($file->name ?? 'No name',0,7).'...' : $file->name ?? 'No name'}}
         </a>
         @include('storage.partials._lead-dropdown')
@@ -85,7 +85,7 @@
     @case('jpg')
     <div class="col-md-2">
         <a href="javascript:void(0);" style="cursor: pointer;"  data-toggle="tooltip" data-placement="top" title="{{$file->name ?? 'No name'}}" data-original-title="{{$file->name ?? 'No name'}}">
-            <img src="/assets/formats/jpg.png" height="64" width="64" alt="{{$file->name ?? 'No name'}}"><br>
+            <img src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}" height="64" width="64" alt="{{$file->name ?? 'No name'}}"><br>
             {{strlen($file->name ?? 'No name') > 10 ? substr($file->name ?? 'No name',0,7).'...' : $file->name ?? 'No name'}}
         </a>
         @include('storage.partials._lead-dropdown')
@@ -94,7 +94,7 @@
     @case('png')
     <div class="col-md-2">
         <a href="javascript:void(0);" style="cursor: pointer;"  data-toggle="tooltip" data-placement="top" title="{{$file->name ?? 'No name'}}" data-original-title="{{$file->name ?? 'No name'}}">
-            <img src="/assets/formats/png.png" height="64" width="64" alt="{{$file->name ?? 'No name'}}"><br>
+            <img src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}" height="64" width="64" alt="{{$file->name ?? 'No name'}}"><br>
             {{strlen($file->name ?? 'No name') > 10 ? substr($file->name ?? 'No name',0,7).'...' : $file->name ?? 'No name'}}
         </a>
         @include('storage.partials._lead-dropdown')
@@ -103,7 +103,7 @@
     @case('gif')
     <div class="col-md-2">
         <a href="javascript:void(0);" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="{{$file->name ?? 'No name'}}" data-original-title="{{$file->name ?? 'No name'}}">
-            <img src="/assets/formats/gif.png" height="64" width="64" alt="{{$file->name ?? 'No name'}}"><br>
+            <img src="/assets/drive/cloud/{{$file->filename ?? ''}}" alt="{{ $file->name ?? 'Unknown' }}" height="64" width="64" alt="{{$file->name ?? 'No name'}}"><br>
             {{strlen($file->name ?? 'No name') > 10 ? substr($file->name ?? 'No name',0,7).'...' : $file->name ?? 'No name'}}
         </a>
         @include('storage.partials._lead-dropdown')

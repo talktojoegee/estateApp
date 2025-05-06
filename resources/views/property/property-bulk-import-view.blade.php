@@ -140,7 +140,10 @@
                                                     <th><input type="checkbox" id="selectAll"></th>
                                                     <th class="">#</th>
                                                     <th class="wd-15p">Property Specification</th>
+                                                    <th class="wd-15p">Estate</th>
                                                     <th class="wd-15p">House No.</th>
+                                                    <th class="wd-15p">Shop No.</th>
+                                                    <th class="wd-15p">Plot No.</th>
                                                     <th class="wd-15p">Street.</th>
                                                     <th class="wd-15p">Customer</th>
                                                     <th class="wd-15p" style="text-align: right;">Price({{env('APP_CURRENCY')}})  </th>
@@ -152,18 +155,27 @@
                                                 @foreach($list as $key=> $item)
                                                     <tr class="">
                                                         <td><input type="checkbox" class="recordCheckbox" name="selected_ids[]" value="{{ $item->id }}"></td>
-                                                        <td>{{ $index++ }}</td>
+                                                        <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                                                         <td>
                                                             {{ strlen( $item->property_name) > 30 ? substr( $item->property_name,0,30).'...' :  $item->property_name}}
+                                                        </td>
+                                                        <td>
+                                                            {{ $item->getEstate->e_name ?? '' }}
                                                         </td>
                                                         <td>
                                                             {{ $item->house_no ?? '' }}
                                                         </td>
                                                         <td>
+                                                            {{ $item->shop_no ?? '' }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $item->plot_no ?? '' }}
+                                                        </td>
+                                                        <td>
                                                             {{ $item->street ?? '' }}
                                                         </td>
                                                         <td>
-                                                            {{$item->getOccupiedBy->first_name ?? '' }} {{$item->getOccupiedBy->last_name ?? '' }}
+                                                            {{$item->customer_name ?? '' }}
                                                         </td>
                                                         <td style="text-align: right;">
                                                             {{ number_format($item->price ?? 0, 2)  }}

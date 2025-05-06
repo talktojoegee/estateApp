@@ -52,6 +52,7 @@
                                             <th class="">#</th>
                                             <th class="wd-15p">Date</th>
                                             <th class="wd-15p">Entry By</th>
+                                            <th class="wd-15p">Estate</th>
                                             <th class="wd-15p">Ref. Code</th>
                                             <th class="wd-15p">Status</th>
                                             <th class="wd-15p">Total Records</th>
@@ -66,19 +67,14 @@
                                                 <td>{{ $key+1 }}</td>
                                                 <td>{{ date('d M, Y', strtotime($record->created_at)) }}</td>
                                                 <td>{{ $record->getImportedBy->first_name ?? '' }} {{ $record->getImportedBy->last_name ?? '' }}</td>
+                                                <td>{{ $record->getEstate($record->id)->e_name ?? '' }}</td>
                                                 <td>{{ $record->batch_code ?? '' }}</td>
                                                 <td>
-                                                    @switch($record->status)
-                                                        @case(0)
+                                                    @if(($record->getBulkImportDetails->count() - ($record->getBulkImportDetails->where('action_status', 1)->count()  + $record->getBulkImportDetails->where('action_status', 2)->count() )) == 0 )
+                                                        <span class="text-success">Done</span>
+                                                    @else
                                                         <span class="text-warning">Pending</span>
-                                                        @break
-                                                        @case(1)
-                                                        <span class="text-success">Approved</span>
-                                                        @break
-                                                        @case(2)
-                                                        <span class="text-danger">Discarded</span>
-                                                        @break
-                                                    @endswitch
+                                                    @endif
                                                 </td>
                                                 <td>{{ number_format($record->getBulkImportDetails->count() ?? 0) ?? '' }}</td>
                                                 <td>

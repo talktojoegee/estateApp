@@ -86,6 +86,8 @@
                                                 <th class="">#</th>
                                                 <th class="wd-15p">Date</th>
                                                 <th class="wd-15p">Name</th>
+                                                <th class="wd-15p">Code</th>
+                                                <!-- EFAB Queens Estate Shopping Complex Karsana  -->
                                                 <th class="wd-15p">State</th>
                                                 <th class="wd-15p">Town</th>
                                                 <th class="wd-15p">Properties</th>
@@ -98,6 +100,7 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{date('d M, Y', strtotime($estate->created_at))}}</td>
                                                     <td><a href="{{route('show-estate-view', $estate->e_slug)}}">{{ $estate->e_name ?? ''  }}</a> </td>
+                                                    <td>{{ $estate->e_ref_code ?? '' }}</td>
                                                     <td>{{$estate->getState->name ?? '' }}</td>
                                                     <td>{{$estate->e_city ?? ''}}</td>
                                                     <td>
@@ -145,7 +148,7 @@
                             </div>
                             <div class="form-group mt-3 col-md-6 ">
                                 <label for="">Country <span class="text-danger" style="color: #ff0000 !important;">*</span></label>
-                                <select name="state" id="country"  class="form-control select2">
+                                <select name="country" id="country"  class="form-control select2">
                                     <option value="161">Nigeria</option>
                                     @foreach($countries as $country)
                                         @if($country->id != 161)

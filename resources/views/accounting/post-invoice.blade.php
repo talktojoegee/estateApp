@@ -78,10 +78,10 @@
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >S/No.</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Date</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Invoice No.</th>
-                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Customer</th>
-                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Total({{env('APP_CURRENCY')}})</th>
-                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Paid({{env('APP_CURRENCY')}})</th>
-                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">Balance({{env('APP_CURRENCY')}})</th>
+                                    {{--<th class="sorting_asc text-left text-uppercase header" tabindex="0" >Customer</th>--}}
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">({{env('APP_CURRENCY')}})Total</th>
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">({{env('APP_CURRENCY')}})Paid</th>
+                                    <th class="sorting_asc text-left text-uppercase header" tabindex="0" style="text-align: right">({{env('APP_CURRENCY')}})Balance</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Status</th>
                                     <th class="sorting_asc text-left text-uppercase header" tabindex="0" >Action</th>
                                 </tr>
@@ -91,13 +91,14 @@
                                     $a = 1;
                                 @endphp
                                 @foreach($invoices as $key => $flow)
+
                                     <tr role="row" class="odd">
                                         <td class="">{{$a++}}</td>
-                                        <td class="sorting_1 text-left">{{ date('d M, Y', strtotime($flow->created_at)) }}</td>
+                                        <td class="sorting_1 text-left">{{ date('d/m/Y', strtotime($flow->created_at)) }}</td>
                                         <td><a href="{{route('show-invoice-detail', $flow->ref_no)}}">{{$flow->invoice_no ?? '' }}</a></td>
-                                        <td class="">
-                                            <a target="_blank" href="{{route('lead-profile', $flow->getCustomer->slug)}}">{{$flow->getCustomer->title ?? '' }} {{$flow->getCustomer->first_name ?? '' }} {{$flow->getCustomer->last_name ?? '' }}</a>
-                                        </td>
+                                       {{-- <td class="">
+                                            <a target="_blank" href="{{route('lead-profile', $flow->getCustomer->slug ?? '')}}">{{$flow->getCustomer->title ?? '' }} {{$flow->getCustomer->first_name ?? '' }} {{$flow->getCustomer->last_name ?? '' }}</a>
+                                        </td>--}}
                                         <td class="" style="text-align: right">{{number_format($flow->total,2)}}</td>
                                         <td class="" style="text-align: right">{{number_format($flow->amount_paid ?? 0,2)}}</td>
                                         <td class="" style="text-align: right">{{number_format(($flow->total ?? 0) - ($flow->amount_paid ?? 0),2)}}</td>

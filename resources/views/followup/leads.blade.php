@@ -128,6 +128,7 @@
                                             <th class="wd-15p">Date</th>
                                             <th class="wd-15p">Name</th>
                                             <th class="wd-15p">Customer ID</th>
+                                            <th class="wd-15p">File(s)</th>
                                             <th class="wd-15p">Mobile No.</th>
                                             <th class="wd-15p">Number of Properties</th>
                                             <th class="wd-15p" style="text-align: right;">Valuation({{env('APP_CURRENCY')}})</th>
@@ -140,7 +141,7 @@
                                         @foreach($leads as $lead)
                                             <tr>
                                                 <td>{{$index++}}</td>
-                                                <td>{{date('M d, Y', strtotime($lead->entry_date))}}</td>
+                                                <td>{{date('d/m/Y', strtotime($lead->entry_date))}}</td>
                                                 <td>
                                                     @if($lead->customer_type != 3)
                                                     <a href="{{route('lead-profile', $lead->slug)}}">{{$lead->first_name ?? '' }} {{$lead->middle_name ?? '' }} {{$lead->last_name ?? '' }}</a>
@@ -152,6 +153,7 @@
 
                                                 </td>
                                                 <td style="text-align: center;"> <code>CS{{$lead->id}}</code> </td>
+                                                <td>{{number_format($lead->getCustomerFiles->count() ?? 0)}}</td>
                                                 <td>
                                                     @if($lead->customer_type != 3)
                                                         {{$lead->phone ?? '' }}

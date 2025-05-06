@@ -155,7 +155,7 @@
                                         <td class="sorting_1 text-left">{{ date('d M, Y', strtotime($flow->created_at)) }}</td>
                                         <td><a href="{{route('show-invoice-detail', $flow->ref_no)}}">{{$flow->invoice_no ?? '' }}</a></td>
                                         <td class="">
-                                            <a target="_blank" href="{{route('lead-profile', $flow->getCustomer->slug)}}">{{$flow->getCustomer->title ?? '' }} {{$flow->getCustomer->first_name ?? '' }} {{$flow->getCustomer->last_name ?? '' }}</a>
+                                            <a target="_blank" href="{{route('lead-profile', $flow->getCustomer->slug ?? '')}}">{{$flow->getCustomer->title ?? '' }} {{$flow->getCustomer->first_name ?? '' }} {{$flow->getCustomer->last_name ?? '' }}</a>
                                         </td>
                                         <td class="" style="color: #ff0000 !important;">{{ date('d M, Y', strtotime($flow->due_date)) }}</td>
                                         <td class="" style="text-align: right">{{number_format($flow->total,2)}}</td>

@@ -143,6 +143,8 @@ Route::group(['prefix'=>'/general/reports', 'middleware'=>'auth'], function(){
 
     Route::get('/general/payroll-report', [\App\Http\Controllers\Portal\ReportsController::class, 'showPayrollReport'])->name('general-payroll-report');
     Route::get('/payroll-general-report', [\App\Http\Controllers\Portal\ReportsController::class, 'generatePayrollReport'])->name('generate-general-payroll-report');
+    Route::get('/export-payroll-report', [\App\Http\Controllers\Portal\ReportsController::class, 'exportPayrollReport'])->name('export-payroll-report');
+
     Route::post('/update-salary', [\App\Http\Controllers\Portal\ReportsController::class, 'updateSalary'])->name('update-salary');
 
     Route::get('/general/property', [\App\Http\Controllers\Portal\ReportsController::class, 'showPropertyReport'])->name('general-property-report');
@@ -157,7 +159,7 @@ Route::group(['prefix'=>'/general/reports', 'middleware'=>'auth'], function(){
 
 
 Route::group(['prefix'=>'/inventory', 'middleware'=>'auth'],function(){
-    Route::get('/', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showAllProducts'])->name('all-products');
+    Route::get('/', [App\Http\Controllers\Portal\SalesMarketingController::class, 'showAllProducts'])->name('all-products');
     Route::post('/add-product-category', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'addProductCategory'])->name('add-product-category');
     Route::post('/edit-product-category', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editProductCategory'])->name('edit-product-category');
     Route::post('/add-product', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'addProduct'])->name('add-product');
@@ -215,7 +217,7 @@ Route::prefix('/sales')->group(function(){
     Route::get('/manage-bulk-lead-list', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'manageBulkLeadList'])->name("manage-bulk-lead-list");
     Route::get('/manage-bulk-lead-list/{batchCode}', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'showBulkLeadImportDetails'])->name("view-bulk-lead-details");
     Route::get('/leads/{slug}', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'leadProfile'])->name('lead-profile');
-    Route::get("/upload-customer-documents/{slug}", [\App\Http\Controllers\portal\SalesnMarketingController::class, "uploadCustomerDocuments"])->name("upload-customer-documents");
+    Route::get("/upload-customer-documents/{slug}", [\App\Http\Controllers\Portal\SalesnMarketingController::class, "uploadCustomerDocuments"])->name("upload-customer-documents");
 
     Route::post('/edit-leads', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editLeadProfile'])->name('edit-lead-profile');
     Route::post('/edit-organization-profile', [App\Http\Controllers\Portal\SalesnMarketingController::class, 'editOrganizationProfile'])->name('edit-organization-profile');

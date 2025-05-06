@@ -90,8 +90,9 @@ class Estate extends Model
     public function getEstateBySlug($slug){
         return Estate::where('e_slug',$slug)->first();
     }
-    public static function getEstateByName($name){
-        return Estate::where('e_name',$name)->first();
+    public static function getEstateByName($name)
+    {
+        return Estate::whereRaw('LOWER(e_name) LIKE ?', ['%' . strtolower($name) . '%'])->first();
     }
 
     public static function getEstateById($id){

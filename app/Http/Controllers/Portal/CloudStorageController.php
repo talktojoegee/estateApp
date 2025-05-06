@@ -31,7 +31,7 @@ class CloudStorageController extends Controller
             'folder'=>'required',
             'fileName'=>'required'
         ]);
-        return dd($request->all());
+        //return dd($request->all());
         $this->file->uploadFiles($request);
         session()->flash("success", "Your file(s) were uploaded!");
         return back();
@@ -90,6 +90,7 @@ class CloudStorageController extends Controller
                 $file->uploaded_by = Auth::user()->id;
                 $file->slug = substr(sha1(time()),32,40);
                 $file->size = $size;
+                $file->property_id = $request->property ?? null;
                 $file->client_id = $formData->lead?? null;
                 $file->lead_id = $formData['lead'] ?? null;
                 $file->type = isset($formData['lead']) ? 1 : 0;

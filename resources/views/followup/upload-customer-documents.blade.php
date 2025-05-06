@@ -52,6 +52,19 @@ Upload {{$client->first_name ?? ''}}'s Documents
                                         <i class="text-danger mt-2">{{$message}}</i>
                                         @enderror
                                     </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="">Select Property</label>
+                                        <select name="property"  id="property" class="form-control">
+                                            <option value="0">None</option>
+                                            @foreach($client->getCustomerListOfProperties($client->id) as $property)
+                                                <option value="{{$property->id}}">{{$property->property_name ?? ''}}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('property')
+                                        <i class="text-danger mt-2">{{$message}}</i>
+                                        @enderror
+                                    </div>
                                     <div class="form-group">
                                         <label for="">Attachment</label> <br>
 
@@ -126,6 +139,7 @@ Upload {{$client->first_name ?? ''}}'s Documents
         function uploadFiles() {
             let formData = new FormData();
             let userFiles = _("fileList").files;
+            let property = _("property").value;
             for(let i = 0; i<userFiles.length; i++){
                 formData.append("file_"+i, userFiles[i])
             }
@@ -134,6 +148,7 @@ Upload {{$client->first_name ?? ''}}'s Documents
             let folder = _("folder");
             formData.append("fileName", fileName.value);
             formData.append("lead", lead.value);
+            formData.append("property", property);
             formData.append("folder", folder.value);
             formData.append("_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content')); // Include CSRF token
             formData.append("_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content')); // Add CSRF token

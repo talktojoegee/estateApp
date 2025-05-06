@@ -802,7 +802,8 @@ class PropertyController extends Controller
             $property->save();
         }
         $houseNo = $item->house_no ?? '';
-        $service = "Invoice generated for  ".$item->property_name." for house number: $houseNo";
+
+        /*$service = "Invoice generated for  ".$item->property_name." for house number: $houseNo";
         //Generate invoice && then receipt
         if($item->amount_paid > 0){
             $invoiceStatus = 0;
@@ -819,7 +820,7 @@ class PropertyController extends Controller
             //Generate receipt now
             $this->receipt->createNewReceipt(rand(99,9999), $invoice, $item->amount_paid, 0,1, now());
 
-        }
+        }*/
 
         //register customer
         $customerId = null;
@@ -840,41 +841,66 @@ class PropertyController extends Controller
             //}
         }
         if(!empty($item->customer_name)){
-           $newCustomer =  $this->addCustomer($item->customer_name, $item->customer_phone, $item->customer_gender,
-                $item->occupation, $item->customer_address, $item->customer_email);
-            //$customerId = $lead->id;
-            $property->occupied_by = $newCustomer->id;
-            $property->sold_to = $newCustomer->id;
+            $exists = $this->checkIfCustomerExists($item->customer_name);
+            if(empty($exists)){
+                $newCustomer =  $this->addCustomer($item->customer_name, $item->customer_phone, $item->customer_gender,
+                    $item->occupation, $item->customer_address, $item->customer_email);
+                //$customerId = $lead->id;
+                $property->occupied_by = $newCustomer->id;
+                $property->sold_to = $newCustomer->id;
+            }else{
+                $property->occupied_by = $exists->id;
+                $property->sold_to = $exists->id;
+            }
             $property->date_sold = now();
             $property->save();
 
+
         }
-
-
 
         if(!empty($item->second_allotee)){ //second allotee
-          $secondAllotee =   $this->addCustomer($item->second_allotee, '234', rand(0,1),
-                null, null, 'placeholder@efab.com');
-         PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $secondAllotee->id, 2,1);
+            $alloteeExists = $this->checkIfCustomerExists($item->second_allotee);
+            if(!$alloteeExists){
+                $secondAllotee =   $this->addCustomer($item->second_allotee, '234', rand(0,1),
+                    null, null, 'placeholder@efab.com');
+                PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $secondAllotee->id, 2,1);
+            }else{
+                PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $alloteeExists->id, 2,1);
+            }
+
         }
         if(!empty($item->third_allotee)){ //third_allotee
-           $thirdAllotee =  $this->addCustomer($item->third_allotee, '234', rand(1,2),
-                null, null, 'placeholder@efab.com');
-            PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $thirdAllotee->id, 3,1);
-
+            $alloteeExists = $this->checkIfCustomerExists($item->third_allotee);
+            if(!$alloteeExists){
+                $thirdAllotee =  $this->addCustomer($item->third_allotee, '234', rand(1,2),
+                    null, null, 'placeholder@efab.com');
+                PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $thirdAllotee->id, 3,1);
+            }else{
+                PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $alloteeExists->id, 3,1);
+            }
         }
 
         if(!empty($item->fourth_allotee)){ //fourth_allotee
-            $fourthAllotee = $this->addCustomer($item->third_allotee, '234', rand(0,1),
-                null, null, 'placeholder@efab.com');
-            PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $fourthAllotee->id, 4,1);
+            $alloteeExists = $this->checkIfCustomerExists($item->fourth_allotee);
+            if(!$alloteeExists){
+                $fourthAllotee = $this->addCustomer($item->third_allotee, '234', rand(0,1),
+                    null, null, 'placeholder@efab.com');
+                PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $fourthAllotee->id, 4,1);
+            }else{
+                PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $alloteeExists->id, 4,1);
+            }
+
 
         }
         if(!empty($item->fifth_allotee)){ //fifth_allotee
-           $fifthAllotee =  $this->addCustomer($item->third_allotee, '234', rand(0,1),
-                null, null, 'placeholder@efab.com');
-            PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $fifthAllotee->id, 5,1);
-
+            $alloteeExists = $this->checkIfCustomerExists($item->fifth_allotee);
+            if(!$alloteeExists){
+                $fifthAllotee =  $this->addCustomer($item->third_allotee, '234', rand(0,1),
+                    null, null, 'placeholder@efab.com');
+                PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $fifthAllotee->id, 5,1);
+            }else{
+                PropertyAllocation::addPropertyAllocation($item->estate_id, $property->id, $alloteeExists->id, 5,1);
+            }
         }
     }
 
@@ -1177,6 +1203,11 @@ class PropertyController extends Controller
         $lead->save();
         return $lead;
 
+    }
+
+    private function checkIfCustomerExists($name)
+    {
+        return Lead::whereRaw('LOWER(first_name) LIKE ?', ['%' . strtolower($name) . '%'])->first();
     }
 
     private function handlePropertyAllocation(){

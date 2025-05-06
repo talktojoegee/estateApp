@@ -14,6 +14,7 @@ class PropertyBulkImportMaster extends Model
         return $this->belongsTo(User::class, "imported_by");
     }
 
+
     public function getBulkImportDetails(){
         return $this->hasMany(PropertyBulkImportDetail::class, "master_id");
     }
@@ -50,5 +51,16 @@ class PropertyBulkImportMaster extends Model
     public function getRecordByBatchCode($batchCode){
         return PropertyBulkImportMaster::where('batch_code', $batchCode)->first();
     }
+    public function getEstate($masterId)
+    {
+        $detail = PropertyBulkImportDetail::where('master_id', $masterId)->first();
+
+        if (!$detail || !$detail->estate_id) {
+            return null; // or return [] if you *must* return an array
+        }
+
+        return Estate::find($detail->estate_id);
+    }
+
 
 }

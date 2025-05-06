@@ -414,19 +414,46 @@
                                         <div class="col-md-12 col-lg-12 mt-3">
                                             <div class="card">
                                                 <div class="modal-header">
-                                                    <div class="modal-title text-uppercase">Browse <code>{{ $client->first_name ?? ''  }} {{ $client->last_name ?? ''  }}</code> documents </div>
+                                                    <div class="modal-title text-uppercase">Browse <code>{{ $client->first_name ?? ''  }} {{ $client->last_name ?? ''  }}</code> General documents </div>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="row">
                                                         @if(count($client->getCustomerFiles) > 0)
-                                                            @foreach ($client->getCustomerFiles as $file)
+                                                            @foreach ($client->getCustomerFiles->where('property_id', null) as $file)
                                                                 @include('storage.partials._lead-switch-format')
                                                             @endforeach
                                                         @else
                                                             <div class="col-md-12 col-lg-12 d-flex justify-content-center">
-                                                                <p>No files or documents uploaded for <code>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</code>. </p>
+                                                                <p>No files or documents uploaded - <code>{{$client->first_name ?? '' }} {{$client->last_name ?? '' }}</code>. </p>
                                                             </div>
                                                         @endif
+                                                            @if($client->getCustomerListOfProperties($client->id)->count() > 0)
+                                                            <div class="modal-header mb-3">
+                                                                <div class="modal-title text-uppercase">Property Specific Documents </div>
+                                                            </div>
+                                                            <div class="accordion accordion-flush" id="accordionFlushExample" >
+                                                                @foreach($client->getCustomerListOfProperties($client->id) as $key=> $property)
+                                                                <div class="accordion-item" >
+                                                                    <h2 class="accordion-header" id="flush-heading_{{$key}}">
+                                                                        <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse_{{$key}}" aria-expanded="false" aria-controls="flush-collapse_{{$key}}">
+                                                                          {{$key + 1}}. &nbsp; &nbsp; <span class="badge rounded-pill bg-danger" style="background: #ff0000 !important;">{{ $property->getPropertyFiles->count() ?? 0 }}</span> &nbsp; &nbsp;  {{$property->property_name ?? '' }}
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="flush-collapse_{{$key}}" class="accordion-collapse collapse" aria-labelledby="flush-heading_{{$key}}" data-bs-parent="#accordionFlushExample_{{$key}}"  style="">
+                                                                        @if($property->getPropertyFiles->count() > 0 )
+                                                                            @foreach($property->getPropertyFiles as $file)
+                                                                                @include('storage.partials._lead-switch-format')
+                                                                            @endforeach
+
+                                                                        @else
+                                                                            <p class="text-center p-3">No documents uploaded</p>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                                @endforeach
+
+                                                            </div>
+                                                            @endif
 
                                                     </div>
                                                 </div>

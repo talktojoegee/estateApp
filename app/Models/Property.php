@@ -212,7 +212,9 @@ class Property extends Model
         return $property;
     }
 
-
+    public function getPropertyFiles(){
+        return $this->hasMany(FileModel::class, 'property_id')->orderBy('id', 'DESC');
+    }
 
     public function getPaymentPlan(){
         return $this->belongsTo(PaymentPlan::class, 'payment_plan', 'pp_id');

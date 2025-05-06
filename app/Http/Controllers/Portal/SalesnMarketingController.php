@@ -371,7 +371,7 @@ class SalesnMarketingController extends Controller
             'to'=>now(),
             'topSelling'=>$topSelling,
             'underperforming'=>$underperforming,
-            'last30Properties'=>$this->property->getPropertyList($last30Ids),
+            'last30Properties'=>$this->property->getPropertyList($last30Ids)->take(10),
             'users'=>$this->user->getTopSellingUsers($start, $end,10)
             //'users'=>$this->user->getUserByIds($issuedByIds)
         ]);

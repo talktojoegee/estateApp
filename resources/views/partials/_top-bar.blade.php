@@ -3,7 +3,7 @@
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box" style="">
-                <a href="{{route('dashboard')}}" class="logo logo-dark">
+                <a href="{{route('marketing-dashboard')}}" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="/assets/drive/logo/arm.png" alt="{{ env("APP_NAME") }}" height="44" width="44">
                     </span>
@@ -12,7 +12,7 @@
                     </span>
                 </a>
 
-                <a href="{{route('dashboard')}}" class="logo logo-light">
+                <a href="{{route('marketing-dashboard')}}" class="logo logo-light">
                     <span class="logo-sm">
                        <img src="/assets/drive/logo/arm.png" alt="{{ env("APP_NAME") }}" height="44" width="44">
                     </span>

@@ -64,12 +64,23 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
+                            <div class="col-md-12 d-flex justify-content-end">
+                                @if(count($tableData) > 0)
+                                <form action="{{route('export-payroll-report')}}" method="get">
+                                    <input type="hidden" name="payrollPeriod" value="{{$period}}">
+                                    <button class="btn btn-primary btn-sm " type="submit"> <i class="bx bx-export"></i> Export Report</button>
+                                </form>
+                                @else
+                                    <p class="text-danger" style="color: #ff0000 !important;">There's no report to export</p>
+                                @endif
+                            </div>
                             <div class="col-md-12">
                                 <h4 class="card-title text-uppercase text-info modal-title"> {{ date('F, Y', strtotime($period)) }} Payroll Report</h4>
-                                <p>Showing payroll report for <code>{{date('F, Y', strtotime($period))}}</code>. </p>
+                                <p>Showing payroll report for <code>{{ date('F, Y', strtotime($period)) }}</code>. </p>
                                 <p>All values are in the Nigerian naira({{config('app.APP_CURRENCY')}})</p>
                                 <form action="{{route('update-salary')}}" method="POST">
                                     @csrf
+                                    @if(count($tableData) > 0)
                                     <div class="table-responsive mt-3">
                                         <table class="table table-bordered ">
                                             <thead>
@@ -89,60 +100,66 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach($tableData as $key => $row)
-                                                <tr>
+                                                @foreach($tableData as $key => $row)
+                                                    <tr>
 
-                                                    <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $row['name'] }}</td>
-                                                    <td>{{ $row['design'] }}</td>
-                                                    <input type="hidden" name="batchCode" value="{{$row['batchCode'] ?? '' }}">
+                                                        <td>{{ $key + 1 }}</td>
+                                                        <td>{{ $row['name'] }}</td>
+                                                        <td>{{ $row['design'] }}</td>
+                                                        <input type="hidden" name="batchCode" value="{{$row['batchCode'] ?? '' }}">
+                                                        @foreach($incomeHeaders as $income)
+                                                            <td class="text-right" style="text-align: right;">
+                                                                {{--{ number_format($row['income'][$income] ?? 0, 2) }}--}}
+                                                                <input  name="salary[]" type="number" step="0.01" min="0" value="{{ $row['income'][$income]['amount'] ?? 0 }}" class="form-control td-width"/>
+                                                                <input type="hidden" name="salaryHandler[]" value="{{ $row['income'][$income]['salaryId'] ?? 0 }}"/>
+                                                                <input type="hidden" name="user[]" value="{{ $row['userId'] ?? 0 }}"/>
+                                                                <input type="hidden" name="paymentDefinition[]" value="{{ $row['income'][$income]['paymentDefinition'] ?? 0 }}"/>
+                                                            </td>
+                                                        @endforeach
+                                                        <td class="dark-green-highlight text-white" style="text-align: right;">{{ number_format($row['total_income'], 2) }}</td>
+                                                        @foreach($deductionHeaders as $deduction)
+                                                            <td class="" style="text-align: right;">
+                                                                {{--{ number_format($row['deductions'][$deduction] ?? 0, 2) }}--}}
+                                                                <input  name="salary[]" type="number" step="0.01" min="0" value="{{ $row['deductions'][$deduction]['amount'] ?? 0 }}" class="form-control td-width">
+                                                                <input type="hidden" name="salaryHandler[]" value="{{ $row['deductions'][$deduction]['salaryId'] ?? 0 }}"/>
+                                                                <input type="hidden" name="user[]" value="{{ $row['userId'] ?? 0 }}"/>
+                                                                <input type="hidden" name="paymentDefinition[]" value="{{ $row['deductions'][$deduction]['paymentDefinition'] ?? 0 }}"/>
+                                                            </td>
+                                                        @endforeach
+                                                        <td class="dark-red-highlight text-white" style="text-align: right;">{{ number_format($row['total_deduction'], 2) }}</td>
+                                                        <td style="text-align: right;">{{ number_format($row['net_pay'], 2) }}</td>
+                                                    </tr>
+                                                @endforeach
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <th colspan="3">Totals</th>
                                                     @foreach($incomeHeaders as $income)
-                                                        <td class="text-right" style="text-align: right;">
-                                                            {{--{ number_format($row['income'][$income] ?? 0, 2) }}--}}
-                                                            <input  name="salary[]" type="number" step="0.01" min="0" value="{{ $row['income'][$income]['amount'] ?? 0 }}" class="form-control td-width"/>
-                                                            <input type="hidden" name="salaryHandler[]" value="{{ $row['income'][$income]['salaryId'] ?? 0 }}"/>
-                                                            <input type="hidden" name="user[]" value="{{ $row['userId'] ?? 0 }}"/>
-                                                            <input type="hidden" name="paymentDefinition[]" value="{{ $row['income'][$income]['paymentDefinition'] ?? 0 }}"/>
-                                                        </td>
+                                                        <th></th>
                                                     @endforeach
-                                                    <td class="dark-green-highlight text-white" style="text-align: right;">{{ number_format($row['total_income'], 2) }}</td>
+                                                    <th class="dark-green-highlight text-white" style="text-align: right;">
+                                                        {{ number_format($totalIncome, 2) }}
+                                                    </th>
                                                     @foreach($deductionHeaders as $deduction)
-                                                        <td class="" style="text-align: right;">
-                                                            {{--{ number_format($row['deductions'][$deduction] ?? 0, 2) }}--}}
-                                                            <input  name="salary[]" type="number" step="0.01" min="0" value="{{ $row['deductions'][$deduction]['amount'] ?? 0 }}" class="form-control td-width">
-                                                            <input type="hidden" name="salaryHandler[]" value="{{ $row['deductions'][$deduction]['salaryId'] ?? 0 }}"/>
-                                                            <input type="hidden" name="user[]" value="{{ $row['userId'] ?? 0 }}"/>
-                                                            <input type="hidden" name="paymentDefinition[]" value="{{ $row['deductions'][$deduction]['paymentDefinition'] ?? 0 }}"/>
-                                                        </td>
+                                                        <th></th>
                                                     @endforeach
-                                                    <td class="dark-red-highlight text-white" style="text-align: right;">{{ number_format($row['total_deduction'], 2) }}</td>
-                                                    <td style="text-align: right;">{{ number_format($row['net_pay'], 2) }}</td>
+                                                    <th class="dark-red-highlight text-white" style="text-align: right;">{{ number_format($totalDeduction, 2) }}</th>
+                                                    <th style="text-align: right;">{{ number_format($totalNet, 2) }}</th>
                                                 </tr>
-                                            @endforeach
-                                            </tbody>
-                                            <tfoot>
-                                            <tr>
-                                                <th colspan="3">Totals</th>
-                                                @foreach($incomeHeaders as $income)
-                                                    <th></th>
-                                                @endforeach
-                                                <th class="dark-green-highlight text-white" style="text-align: right;">
-                                                    {{ number_format($totalIncome, 2) }}
-                                                </th>
-                                                @foreach($deductionHeaders as $deduction)
-                                                    <th></th>
-                                                @endforeach
-                                                <th class="dark-red-highlight text-white" style="text-align: right;">{{ number_format($totalDeduction, 2) }}</th>
-                                                <th style="text-align: right;">{{ number_format($totalNet, 2) }}</th>
-                                            </tr>
-                                            </tfoot>
+                                                </tfoot>
                                         </table>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12 d-flex justify-content-center">
-                                            <button style="border-radius: 0px !important; width: 300px;" type="submit" class="btn btn-primary btn-lg waves-effect waves-light">Save Changes</button>
+                                        <div class="row">
+                                            <div class="col-md-12 d-flex justify-content-center">
+                                                <button style="border-radius: 0px !important; width: 300px;" type="submit" class="btn btn-primary btn-lg waves-effect waves-light">Save Changes</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @else
+                                        <p class="text-center" style="color: #ff0000 !important;">
+                                            Whoops! There is no payroll report for {{ date('F, Y', strtotime($period)) }}
+                                        </p>
+                                    @endif
+
                                 </form>
                             </div>
                         </div>
