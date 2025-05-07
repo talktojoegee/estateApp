@@ -58,7 +58,8 @@ Upload {{$client->first_name ?? ''}}'s Documents
                                         <select name="property"  id="property" class="form-control">
                                             <option value="0">None</option>
                                             @foreach($client->getCustomerListOfProperties($client->id) as $property)
-                                                <option value="{{$property->id}}">{{$property->property_name ?? ''}}</option>
+                                                <option value="{{$property->id}}">{{$property->property_name ?? ''}} - House No.: {{$property->house_no ?? '' }}, Plot No.: {{$property->plot_no ?? '' }},
+                                                    Shop No.: {{$property->shop_no ?? '' }}, Street: {{$property->street ?? '' }}</option>
                                             @endforeach
                                         </select>
                                         @error('property')

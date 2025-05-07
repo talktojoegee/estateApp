@@ -112,6 +112,9 @@
                                 <th class="wd-15p">Date</th>
                                 <th class="wd-15p">Estate</th>
                                 <th class="wd-15p">House No.</th>
+                                <th class="wd-15p">Plot No.</th>
+                                <th class="wd-15p">Shop No.</th>
+                                <th class="wd-15p">Street</th>
                                 <th class="wd-15p">Code</th>
                                 <th class="wd-15p">Property Specification</th>
                                 <th class="wd-15p" style="text-align: right;">Price(₦)</th>
@@ -126,6 +129,9 @@
                                     <td>{{date('d M, Y', strtotime($property->created_at))}}</td>
                                     <td>{{$property->getEstate->e_name ?? '' }}</td>
                                     <td>{{ $property->house_no ?? '' }}</td>
+                                    <td>{{ $property->plot_no ?? '' }}</td>
+                                    <td>{{ $property->shop_no ?? '' }}</td>
+                                    <td>{{ $property->street ?? '' }}</td>
                                     <td>{{$property->property_code ?? '' }}</td>
                                     <td>
                                         <a href="{{route('show-property-details', ['slug'=>$property->slug])}}">

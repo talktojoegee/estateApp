@@ -253,6 +253,8 @@
                                                             <th class="">#</th>
                                                             <th class="wd-15p">Date</th>
                                                             <th class="wd-15p">House No.</th>
+                                                            <th class="wd-15p">Plot No.</th>
+                                                            <th class="wd-15p">Street Name.</th>
                                                             <th class="wd-15p">Code</th>
                                                             <th class="wd-15p">Property Name</th>
                                                             <th class="wd-15p" style="text-align: right;">Price(₦)</th>
@@ -266,6 +268,8 @@
                                                                 <td>{{ $key + 1 }}</td>
                                                                 <td>{{date('d M, Y', strtotime($property->created_at))}}</td>
                                                                 <td>{{ $property->house_no ?? '' }}</td>
+                                                                <td>{{ $property->plot_no ?? '' }}</td>
+                                                                <td>{{ $property->street ?? '' }}</td>
                                                                 <td>{{$property->property_code ?? '' }}</td>
                                                                 <td>
                                                                     <a href="{{route('show-property-details', ['slug'=>$property->slug])}}">

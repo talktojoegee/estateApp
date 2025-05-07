@@ -438,6 +438,8 @@
                                                                         <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse_{{$key}}" aria-expanded="false" aria-controls="flush-collapse_{{$key}}">
                                                                           {{$key + 1}}. &nbsp; &nbsp; <span class="badge rounded-pill bg-danger" style="background: #ff0000 !important;">{{ $property->getPropertyFiles->count() ?? 0 }}</span> &nbsp; &nbsp;  {{$property->property_name ?? '' }}
                                                                         </button>
+                                                                        <p class="fs-12" style="font-size: 12px !important; margin-left: 80px; margin-top: 10px;"><span><strong>House No.:</strong> <span class="text-info">{{$property->house_no ?? '-'}}</span></span>
+                                                                            &nbsp; &nbsp; <span><strong>Plot No.:</strong>  <span class="text-info">{{$property->plot_no ?? '-'}}</span></span> &nbsp; &nbsp; <span><strong>Shop No.:</strong> <span class="text-info">{{$property->shop_no ?? '-'}}</span></span> &nbsp; &nbsp; <span><strong>Street: </strong> <span class="text-info">{{$property->street ?? '-'}}</span></span></p>
                                                                     </h2>
                                                                     <div id="flush-collapse_{{$key}}" class="accordion-collapse collapse" aria-labelledby="flush-heading_{{$key}}" data-bs-parent="#accordionFlushExample_{{$key}}"  style="">
                                                                         @if($property->getPropertyFiles->count() > 0 )
@@ -475,6 +477,9 @@
                                                         <th class="">#</th>
                                                         <th class="wd-15p">Estate</th>
                                                         <th class="wd-15p">House No.</th>
+                                                        <th class="wd-15p">Plot No.</th>
+                                                        <th class="wd-15p">Shop No.</th>
+                                                        <th class="wd-15p">Street</th>
                                                         <th class="wd-15p">Property Name</th>
                                                         <th class="wd-15p" style="text-align: right;">Price(₦)</th>
                                                         <th class="wd-15p">Status</th>
@@ -487,6 +492,9 @@
                                                             <td>{{ $key + 1 }}</td>
                                                             <td>{{$property->getEstate->e_name ?? '' }}</td>
                                                             <td>{{ $property->house_no ?? '' }}</td>
+                                                            <td>{{ $property->plot_no ?? '' }}</td>
+                                                            <td>{{ $property->shop_no ?? '' }}</td>
+                                                            <td>{{ $property->street ?? '' }}</td>
                                                             <td>
                                                                 <a href="{{route('show-property-details', ['slug'=>$property->slug])}}">
                                                                     <div class="d-flex">
