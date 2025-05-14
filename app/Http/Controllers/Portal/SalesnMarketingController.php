@@ -16,6 +16,7 @@ use App\Models\CashBookAccount;
 use App\Models\CashBookAttachment;
 use App\Models\Client;
 use App\Models\Currency;
+use App\Models\Estate;
 use App\Models\FolderModel;
 use App\Models\InventoryTransactionDetail;
 use App\Models\InventoryTransactions;
@@ -1071,6 +1072,7 @@ class SalesnMarketingController extends Controller
             'defaultCurrency'=>$this->cashbook->getDefaultCurrency(),
             'accounts'=>$this->cashbookaccount->getBranchAccounts($branchId),
             'search'=>0,
+
 
         ]);
     }

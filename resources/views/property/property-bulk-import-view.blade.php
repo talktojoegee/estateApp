@@ -294,8 +294,8 @@
                                             <tr>
                                                 <th scope="row"><strong> No. of Office Rooms:</strong></th>
                                                 <td>{{ $item->no_of_office_rooms ?? '' }}</td>
-                                                <th scope="row"><strong> Office Ensuite Toilet/Bathroom:</strong></th>
-                                                <td>{{ $item->office_ensuite_toilet_bathroom ?? '' }}</td>
+                                                <th scope="row"> <!-- <strong> Office Ensuite Toilet/Bathroom:</strong> --> </th>
+                                                <td><!-- { $item->office_ensuite_toilet_bathroom ?? '' }} --></td>
                                             </tr>
                                             <tr>
                                                 <th scope="row"><strong> No. of Shops:</strong></th>
@@ -306,18 +306,18 @@
                                             <tr>
                                                 <th scope="row"><strong> With BQ Option:</strong></th>
                                                 <td>{{ $item->getWithBQOption->bqo_name ?? '' }}</td>
-                                                <th scope="row"><strong> No.  of Floors:</strong></th>
-                                                <td>{{ $item->no_of_floors ?? '' }}</td>
+                                                <th scope="row"><strong><!--  No.  of Floors: --></strong></th>
+                                                <td><!-- { $item->no_of_floors ?? '' }} --></td>
                                             </tr>
                                             <tr>
                                                 <th scope="row"><strong> No.  of Toilets:</strong></th>
                                                 <td>{{ $item->no_of_toilets ?? '' }}</td>
-                                                <th scope="row"><strong> No.  of Car Parking:</strong></th>
-                                                <td>{{ $item->no_of_car_parking ?? '' }}</td>
+                                                <th scope="row"><strong><!--  No.  of Car Parking:</strong> --> </th>
+                                                <td><!-- { $item->no_of_car_parking ?? '' }} --></td>
                                             </tr>
                                             <tr>
-                                                <th scope="row"><strong> No.  of Units:</strong></th>
-                                                <td>{{ $item->no_of_units ?? '' }}</td>
+                                                <th scope="row"><strong><!--  No.  of Units: --></strong></th>
+                                                <td><!-- { $item->no_of_units ?? '' }} --> </td>
                                                 <th scope="row"><strong> Property Condition:</strong></th>
                                                 <td>
                                                     @switch($item->property_condition)
@@ -343,8 +343,8 @@
                                             <tr>
                                                 <th scope="row"><strong> Property Status:</strong></th>
                                                 <td>{{ $item->getConstructionStage->cs_name ?? '' }}</td>
-                                                <th scope="row"><strong> Land Size:</strong></th>
-                                                <td>{{ $item->land_size ?? '' }}</td>
+                                                <th scope="row"><strong><!-- Land Size: --></strong></th>
+                                                <td><!-- { $item->land_size ?? '' }} --> </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row"><strong> Property Title:</strong></th>
@@ -354,13 +354,13 @@
                                             </tr>
                                             <tr>
                                                 <th scope="row"><strong> Availability:</strong></th>
-                                                <td>{{ $item->availability ?? '' }}</td>
+                                                <td>{{ isset($item->customer_name) ? 'No' : 'Yes'  }}</td>
                                                 <th scope="row"><strong> Bank Details:</strong></th>
                                                 <td>{{ $item->bank_details ?? '' }}</td>
                                             </tr>
                                             <tr>
-                                                <th scope="row"><strong> Account No.:</strong></th>
-                                                <td>{{ $item->account_number ?? '' }}</td>
+                                                <th scope="row"><strong><!--  Account No.: --> </strong></th>
+                                                <td><!-- { $item->account_number ?? '' } --></td>
                                                 <th scope="row"><strong> Mode of Payment:</strong></th>
                                                 <td>{{ $item->mode_of_payment ?? '' }}</td>
                                             </tr>
@@ -396,7 +396,7 @@
                                             </tr>
                                             <tr>
                                                 <th scope="row"><strong> Availability:</strong></th>
-                                                <td>{{ $item->availability ?? '' }}</td>
+                                                <td>{{ isset($item->customer_name) ? 'No' : 'Yes'  }}</td>
                                                 <th scope="row"><strong> Gender:</strong></th>
                                                 <td>{{ $item->customer_gender ?? '' }}</td>
                                             </tr>

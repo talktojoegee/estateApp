@@ -221,16 +221,16 @@
                                                             <table class="table mb-0 table-striped">
                                                                 <tbody>
                                                                 <tr>
-                                                                    <th scope="row">No. of Properties:<span class="text-info">{{number_format($record->getProperties->count())}} </span></th>
+                                                                    <th scope="row">No. of Properties: <span class="text-info">{{number_format($record->getProperties->count())}} </span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">No. of Customers:<span class="text-info">{{number_format(count($customers))}}</span></th>
+                                                                    <th scope="row">No. of Customers: <span class="text-info">{{number_format(count($customers))}}</span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">Est. Value:<span class="text-info"> {{env('APP_CURRENCY')}}{{ number_format( $record->getProperties->sum('price'),2 ) }} </span></th>
+                                                                    <th scope="row">Est. Value: <span class="text-info"> {{env('APP_CURRENCY')}}{{ number_format( $record->getProperties->sum('price'),2 ) }} </span></th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th scope="row">Total Inflow:<span class="text-info"> {{env('APP_CURRENCY')}} {{number_format($receipts->sum('total'),2)}}</span></th>
+                                                                    <th scope="row">Total Inflow: <span class="text-info"> {{env('APP_CURRENCY')}} {{number_format($receipts->sum('total'),2)}}</span></th>
                                                                 </tr>
 
                                                                 </tbody>

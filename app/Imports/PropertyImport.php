@@ -4,27 +4,26 @@ namespace App\Imports;
 
 use App\Models\BqOption;
 use App\Models\BuildingType;
-use App\Models\BulkCashbookImportDetail;
 use App\Models\ConstructionStage;
-use App\Models\Estate;
 use App\Models\Lead;
 use App\Models\PropertyBulkImportDetail;
 use App\Models\PropertyTitle;
-use App\Models\TransactionCategory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
+class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets,WithCalculatedFormulas
 {
-    public $header, $masterId;
+    public $header, $masterId, $estateId;
 
-    public function __construct($header, $masterId)
+    public function __construct($header, $masterId, $estateId)
     {
         $this->masterId = $masterId;
         $this->header = $header;
+        $this->estateId = $estateId;
     }
     /*
      * 0 = PROPERTY SPECIFICATION
@@ -90,8 +89,9 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
         if (collect($row)->filter()->isEmpty()) {
             return null; // Skip row
         }
+
         $constructionStage = ConstructionStage::getConstructionStageByName($row[19]);
-        $estate = Estate::getEstateByName($row[7]); //estate
+        //$estate = Estate::getEstateByName($row[7]); //estate
         $buildingType = BuildingType::getBuildingTypeByName($row[1]); //property type
         $bq = BqOption::getBQOptionByName($row[11]);
         $propertyTitle = PropertyTitle::getPropertyTitleByName($row[21]);
@@ -140,15 +140,17 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
         }
         return new PropertyBulkImportDetail([
             'property_name' => $row[0] ?? 'Unknown_'.$randNum,
-            'building_type' => !empty($buildingType) ? $buildingType->bt_id : 1,
+            'building_type' => $row[1], //!empty($buildingType) ? $buildingType->bt_id : 1,
             'plot_no' => $row[2] ?? null, //plot number
             'house_no' => $row[3] ?? null, //house number
             'shop_no' => $row[4] ?? null, //shop number
             'street' => $row[5] ?? null, //street name
             'block' => $row[6] ?? null, //block
-            'estate_id' => !empty($estate) ? $estate->e_id : 1, //estate
+            'estate_id' => $this->estateId, // !empty($estate) ? $estate->e_id : 1, //estate
             'location' => $row[8] ?? '', //location
+
             'availability' => $row[9] ?? '', //availability
+
             'bank_details' => $row[10] ?? '', //bank details
             'account_number' => $row[11] ?? '', //account number
             'mode_of_payment' => $row[12] ?? '', //mode_of_payment
@@ -233,7 +235,7 @@ class PropertyImport implements ToModel, WithStartRow, WithMultipleSheets
         $lead->added_by = Auth::user()->id;
         $lead->org_id = Auth::user()->org_id;
         $lead->first_name = $name ?? '';
-        $lead->last_name = $request->lastName ?? '';
+        $lead->last_name = null;
         $lead->middle_name = null;
         $lead->email = 'placeholder@gmail.com';
         $lead->phone = '+234';

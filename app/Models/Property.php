@@ -50,7 +50,6 @@ class Property extends Model
             'address',
             'built_on',
             'description',
-            'status',
             'bedrooms',
             'living_rooms',
             'kitchen',
@@ -95,6 +94,7 @@ class Property extends Model
             'account_number',
             'mode_of_payment',
             'block',
+            'status'
         ];
 
     public function addProperty(Request $request){
@@ -348,6 +348,11 @@ class Property extends Model
    public function getPropertiesByEstateId($estateId){
         return Property::where('estate_id', $estateId)
             ->orderBy('id', 'DESC')->take(5)->get();
+    }
+
+   public function getPropertyListByEstateId($estateId){
+        return Property::where('estate_id', $estateId)
+            ->orderBy('id', 'DESC')->get();
     }
    public function getAvailablePropertiesByEstateId($estateId){
         return Property::where('estate_id', $estateId)->where('status',0)

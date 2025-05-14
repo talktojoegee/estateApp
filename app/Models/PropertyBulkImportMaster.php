@@ -24,6 +24,7 @@ class PropertyBulkImportMaster extends Model
         $bulk->imported_by = $userId;
         $bulk->batch_code = substr(sha1(time()),21,40);
         $bulk->narration = $request->narration ?? '';
+        $bulk->estate_id = $request->estate ?? 1;
         $bulk->attachment =  $this->uploadFile($request) ?? '';
         $bulk->save();
         return $bulk;

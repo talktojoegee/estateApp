@@ -501,13 +501,16 @@ class PropertyController extends Controller
     public function showBulkPropertyImportForm(Request $request){
         switch ($request->method()){
             case 'GET':
-                return view('property.property-bulk-import');
+                return view('property.property-bulk-import',[
+                    'estates'=>Estate::orderBy('e_name', 'ASC')->get(),
+                ]);
             case 'POST':
-                //return dd($request->all());
                 $this->validate($request, [
-                    'attachment'=>'required'
+                    'attachment'=>'required',
+                    'estate'=>'required'
                 ],[
                     'attachment.required'=>'Choose a file to upload',
+                    'estate.required'=>'Select estate'
                 ]);
                 $file = $request->attachment;
 
@@ -519,7 +522,7 @@ class PropertyController extends Controller
                     'attachment.max'=>'Maximum file upload size exceeded. Your file should not exceed 2MB'
                 ]);
                 $bulkimport = $this->propertyimportmaster->publishBulkImport($request, Auth::user()->id);
-                Excel::import(new PropertyImport($request->firstRowHeader, $bulkimport->id),
+                Excel::import(new PropertyImport($request->firstRowHeader, $bulkimport->id, $request->estate),
                     public_path("assets/drive/import/{$bulkimport->attachment}"));
                 session()->flash("success", "Success! Properties staged for import. Kindly review before carrying out the final operation. ");
                 return back();
@@ -614,7 +617,6 @@ class PropertyController extends Controller
                 return back()->with('error', 'No records selected.');
             }
 
-            //return dd($request->all());
 
 
             if ($action == 'approve') {
@@ -789,6 +791,7 @@ class PropertyController extends Controller
             'customer_email'=>$item->customer_email,
             'location'=>$item->location,
             'availability'=>$item->availability,
+            //'status'=>$item->availability == 'NO' ? 2 : 0,
             'bank_details'=>$item->bank_details,
             'account_number'=>$item->account_number,
             'mode_of_payment'=>$item->mode_of_payment,
@@ -803,28 +806,9 @@ class PropertyController extends Controller
         }
         $houseNo = $item->house_no ?? '';
 
-        /*$service = "Invoice generated for  ".$item->property_name." for house number: $houseNo";
-        //Generate invoice && then receipt
-        if($item->amount_paid > 0){
-            $invoiceStatus = 0;
-            if($item->amount_paid >= $item->price){
-                $invoiceStatus = 1;
-                //update property status
-                $property->status = 2; //sold
-                $property->save();
-            }
-            $invoice = $this->invoicemaster->generateInvoice($property->id, $item->occupied_by, rand(99,9999),3,
-                now(),date('Y-m-d', strtotime(now(). ' + 30 day')),
-                $item->price,$item->price, $item->amount_paid,$invoiceStatus, $service, 1,
-                $item->amount_paid);
-            //Generate receipt now
-            $this->receipt->createNewReceipt(rand(99,9999), $invoice, $item->amount_paid, 0,1, now());
-
-        }*/
-
         //register customer
         $customerId = null;
-        if(!empty($item->customer_id) ){
+        if(!empty($item->customer_id) ){ //for existing customer
             //if(!is_null($item->customer_id)){
                 //extract first CS89384
                 $val = substr($item->customer_id,2);
@@ -835,6 +819,7 @@ class PropertyController extends Controller
                         $property->occupied_by = $customerId;
                         $property->sold_to = $customerId;
                         $property->date_sold = now();
+                        $property->status = 2; //sold
                         $property->save();
                     }
                 }
@@ -853,6 +838,7 @@ class PropertyController extends Controller
                 $property->sold_to = $exists->id;
             }
             $property->date_sold = now();
+            $property->status = 2; //sold
             $property->save();
 
 

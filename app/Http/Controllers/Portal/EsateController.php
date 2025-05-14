@@ -145,8 +145,9 @@ class EsateController extends Controller
         $estate = $this->estate->getEstateBySlug($slug);
         if(!empty($estate)){
             //get IDs of properties in this estate
-            $propertyIds = $this->property->getPropertiesByEstateId($estate->e_id)->pluck('id')->toArray();
-            $customerIds = $this->property->getPropertiesByEstateId($estate->e_id)->pluck('occupied_by')->toArray();
+            $propertyIds = $this->property->getPropertyListByEstateId($estate->e_id)->pluck('id')->toArray();
+            $customerIds = $this->property->getPropertyListByEstateId($estate->e_id)->pluck('occupied_by')->toArray();
+
             $customerIdsInAllocation = $this->propertyallocation->getAllocationByPropertyId($propertyIds, [1])
                 ->pluck('customer_id')->toArray();
             $mergedCustomerIds = array_merge($customerIds, $customerIdsInAllocation);

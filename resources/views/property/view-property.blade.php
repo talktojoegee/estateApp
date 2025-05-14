@@ -57,9 +57,9 @@
                         <div class="carousel-inner" role="listbox">
                             @if(count($property->getPropertyGalleryImages) > 0)
                                 @foreach($property->getPropertyGalleryImages as $key=>$image)
-                                <div class="carousel-item {{$key == 0 ? 'active' : ''}}">
-                                    <img class="d-block img-fluid" src="/assets/drive/property/{{$image->attachment ?? '' }}" alt="Property image">
-                                </div>
+                                    <div class="carousel-item {{$key == 0 ? 'active' : ''}}">
+                                        <img class="d-block img-fluid" src="/assets/drive/property/{{$image->attachment ?? '' }}" alt="Property image">
+                                    </div>
                                 @endforeach
                             @else
                                 <div class="carousel-item active">
@@ -99,22 +99,22 @@
                             </tr>
                             <tr>
                                 <th scope="row" >Plot No.: &nbsp; &nbsp; <span class="text-info">{{$property->plot_no ?? '-' }} </span></th>
-                                <th scope="row" >No. of Office Rooms: &nbsp; &nbsp; <span class="text-info">{{ $property->no_of_office_rooms ?? '-' }}</span></th>
+                            <!-- <th scope="row" >No. of Office Rooms: &nbsp; &nbsp; <span class="text-info">{{ $property->no_of_office_rooms ?? '-' }}</span></th> -->
                             </tr>
                             <tr>
                                 <th scope="row" >No. of shops: &nbsp; &nbsp; <span class="text-info">{{$property->no_of_shops ?? '-' }} </span></th>
-                                <th scope="row" >Office Ensuite Toilet/Bathroom: &nbsp; &nbsp; <span class="text-info">
-                                        @switch($property->office_ensuite_toilet_bathroom)
-                                            @case(0)
+                                <th scope="row" ><!-- Office Ensuite Toilet/Bathroom: --> &nbsp; &nbsp; <span class="text-info">
+                                       <!--  switch($property->office_ensuite_toilet_bathroom)
+                                            case(0)
                                             None
-                                            @break
-                                            @case(1)
+                                            break
+                                            ase(1)
                                             Yes
-                                            @break
-                                            @case(2)
+                                            break
+                                            case(2)
                                             No
-                                            @break
-                                        @endswitch
+                                            break
+                                        endswitch -->
                                     </span></th>
                             </tr>
                             <tr>
@@ -125,14 +125,16 @@
                                 <th scope="row" >Total No. of Bedrooms: &nbsp; &nbsp; <span class="text-info">{{$property->total_no_bedrooms ?? '-' }} </span></th>
                                 <th scope="row" >With BQ.: &nbsp; &nbsp; <span class="text-info">{{ $property->getWithBQOption->bqo_name ?? '-' }}</span></th>
                             </tr>
-                            <tr>
-                                <th scope="row" >No. of Floors: &nbsp; &nbsp; <span class="text-info">{{$property->no_of_floors ?? '-' }} </span></th>
-                                <th scope="row" >No. of Toilets: &nbsp; &nbsp; <span class="text-info">{{ $property->no_of_toilets ?? '-' }}</span></th>
-                            </tr>
-                            <tr>
-                                <th scope="row" >No. of Car Parking: &nbsp; &nbsp; <span class="text-info">{{$property->no_of_car_parking ?? '-' }} </span></th>
-                                <th scope="row" >No. of Units: &nbsp; &nbsp; <span class="text-info">{{ $property->no_of_units ?? '-' }}</span></th>
-                            </tr>
+                            <!--  <tr>
+                                 <th scope="row" >No. of Floors: &nbsp; &nbsp; <span class="text-info">{$property->no_of_floors ?? '-' } </span></th>
+                                 <th scope="row" >No. of Toilets: &nbsp; &nbsp; <span class="text-info">{ $property->no_of_toilets ?? '-' }</span></th>
+                             </tr>
+                             <tr>
+                                 <th scope="row" >No. of Car Parking: &nbsp; &nbsp; <span class="text-info">{ $property->no_of_car_parking ?? '-' } </span></th>
+                                 <th scope="row" >No. of Units: &nbsp; &nbsp; <span class="text-info">{ $property->no_of_units ?? '-' }</span></th>
+                             </tr>
+                             -->
+
                             <tr>
                                 <th scope="row" >Property Condition: &nbsp; &nbsp;
 
@@ -150,14 +152,15 @@
                                         <span class="text-info"> Fair</span>
                                         @break
                                     @endswitch
-                                    </th>
+                                </th>
                                 <th scope="row" >Property Status: &nbsp; &nbsp; <span class="text-info">{{ $property->getConstructionStage->cs_name ?? '-' }}</span></th>
                             </tr>
+                            <!--
                             <tr>
-                                <th scope="row" >Land Size: &nbsp; &nbsp; <span class="text-info">{{$property->land_size ?? '-' }} </span></th>
-                                <th scope="row" >Ledger Account: &nbsp; &nbsp; <span class="text-warning">{{ $property->getGlAccount->account_name ?? '-' }} - {{ $property->getGlAccount->glcode ?? '-' }}</span></th>
-                            </tr>
-                             <tr>
+                                <th scope="row" >Land Size: &nbsp; &nbsp; <span class="text-info">{$property->land_size ?? '-' }} </span></th>
+                                <th scope="row" >Ledger Account: &nbsp; &nbsp; <span class="text-warning">{ $property->getGlAccount->account_name ?? '-' }} - { $property->getGlAccount->glcode ?? '-' }}</span></th>
+                            </tr> -->
+                            <tr>
 
                                 <th scope="row" >Status: &nbsp; &nbsp;
                                     @switch($property->status)
@@ -175,7 +178,7 @@
                                         @break
                                     @endswitch
                                 </th>
-                                 <th scope="row" >Date Added: &nbsp; &nbsp; <span class="text-info"> {{ date('d M, Y h:ia', strtotime($property->created_at)) }}  </span></th>
+                                <th scope="row" >Date Added: &nbsp; &nbsp; <span class="text-info"> {{ date('d M, Y h:ia', strtotime($property->created_at)) }}  </span></th>
                             </tr>
                             <tr>
                                 <th scope="row" > Added By: &nbsp; &nbsp; <span class="text-info"> {{$property->getAddedBy->title ?? '' }} {{$property->getAddedBy->first_name ?? '' }} {{$property->getAddedBy->last_name ?? '' }} {{$property->getAddedBy->other_names ?? '' }} </span></th>
@@ -197,42 +200,50 @@
                         <div class="table-responsive">
                             <table class="table mb-0 table-striped">
                                 <tbody>
-                                    <tr>
-                                        <th scope="row" > Name: &nbsp; &nbsp;
-                                            <span class="text-info"><a target="_blank" href="{{ route('lead-profile', $property->getSoldTo->slug)}}">{{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }} </a></span></th>
-                                        <th scope="row" >Date: &nbsp; &nbsp;
-                                            <span class="text-info">{{ !is_null($property->date_sold) ? date('d M, Y h:ia', strtotime($property->date_sold)) : '-' }}</span>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row" > Email: &nbsp; &nbsp;
-                                            <span class="text-info">{{$property->getSoldTo->email ?? '' }} </span></th>
-                                        <th scope="row" >Mobile No.: &nbsp; &nbsp;
-                                            <span class="text-info">{{$property->getSoldTo->mobile_no ?? '' }}</span>
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th scope="row" > Name: &nbsp; &nbsp;
+                                        <span class="text-info"><a target="_blank" href="{{ route('lead-profile', $property->getSoldTo->slug)}}">{{$property->getSoldTo->first_name ?? '' }} {{$property->getSoldTo->last_name ?? '' }} {{$property->getSoldTo->other_names ?? '' }} </a></span></th>
+                                    <th scope="row" >Date: &nbsp; &nbsp;
+                                        <span class="text-info">{{ !is_null($property->date_sold) ? date('d M, Y h:ia', strtotime($property->date_sold)) : '-' }}</span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th scope="row" > Email: &nbsp; &nbsp;
+                                        <span class="text-info">{{$property->getSoldTo->email ?? '' }} </span></th>
+                                    <th scope="row" >Mobile No.: &nbsp; &nbsp;
+                                        <span class="text-info">{{$property->getSoldTo->mobile_no ?? '' }}</span>
+                                    </th>
+                                </tr>
 
-                                    <tr>
-                                        <th scope="row" > Availability: &nbsp; &nbsp;
-                                            <span class="text-info">{{$property->availability ?? '' }} </span></th>
-                                        <th scope="row" >Bank Details: &nbsp; &nbsp;
-                                            <span class="text-info">{{$property->bank_details ?? '' }}</span>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row" > Account Number: &nbsp; &nbsp;
-                                            <span class="text-info">{{$property->account_number ?? '' }} </span></th>
-                                        <th scope="row" >Mode of Payment: &nbsp; &nbsp;
-                                            <span class="text-info">{{$property->mode_of_payment ?? '' }}</span>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row" > Provisional Letter: &nbsp; &nbsp;
-                                            <span class="text-info">{{$property->provisional_letter ?? '' }} </span></th>
-                                        <th scope="row" >Allocation Letter: &nbsp; &nbsp;
-                                            <span class="text-info">{{$property->allocation_letter ?? '' }}</span>
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th scope="row" > Availability: &nbsp; &nbsp;
+                                        @switch($property->status)
+                                            @case(0)
+                                            <span class="text-success">Yes</span>
+                                            @break
+                                            @case(2)
+                                            <span class="text-danger" style="color: #ff0000 !important;">No</span>
+                                            @break
+                                        @endswitch
+                                    </th>
+                                    <th scope="row" >Bank Details: &nbsp; &nbsp;
+                                        <span class="text-info">{{$property->bank_details ?? '' }}</span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th scope="row" > Account Number: &nbsp; &nbsp;
+                                        <span class="text-info">{{$property->account_number ?? '' }} </span></th>
+                                    <th scope="row" >Mode of Payment: &nbsp; &nbsp;
+                                        <span class="text-info">{{$property->mode_of_payment ?? '' }}</span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th scope="row" > Provisional Letter: &nbsp; &nbsp;
+                                        <span class="text-info">{{$property->provisional_letter ?? '' }} </span></th>
+                                    <th scope="row" >Allocation Letter: &nbsp; &nbsp;
+                                        <span class="text-info">{{$property->allocation_letter ?? '' }}</span>
+                                    </th>
+                                </tr>
 
                                 </tbody>
                             </table>

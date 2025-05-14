@@ -11,6 +11,7 @@
     <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
     <link href="/css/parsley.css" rel="stylesheet" type="text/css" />
 @endsection
 @section('breadcrumb-action-btn')
@@ -69,6 +70,19 @@
                                                     <div class="row mt-4">
                                                         <div class="col-md-12 col-12 col-sm-12 mt-4">
                                                             <div class="form-group">
+                                                                <label for="">Estate<sup class="text-danger">*</sup></label>
+                                                                <select data-parsley-required-message="Select the estate to which this property belongs to" required  class="form-control p-3 select2" name="estate">
+                                                                    <option disabled selected>Select Estate</option>
+                                                                    @foreach($estates as $estate)
+                                                                        <option value="{{$estate->e_id}}">{{ $estate->e_name ?? '' }}</option>
+                                                                    @endforeach
+
+                                                                </select>
+                                                                <br> @error('estate')<i class="text-danger">{{$message}}</i>@enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12 col-12 col-sm-12 mt-4">
+                                                            <div class="form-group">
                                                                 <label for="">Attachment <small>(.xlsx, .xls format only)</small> <sup class="text-danger">*</sup></label> <br>
                                                                 <input type="file" name="attachment" class="form-control-file">
                                                                 @error('attachment') <i class="text-danger">{{$message}}</i> @enderror
@@ -116,5 +130,6 @@
 @endsection
 
 @section('extra-scripts')
-
+    <script src="/assets/libs/select2/js/select2.min.js"></script>
+    <script src="/assets/js/pages/form-advanced.init.js"></script>
 @endsection
